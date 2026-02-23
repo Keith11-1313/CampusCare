@@ -51,13 +51,13 @@ npm install
 ### 3. Create the Database
 
 1. Open **phpMyAdmin** or MySQL CLI
-2. Create a database named `campuscare_db`:
+2. Create a database named `campuscare` (for local development):
    ```sql
-   CREATE DATABASE campuscare_db;
+   CREATE DATABASE campuscare;
    ```
 3. Import/Paste the schema:
    ```sql
-   USE campuscare_db;
+   USE campuscare;
    SOURCE database/campuscare.sql;
    ```
 4. Import/Paste the seed data (for ready to-go data):
@@ -71,7 +71,7 @@ Edit `config/config.php` to match your database credentials:
 
 ```php
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'campuscare_db');
+define('DB_NAME', 'campuscare');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 ```
