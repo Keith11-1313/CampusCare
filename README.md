@@ -55,17 +55,17 @@ npm install
    ```sql
    CREATE DATABASE campuscare_db;
    ```
-3. Import the schema:
+3. Import/Paste the schema:
    ```sql
    USE campuscare_db;
    SOURCE database/campuscare.sql;
    ```
-4. Import the seed data (optional but recommended):
+4. Import/Paste the seed data (for ready to-go data):
    ```sql
    SOURCE database/seed_data.sql;
    ```
 
-### 4. Configure the Application
+### 4. Configure the credentials (for deployment)
 
 Edit `config/config.php` to match your database credentials:
 
