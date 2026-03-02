@@ -239,11 +239,87 @@ endforeach; ?>
 </div>
 </div>
 
+<!-- Announcement Modal -->
+<div class="modal fade" id="announcementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="announcementModalTitle">Add Announcement</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="announcementForm">
+        <div class="modal-body">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="section" value="announcements">
+            <input type="hidden" name="id" id="annId" value="0">
+            <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="annTitle" required placeholder="Enter title"></div>
+            <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="annContent" rows="4" required placeholder="Enter content"></textarea></div>
+            <div class="mb-3"><label class="form-label">Status</label><select class="form-select" name="status" id="annStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- FAQ Modal -->
+<div class="modal fade" id="faqModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="faqModalTitle">Add FAQ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="faqForm">
+        <div class="modal-body">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="section" value="faqs">
+            <input type="hidden" name="id" id="faqId" value="0">
+            <div class="mb-3"><label class="form-label">Question <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="question" id="faqQuestion" required placeholder="Enter question"></div>
+            <div class="mb-3"><label class="form-label">Answer <span class="required-asterisk">*</span></label><textarea class="form-control" name="answer" id="faqAnswer" rows="4" required placeholder="Enter answer"></textarea></div>
+            <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- First Aid Modal -->
+<div class="modal fade" id="firstAidModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="firstAidModalTitle">Add Guideline</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="firstAidForm">
+        <div class="modal-body">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="section" value="first_aid">
+            <input type="hidden" name="id" id="faId" value="0">
+            <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="faTitle" required placeholder="Enter title"></div>
+            <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="faContent" rows="4" required placeholder="Enter content (HTML allowed)"></textarea></div>
+            <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- Emergency Contact Modal -->
+<div class="modal fade" id="emergencyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="emergencyModalTitle">Add Contact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="emergencyForm">
+        <div class="modal-body">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="section" value="emergency">
+            <input type="hidden" name="id" id="emId" value="0">
+            <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
+            <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
+            <div class="mb-3"><label class="form-label">Phone Number <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="Enter phone number"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
 const csrf = '<?php echo getCSRFToken(); ?>';
-const labelStyle = 'display:block;text-align:left;font-weight:600;font-size:0.85rem;margin:12px auto 4px;width:85%;color:#333;';
+
+const announcementModalEl = document.getElementById('announcementModal');
+const announcementModal = new bootstrap.Modal(announcementModalEl);
+const faqModalEl = document.getElementById('faqModal');
+const faqModal = new bootstrap.Modal(faqModalEl);
+const firstAidModalEl = document.getElementById('firstAidModal');
+const firstAidModal = new bootstrap.Modal(firstAidModalEl);
+const emergencyModalEl = document.getElementById('emergencyModal');
+const emergencyModal = new bootstrap.Modal(emergencyModalEl);
 
 function postAction(data) {
     data.append('csrf_token', csrf);
@@ -252,9 +328,10 @@ function postAction(data) {
 
 function handleResult(d) {
     if (d.success) {
-        Swal.fire({icon:'success', title:'Saved!', text:d.message, confirmButtonColor:'#0d6e3f'}).then(()=>location.reload());
+        showToast('success', d.message);
+        setTimeout(()=>location.reload(), 800);
     } else {
-        Swal.fire({icon:'error', title:'Error', text:d.message, confirmButtonColor:'#0d6e3f'});
+        showAlert('error', 'Error', d.message);
     }
 }
 
@@ -263,8 +340,8 @@ function deleteItem(section, id) {
         if(r.isConfirmed){
             const fd=new FormData();fd.append('action','delete');fd.append('section',section);fd.append('id',id);
             postAction(fd).then(d=>{
-                if(d.success) Swal.fire({icon:'success',title:'Deleted!',text:d.message,confirmButtonColor:'#0d6e3f'}).then(()=>location.reload());
-                else Swal.fire({icon:'error',title:'Error',text:d.message,confirmButtonColor:'#0d6e3f'});
+                if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+                else showAlert('error','Error',d.message);
             });
         }
     });
@@ -279,94 +356,68 @@ function editItem(section, id) {
         else if(section==='faqs') showFaqForm(item);
         else if(section==='first_aid') showFirstAidForm(item);
         else if(section==='emergency') showEmergencyForm(item);
-    }).catch(err=>{ console.error('Edit fetch error:', err); Swal.fire({icon:'error',title:'Error',text:'Failed to load item data. Please try again.',confirmButtonColor:'#0d6e3f'}); });
+    }).catch(err=>{ console.error('Edit fetch error:', err); showAlert('error','Error','Failed to load item data. Please try again.'); });
 }
 
 function addAnnouncement(){showAnnouncementForm(null);}
 function showAnnouncementForm(item){
-    Swal.fire({title:item?'Edit Announcement':'Add Announcement',
-        html:'<label style="'+labelStyle+'">Title <span style="color:red">*</span></label><input class="swal2-input" id="s_title" placeholder="Enter title">' +
-             '<label style="'+labelStyle+'">Content <span style="color:red">*</span></label><textarea class="swal2-textarea" id="s_content" placeholder="Enter content"></textarea>' +
-             '<label style="'+labelStyle+'">Status</label><select class="swal2-select" id="s_status"><option value="published">Published</option><option value="draft">Draft</option></select>',
-        showCancelButton:true,confirmButtonColor:'#0d6e3f',confirmButtonText:'Save',
-        didOpen:()=>{
-            if(item){
-                document.getElementById('s_title').value=item.title||'';
-                document.getElementById('s_content').value=item.content||'';
-                document.getElementById('s_status').value=item.status||'published';
-            }
-        },
-        preConfirm:()=>({title:document.getElementById('s_title').value,content:document.getElementById('s_content').value,status:document.getElementById('s_status').value})
-    }).then(r=>{if(r.isConfirmed){const fd=new FormData();fd.append('action','save');fd.append('section','announcements');
-    if(item)fd.append('id',item.id);Object.entries(r.value).forEach(([k,v])=>fd.append(k,v));
-    postAction(fd).then(handleResult);}});
+    document.getElementById('announcementModalTitle').textContent = item ? 'Edit Announcement' : 'Add Announcement';
+    document.getElementById('annId').value = item ? item.id : 0;
+    document.getElementById('annTitle').value = item ? (item.title||'') : '';
+    document.getElementById('annContent').value = item ? (item.content||'') : '';
+    document.getElementById('annStatus').value = item ? (item.status||'published') : 'published';
+    announcementModal.show();
 }
 
 function addFaq(){showFaqForm(null);}
 function showFaqForm(item){
-    Swal.fire({title:item?'Edit FAQ':'Add FAQ',
-        html:'<label style="'+labelStyle+'">Question <span style="color:red">*</span></label><input class="swal2-input" id="s_question" placeholder="Enter question">' +
-             '<label style="'+labelStyle+'">Answer <span style="color:red">*</span></label><textarea class="swal2-textarea" id="s_answer" placeholder="Enter answer"></textarea>' +
-             '<label style="'+labelStyle+'">Sort Order</label><input class="swal2-input" id="s_sort_order" type="number" placeholder="0">',
-        showCancelButton:true,confirmButtonColor:'#0d6e3f',confirmButtonText:'Save',
-        didOpen:()=>{
-            if(item){
-                document.getElementById('s_question').value=item.question||'';
-                document.getElementById('s_answer').value=item.answer||'';
-                document.getElementById('s_sort_order').value=item.sort_order||'0';
-            }
-        },
-        preConfirm:()=>({question:document.getElementById('s_question').value,answer:document.getElementById('s_answer').value,sort_order:document.getElementById('s_sort_order').value})
-    }).then(r=>{if(r.isConfirmed){const fd=new FormData();fd.append('action','save');fd.append('section','faqs');
-    if(item)fd.append('id',item.id);Object.entries(r.value).forEach(([k,v])=>fd.append(k,v));
-    postAction(fd).then(handleResult);}});
+    document.getElementById('faqModalTitle').textContent = item ? 'Edit FAQ' : 'Add FAQ';
+    document.getElementById('faqId').value = item ? item.id : 0;
+    document.getElementById('faqQuestion').value = item ? (item.question||'') : '';
+    document.getElementById('faqAnswer').value = item ? (item.answer||'') : '';
+    document.getElementById('faqSortOrder').value = item ? (item.sort_order||'0') : '0';
+    faqModal.show();
 }
 
 function addFirstAid(){showFirstAidForm(null);}
 function showFirstAidForm(item){
-    Swal.fire({title:item?'Edit Guideline':'Add Guideline',
-        html:'<label style="'+labelStyle+'">Title <span style="color:red">*</span></label><input class="swal2-input" id="s_title" placeholder="Enter title">' +
-             '<label style="'+labelStyle+'">Content <span style="color:red">*</span></label><textarea class="swal2-textarea" id="s_content" placeholder="Enter content (HTML allowed)"></textarea>' +
-             '<label style="'+labelStyle+'">Sort Order</label><input class="swal2-input" id="s_sort_order" type="number" placeholder="0">',
-        showCancelButton:true,confirmButtonColor:'#0d6e3f',confirmButtonText:'Save',
-        didOpen:()=>{
-            if(item){
-                document.getElementById('s_title').value=item.title||'';
-                document.getElementById('s_content').value=item.content||'';
-                document.getElementById('s_sort_order').value=item.sort_order||'0';
-            }
-        },
-        preConfirm:()=>({title:document.getElementById('s_title').value,content:document.getElementById('s_content').value,sort_order:document.getElementById('s_sort_order').value})
-    }).then(r=>{if(r.isConfirmed){const fd=new FormData();fd.append('action','save');fd.append('section','first_aid');
-    if(item)fd.append('id',item.id);Object.entries(r.value).forEach(([k,v])=>fd.append(k,v));
-    postAction(fd).then(handleResult);}});
+    document.getElementById('firstAidModalTitle').textContent = item ? 'Edit Guideline' : 'Add Guideline';
+    document.getElementById('faId').value = item ? item.id : 0;
+    document.getElementById('faTitle').value = item ? (item.title||'') : '';
+    document.getElementById('faContent').value = item ? (item.content||'') : '';
+    document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
+    firstAidModal.show();
 }
 
 function addEmergency(){showEmergencyForm(null);}
 function showEmergencyForm(item){
-    Swal.fire({title:item?'Edit Contact':'Add Contact',
-        html:'<label style="'+labelStyle+'">Name <span style="color:red">*</span></label><input class="swal2-input" id="s_name" placeholder="Enter name">' +
-             '<label style="'+labelStyle+'">Role</label><input class="swal2-input" id="s_role" placeholder="Enter role">' +
-             '<label style="'+labelStyle+'">Phone Number <span style="color:red">*</span></label><input class="swal2-input" id="s_phone_number" placeholder="Enter phone number">',
-        showCancelButton:true,confirmButtonColor:'#0d6e3f',confirmButtonText:'Save',
-        didOpen:()=>{
-            if(item){
-                document.getElementById('s_name').value=item.name||'';
-                document.getElementById('s_role').value=item.role||'';
-                document.getElementById('s_phone_number').value=item.phone_number||'';
-            }
-        },
-        preConfirm:()=>({name:document.getElementById('s_name').value,role:document.getElementById('s_role').value,phone_number:document.getElementById('s_phone_number').value})
-    }).then(r=>{if(r.isConfirmed){const fd=new FormData();fd.append('action','save');fd.append('section','emergency');
-    if(item)fd.append('id',item.id);Object.entries(r.value).forEach(([k,v])=>fd.append(k,v));
-    postAction(fd).then(handleResult);}});
+    document.getElementById('emergencyModalTitle').textContent = item ? 'Edit Contact' : 'Add Contact';
+    document.getElementById('emId').value = item ? item.id : 0;
+    document.getElementById('emName').value = item ? (item.name||'') : '';
+    document.getElementById('emRole').value = item ? (item.role||'') : '';
+    document.getElementById('emPhone').value = item ? (item.phone_number||'') : '';
+    emergencyModal.show();
 }
+
+function submitModalForm(formId, modalInstance) {
+    document.getElementById(formId).addEventListener('submit', function(e){
+        e.preventDefault();
+        postAction(new FormData(this)).then(d=>{
+            if(d.success){ modalInstance.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+            else showAlert('error','Error',d.message);
+        });
+    });
+}
+submitModalForm('announcementForm', announcementModal);
+submitModalForm('faqForm', faqModal);
+submitModalForm('firstAidForm', firstAidModal);
+submitModalForm('emergencyForm', emergencyModal);
 
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
     postAction(new FormData(this)).then(d=>{
-        if(d.success) Swal.fire({icon:'success',title:'Saved!',text:d.message,confirmButtonColor:'#0d6e3f'}).then(()=>location.reload());
-        else Swal.fire({icon:'error',title:'Error',text:d.message,confirmButtonColor:'#0d6e3f'});
+        if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+        else showAlert('error','Error',d.message);
     });
 });
 </script>

@@ -225,9 +225,109 @@ endif; ?>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
+<!-- Add Allergy Modal -->
+<div class="modal fade" id="allergyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Allergy</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="allergyForm">
+        <div class="modal-body">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="table" value="allergies">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <div class="mb-3"><label class="form-label">Allergen <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[allergen]" required placeholder="e.g. Peanuts"></div>
+            <div class="mb-3"><label class="form-label">Reaction</label><input type="text" class="form-control" name="data[reaction]" placeholder="e.g. Hives, swelling"></div>
+            <div class="mb-3"><label class="form-label">Severity</label><select class="form-select" name="data[severity]"><option value="Mild">Mild</option><option value="Moderate">Moderate</option><option value="Severe">Severe</option></select></div>
+            <div class="mb-3"><label class="form-label">Notes</label><input type="text" class="form-control" name="data[notes]" placeholder="Additional notes"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- Add Condition Modal -->
+<div class="modal fade" id="conditionModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Chronic Condition</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="conditionForm">
+        <div class="modal-body">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="table" value="chronic_conditions">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <div class="mb-3"><label class="form-label">Condition Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[condition_name]" required placeholder="e.g. Asthma"></div>
+            <div class="mb-3"><label class="form-label">Diagnosis Date</label><input type="date" class="form-control" name="data[diagnosis_date]"></div>
+            <div class="mb-3"><label class="form-label">Status</label><select class="form-select" name="data[status]"><option value="Active">Active</option><option value="Managed">Managed</option><option value="Resolved">Resolved</option></select></div>
+            <div class="mb-3"><label class="form-label">Notes</label><input type="text" class="form-control" name="data[notes]" placeholder="Additional notes"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- Add Medication Modal -->
+<div class="modal fade" id="medicationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Medication</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="medicationForm">
+        <div class="modal-body">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="table" value="medications">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <div class="mb-3"><label class="form-label">Medication Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[medication_name]" required placeholder="e.g. Salbutamol"></div>
+            <div class="mb-3"><label class="form-label">Dosage</label><input type="text" class="form-control" name="data[dosage]" placeholder="e.g. 200mg"></div>
+            <div class="mb-3"><label class="form-label">Frequency</label><input type="text" class="form-control" name="data[frequency]" placeholder="e.g. Twice daily"></div>
+            <div class="mb-3"><label class="form-label">Prescribing Doctor</label><input type="text" class="form-control" name="data[prescribing_doctor]" placeholder="Doctor name"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- Add Immunization Modal -->
+<div class="modal fade" id="immunizationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Immunization</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="immunizationForm">
+        <div class="modal-body">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="table" value="immunizations">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <div class="mb-3"><label class="form-label">Vaccine Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[vaccine_name]" required placeholder="e.g. Hepatitis B"></div>
+            <div class="mb-3"><label class="form-label">Date Administered</label><input type="date" class="form-control" name="data[date_administered]"></div>
+            <div class="mb-3"><label class="form-label">Dose Number</label><input type="text" class="form-control" name="data[dose_number]" placeholder="e.g. 1st dose"></div>
+            <div class="mb-3"><label class="form-label">Administered By</label><input type="text" class="form-control" name="data[administered_by]" placeholder="Name of administrator"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
+<!-- Add Emergency Contact Modal -->
+<div class="modal fade" id="emContactModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Emergency Contact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="emContactForm">
+        <div class="modal-body">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="table" value="emergency_contacts">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <div class="mb-3"><label class="form-label">Contact Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[contact_name]" required placeholder="Full name"></div>
+            <div class="mb-3"><label class="form-label">Relationship <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[relationship]" required placeholder="e.g. Parent, Guardian"></div>
+            <div class="mb-3"><label class="form-label">Phone Number <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[phone_number]" required placeholder="e.g. 09xxxxxxxxx"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+    </form>
+</div></div></div>
+
 <script>
 const csrf = '<?php echo getCSRFToken(); ?>';
 const studentUrl = 'student_profile.php?id=<?php echo $studentId; ?>';
+
+const modals = {
+    allergies: new bootstrap.Modal(document.getElementById('allergyModal')),
+    chronic_conditions: new bootstrap.Modal(document.getElementById('conditionModal')),
+    medications: new bootstrap.Modal(document.getElementById('medicationModal')),
+    immunizations: new bootstrap.Modal(document.getElementById('immunizationModal')),
+    emergency_contacts: new bootstrap.Modal(document.getElementById('emContactModal'))
+};
+
+const formIds = {
+    allergies: 'allergyForm',
+    chronic_conditions: 'conditionForm',
+    medications: 'medicationForm',
+    immunizations: 'immunizationForm',
+    emergency_contacts: 'emContactForm'
+};
 
 function deleteRecord(table, id) {
     showConfirm('Delete Record?','Are you sure you want to delete this record?','Yes, Delete').then(r => {
@@ -236,9 +336,10 @@ function deleteRecord(table, id) {
             fd.append('action','delete'); fd.append('table',table); fd.append('record_id',id); fd.append('csrf_token',csrf);
             fetch(studentUrl, {method:'POST',body:fd}).then(r=>r.json()).then(d => {
                 if (d.success) {
-                    Swal.fire({icon:'success', title:'Deleted!', text:d.message, confirmButtonColor:'#0d6e3f'}).then(()=>location.reload());
+                    showToast('success', d.message);
+                    setTimeout(()=>location.reload(), 800);
                 } else {
-                    Swal.fire({icon:'error', title:'Error', text:d.message, confirmButtonColor:'#0d6e3f'});
+                    showAlert('error', 'Error', d.message);
                 }
             });
         }
@@ -246,63 +347,27 @@ function deleteRecord(table, id) {
 }
 
 function showAddForm(table) {
-    let html = '';
-    const ls = 'display:block;text-align:left;font-weight:600;font-size:0.85rem;margin:12px auto 4px;width:85%;color:#333;';
-    switch(table) {
-        case 'allergies':
-            html = '<label style="'+ls+'">Allergen <span style="color:red">*</span></label><input class="swal2-input" id="s_allergen" placeholder="e.g. Peanuts">' +
-                   '<label style="'+ls+'">Reaction</label><input class="swal2-input" id="s_reaction" placeholder="e.g. Hives, swelling">' +
-                   '<label style="'+ls+'">Severity</label><select class="swal2-select" id="s_severity"><option value="Mild">Mild</option><option value="Moderate">Moderate</option><option value="Severe">Severe</option></select>' +
-                   '<label style="'+ls+'">Notes</label><input class="swal2-input" id="s_notes" placeholder="Additional notes">';
-            break;
-        case 'chronic_conditions':
-            html = '<label style="'+ls+'">Condition Name <span style="color:red">*</span></label><input class="swal2-input" id="s_condition_name" placeholder="e.g. Asthma">' +
-                   '<label style="'+ls+'">Diagnosis Date</label><input class="swal2-input" id="s_diagnosis_date" type="date">' +
-                   '<label style="'+ls+'">Status</label><select class="swal2-select" id="s_status"><option value="Active">Active</option><option value="Managed">Managed</option><option value="Resolved">Resolved</option></select>' +
-                   '<label style="'+ls+'">Notes</label><input class="swal2-input" id="s_notes" placeholder="Additional notes">';
-            break;
-        case 'medications':
-            html = '<label style="'+ls+'">Medication Name <span style="color:red">*</span></label><input class="swal2-input" id="s_medication_name" placeholder="e.g. Salbutamol">' +
-                   '<label style="'+ls+'">Dosage</label><input class="swal2-input" id="s_dosage" placeholder="e.g. 200mg">' +
-                   '<label style="'+ls+'">Frequency</label><input class="swal2-input" id="s_frequency" placeholder="e.g. Twice daily">' +
-                   '<label style="'+ls+'">Prescribing Doctor</label><input class="swal2-input" id="s_prescribing_doctor" placeholder="Doctor name">';
-            break;
-        case 'immunizations':
-            html = '<label style="'+ls+'">Vaccine Name <span style="color:red">*</span></label><input class="swal2-input" id="s_vaccine_name" placeholder="e.g. Hepatitis B">' +
-                   '<label style="'+ls+'">Date Administered</label><input class="swal2-input" id="s_date_administered" type="date">' +
-                   '<label style="'+ls+'">Dose Number</label><input class="swal2-input" id="s_dose_number" placeholder="e.g. 1st dose">' +
-                   '<label style="'+ls+'">Administered By</label><input class="swal2-input" id="s_administered_by" placeholder="Name of administrator">';
-            break;
-        case 'emergency_contacts':
-            html = '<label style="'+ls+'">Contact Name <span style="color:red">*</span></label><input class="swal2-input" id="s_contact_name" placeholder="Full name">' +
-                   '<label style="'+ls+'">Relationship <span style="color:red">*</span></label><input class="swal2-input" id="s_relationship" placeholder="e.g. Parent, Guardian">' +
-                   '<label style="'+ls+'">Phone Number <span style="color:red">*</span></label><input class="swal2-input" id="s_phone_number" placeholder="e.g. 09xxxxxxxxx">';
-            break;
+    const formId = formIds[table];
+    if (formId) {
+        document.getElementById(formId).reset();
+        modals[table].show();
     }
-    Swal.fire({
-        title: 'Add Record', html: html, showCancelButton: true,
-        confirmButtonColor: '#0d6e3f', confirmButtonText: 'Save',
-        preConfirm: () => {
-            const data = {};
-            Swal.getPopup().querySelectorAll('input,select').forEach(el => {
-                const key = el.id.replace('s_','');
-                data[key] = el.value;
-            });
-            return data;
-        }
-    }).then(result => {
-        if (result.isConfirmed) {
-            const fd = new FormData();
-            fd.append('action','add'); fd.append('table',table); fd.append('csrf_token',csrf);
-            Object.entries(result.value).forEach(([k,v]) => fd.append('data['+k+']',v));
-            fetch(studentUrl, {method:'POST',body:fd}).then(r=>r.json()).then(d => {
-                if (d.success) {
-                    Swal.fire({icon:'success', title:'Saved!', text:d.message, confirmButtonColor:'#0d6e3f'}).then(()=>location.reload());
-                } else {
-                    Swal.fire({icon:'error', title:'Error', text:d.message, confirmButtonColor:'#0d6e3f'});
-                }
-            });
-        }
-    });
 }
+
+// Attach submit handlers to all modal forms
+Object.entries(formIds).forEach(([table, formId]) => {
+    document.getElementById(formId).addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch(studentUrl, {method:'POST', body: new FormData(this)}).then(r=>r.json()).then(d => {
+            if (d.success) {
+                modals[table].hide();
+                showToast('success', d.message);
+                setTimeout(()=>location.reload(), 800);
+            } else {
+                showAlert('error', 'Error', d.message);
+            }
+        });
+    });
+});
 </script>
+
