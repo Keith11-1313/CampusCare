@@ -9,16 +9,9 @@ requireRole('admin');
 $db = Database::getInstance();
 
 // Handle export requests
-if (isset($_GET['export'])) {
-    $type = $_GET['export'];
-    if ($type === 'csv') {
-        require_once __DIR__ . '/../includes/export_csv.php';
-        exit;
-    }
-    if ($type === 'pdf') {
-        require_once __DIR__ . '/../includes/export_pdf.php';
-        exit;
-    }
+if (isset($_GET['export']) && $_GET['export'] === 'pdf') {
+    require_once __DIR__ . '/../includes/export_pdf.php';
+    exit;
 }
 
 // Chart data: visits by month (last 12 months)
@@ -54,7 +47,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div><h1><i class="bi bi-graph-up me-2"></i>Reports & Analytics</h1>
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Reports</li></ol></nav></div>
     <div>
-        <a href="?export=csv" class="btn btn-outline-success me-1"><i class="bi bi-filetype-csv me-1"></i>Export CSV</a>
         <a href="?export=pdf" class="btn btn-outline-danger"><i class="bi bi-filetype-pdf me-1"></i>Export PDF</a>
     </div>
 </div>

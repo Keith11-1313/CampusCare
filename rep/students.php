@@ -63,6 +63,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $s = $db->fetch("SELECT * FROM students WHERE id=?", [$id]);
         jsonResponse(['success' => true, 'student' => $s]);
     }
+
+    if ($action === 'import_csv') {
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK)
+            jsonResponse(['success' => false, 'message' => 'Please select a valid CSV file.']);
+
+        $file = fopen($_FILES['csv_file']['tmp_name'], 'r');
+        if (!$file)
+            jsonResponse(['success' => false, 'message' => 'Failed to read file.']);
+
+        // Read header row
+        $header = fgetcsv($file);
+        if (!$header)
+            jsonResponse(['success' => false, 'message' => 'CSV file is empty.']);
+
+        // Normalize headers (lowercase, trim)
+        $header = array_map(function ($h) {
+            return strtolower(trim(str_replace(' ', '_', $h)));
+        }, $header);
+
+        // Required columns
+        $required = ['student_id', 'first_name', 'last_name', 'gender', 'date_of_birth'];
+        $missing = array_diff($required, $header);
+        if (!empty($missing))
+            jsonResponse(['success' => false, 'message' => 'Missing required columns: ' . implode(', ', $missing)]);
+
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+        $rowNum = 1;
+
+        while (($row = fgetcsv($file)) !== false) {
+            $rowNum++;
+            if (count($row) !== count($header)) {
+                $errors[] = "Row $rowNum: column count mismatch";
+                $skipped++;
+                continue;
+            }
+
+            $data = array_combine($header, $row);
+            $sid = trim($data['student_id'] ?? '');
+            $fn = trim($data['first_name'] ?? '');
+            $ln = trim($data['last_name'] ?? '');
+            $mn = trim($data['middle_name'] ?? '');
+            $gender = trim($data['gender'] ?? '');
+            $dob = trim($data['date_of_birth'] ?? '');
+            $bt = trim($data['blood_type'] ?? '');
+            $contact = trim($data['contact_number'] ?? '');
+            $email = trim($data['email'] ?? '');
+            $address = trim($data['address'] ?? '');
+
+            if (empty($sid) || empty($fn) || empty($ln) || empty($gender) || empty($dob)) {
+                $errors[] = "Row $rowNum: missing required fields";
+                $skipped++;
+                continue;
+            }
+
+            // Skip if student_id already exists
+            $existing = $db->fetch("SELECT id FROM students WHERE student_id=?", [$sid]);
+            if ($existing) {
+                $skipped++;
+                continue;
+            }
+
+            $db->query("INSERT INTO students (student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address,program_id,year_level_id,section) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            [$sid, $fn, $mn ?: null, $ln, $gender, $dob, $bt ?: null, $contact ?: null, $email ?: null, $address ?: null, $programId, $yearLevelId, $section]);
+            $imported++;
+        }
+        fclose($file);
+
+        logAccess($_SESSION['user_id'], 'import_students_csv', "Imported $imported students from CSV");
+
+        $msg = "$imported student(s) imported successfully.";
+        if ($skipped > 0)
+            $msg .= " $skipped row(s) skipped (duplicates or errors).";
+        jsonResponse(['success' => true, 'message' => $msg, 'imported' => $imported, 'skipped' => $skipped]);
+    }
 }
 
 // Fetch students
@@ -101,7 +177,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="page-header d-flex justify-content-between align-items-start flex-wrap">
     <div><h1><i class="bi bi-people me-2"></i>My Students</h1>
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Students</li></ol></nav></div>
-    <button class="btn btn-primary" onclick="openStudentModal()"><i class="bi bi-person-plus me-1"></i>Add Student</button>
+    <div>
+        <button class="btn btn-outline-success me-2" onclick="document.getElementById('importModal') && importModal.show()"><i class="bi bi-upload me-1"></i>Import CSV</button>
+        <button class="btn btn-primary" onclick="openStudentModal()"><i class="bi bi-person-plus me-1"></i>Add Student</button>
+    </div>
 </div>
 
 <div class="filter-bar"><form method="GET" class="row g-2">
@@ -159,10 +238,37 @@ endif; ?>
 <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Student</button></div>
 </form></div></div></div>
 
+<!-- Import CSV Modal -->
+<div class="modal fade" id="importModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="bi bi-upload me-2"></i>Import Students from CSV</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="importForm" enctype="multipart/form-data">
+        <div class="modal-body">
+            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+            <input type="hidden" name="action" value="import_csv">
+            <div class="mb-3">
+                <label class="form-label">CSV File <span class="required-asterisk">*</span></label>
+                <input type="file" class="form-control" name="csv_file" id="csvFile" accept=".csv" required>
+                <div class="form-text">Upload a .csv file with student data.</div>
+            </div>
+            <div class="alert alert-info small mb-0 py-2">
+                <i class="bi bi-info-circle me-1"></i><strong>Required columns:</strong> student_id, first_name, last_name, gender, date_of_birth<br>
+                <strong>Optional columns:</strong> middle_name, blood_type, contact_number, email, address<br>
+                <a href="#" onclick="downloadTemplate(); return false;" class="alert-link"><i class="bi bi-download me-1"></i>Download CSV template</a>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success" id="importBtn"><i class="bi bi-upload me-1"></i>Import</button>
+        </div>
+    </form>
+</div></div></div>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
 const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
+const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+
 function openStudentModal(){
     document.getElementById('studentModalTitle').textContent='Add Student';
     document.getElementById('studentDbId').value=0;
@@ -196,6 +302,39 @@ document.getElementById('studentForm').addEventListener('submit',function(e){
     });
 });
 
+// Import CSV form
+document.getElementById('importForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const btn = document.getElementById('importBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Importing...';
+    fetch('students.php', {method:'POST', body: new FormData(this)}).then(r=>r.json()).then(d=>{
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-upload me-1"></i>Import';
+        if(d.success){
+            importModal.hide();
+            showAlert('success', 'Import Complete', d.message).then(()=>location.reload());
+        } else {
+            showAlert('error', 'Import Failed', d.message);
+        }
+    }).catch(err=>{
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-upload me-1"></i>Import';
+        showAlert('error', 'Error', 'An unexpected error occurred.');
+    });
+});
+
+function downloadTemplate(){
+    const headers = 'student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address';
+    const sample = '2024-0001,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
+    const blob = new Blob([headers + '\n' + sample + '\n'], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'students_import_template.csv';
+    a.click();
+}
+
 // Auto-open add modal if ?action=add in URL
 if(new URLSearchParams(window.location.search).get('action')==='add') openStudentModal();
 </script>
+
