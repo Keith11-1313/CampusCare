@@ -5,15 +5,26 @@
 
 /* ---- CSS Variables / Design Tokens ---- */
 :root {
-    --cc-primary: #0d6e3f;
-    --cc-primary-light: #11995a;
-    --cc-primary-dark: #094d2c;
-    --cc-primary-bg: #e8f5ee;
-    --cc-secondary: #1a73a7;
-    --cc-secondary-light: #2196c8;
-    --cc-secondary-bg: #e3f2fd;
-    --cc-accent: #e8910c;
-    --cc-accent-bg: #fff8e1;
+    --cc-primary: #005a9c;
+    /* Professional Medical Blue */
+    --cc-primary-light: #2d89cf;
+    /* Brighter Action Blue */
+    --cc-primary-dark: #003d6b;
+    /* Deep Trust Navy */
+    --cc-primary-bg: #f0f7ff;
+    /* Clean Hospital-White (Blue tint) */
+
+    --cc-secondary: #4a6fa5;
+    /* Muted Slate Blue for secondary UI */
+    --cc-secondary-light: #6c8ebf;
+    /* Soft Highlight Blue */
+    --cc-secondary-bg: #f8fafc;
+    /* Neutral Surface White */
+
+    --cc-accent: #0ea5e9;
+    /* Sky Blue for vital alerts/focus */
+    --cc-accent-bg: #ffffff;
+    /* Pure Paper White */
     --cc-danger: #c0392b;
     --cc-danger-bg: #fdecea;
     --cc-success: #27ae60;
@@ -591,7 +602,7 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0a4d2e 0%, #0d6e3f 30%, #1a8a56 60%, #1a73a7 100%);
+    background: linear-gradient(135deg, #003d6b 0%, #005a9c 30%, #2d89cf 60%, #4a6fa5 100%);
     padding: 1.5rem;
     position: relative;
     overflow: hidden;
@@ -651,22 +662,7 @@ a:hover {
 }
 
 .public-hero {
-    background: linear-gradient(135deg, #0a4d2e 0%, #0d6e3f 40%, #1a73a7 100%);
-    color: #fff;
-    padding: 5rem 0 4rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.public-hero::before {
-    content: '';
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-    top: -200px;
-    right: -100px;
-    border-radius: 50%;
+    background: #000;
 }
 
 .public-section {
@@ -702,6 +698,26 @@ a:hover {
 .public-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Hero Section ---- */
+.carousel-img-overlay {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Dark Overlay so text stays readable on photos */
+.carousel-img-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 90, 156, 0.85), rgba(0, 0, 0, 0.3));
 }
 
 /* ---- Empty State ---- */

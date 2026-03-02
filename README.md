@@ -102,8 +102,6 @@ http://localhost/CampusCare
 | Class Rep | `rep_delacruz` | `rep123` |
 | Class Rep | `rep_reyes` | `rep123` |
 
-> **Important:** Change these passwords after first login.
-
 ---
 
 ## Project Structure

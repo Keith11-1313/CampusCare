@@ -13,7 +13,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 // Application Settings
 define('APP_NAME', 'CampusCare');
-define('APP_TAGLINE', 'School Clinic Patient Information & Medicine Record System');
+define('APP_TAGLINE', 'School Clinic Patient Information Record System');
 define('APP_VERSION', '1.0.0');
 
 // Base URL - adjust if project is in a subdirectory

@@ -57,27 +57,39 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     </nav>
 
     <!-- Hero Section -->
-    <section class="public-hero" style="padding-top: 7rem;">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-7">
+    <section class="public-hero p-0 position-relative overflow-hidden" style="min-height: 80vh;">
+        <div id="heroBgCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" data-bs-ride="carousel" data-bs-interval="3000" style="z-index: 1;">
+            <div class="carousel-inner h-100">
+                <div class="carousel-item active h-100">
+                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic1.jpg');"></div>
+                </div>
+                <div class="carousel-item h-100">
+                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic2.jpg');"></div>
+                </div>
+                <div class="carousel-item h-100">
+                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic3.jpg');"></div>
+                </div>
+                <div class="carousel-item h-100">
+                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic4.jpg');"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container position-relative" style="z-index: 2; padding-top: 10rem; padding-bottom: 10rem;">
+            <div class="row">
+                <div class="col-lg-7 text-white">
                     <h1 class="display-5 fw-bold mb-3 animate-fade-in"><?php echo APP_NAME; ?></h1>
-                    <p class="lead mb-4 opacity-75 animate-fade-in animate-delay-1"><?php echo APP_TAGLINE; ?></p>
+                    <p class="lead mb-4 opacity-100 animate-fade-in animate-delay-1"><?php echo APP_TAGLINE; ?></p>
                     <p class="mb-4 opacity-75 animate-fade-in animate-delay-2">
                         Your campus health partner. Access clinic information, announcements, first-aid guidelines, and emergency contacts all in one place.
                     </p>
-                    <div class="animate-fade-in animate-delay-3">
-                        <a href="#announcements" class="btn btn-light btn-lg me-2 px-4 fw-semibold">
+                    <div class="animate-fade-in animate-delay-3 d-flex flex-column flex-md-row gap-2">
+                        <a href="#announcements" class="btn btn-primary btn-md px-4 py-3 fw-semibold border-white d-flex align-items-center justify-content-center">
                             <i class="bi bi-megaphone me-2"></i>Latest Updates
                         </a>
-                        <a href="#emergency" class="btn btn-outline-light btn-lg px-4">
+                        <a href="#emergency" class="btn btn-outline-light btn-md px-4 py-3 d-flex align-items-center justify-content-center">
                             <i class="bi bi-telephone me-2"></i>Emergency
                         </a>
-                    </div>
-                </div>
-                <div class="col-lg-5 d-none d-lg-flex justify-content-center">
-                    <div class="text-center" style="opacity: 0.15;">
-                        <i class="bi bi-heart-pulse-fill" style="font-size: 15rem;"></i>
                     </div>
                 </div>
             </div>
@@ -105,7 +117,7 @@ else: ?>
                                 <small class="text-muted"><?php echo formatDate($ann['created_at']); ?></small>
                             </div>
                             <h5 class="card-title fw-bold mb-2" style="font-size: 1rem;"><?php echo e($ann['title']); ?></h5>
-                            <p class="card-text text-muted" style="font-size: 0.875rem;"><?php echo e(substr($ann['content'], 0, 150)); ?>...</p>
+                            <p class="card-text text-muted" style="font-size: 0.875rem;"><?php echo e($ann['content']); ?></p>
                         </div>
                     </div>
                 </div>
@@ -297,7 +309,7 @@ endforeach; ?>
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.public-navbar');
             if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(9, 77, 44, 0.95)';
+                navbar.style.background = '';
                 navbar.style.backdropFilter = 'blur(10px)';
             } else {
                 navbar.style.background = '';
