@@ -274,7 +274,7 @@ endif; ?>
 
 <!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="userModalTitle">Add User</h5>
@@ -285,41 +285,70 @@ endif; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <input type="hidden" name="action" id="formAction" value="create">
                     <input type="hidden" name="id" id="userId" value="0">
-                    
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">First Name <span class="required-asterisk">*</span></label>
-                            <input type="text" class="form-control" name="first_name" id="firstName" required>
+
+                    <!-- Stepper Timeline -->
+                    <div class="stepper" id="userStepper">
+                        <div class="stepper-step active" data-step="1">
+                            <div class="stepper-circle">1</div>
+                            <div class="stepper-label">Personal Info</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
-                            <input type="text" class="form-control" name="last_name" id="lastName" required>
+                        <div class="stepper-step" data-step="2">
+                            <div class="stepper-circle">2</div>
+                            <div class="stepper-label">Account</div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Username <span class="required-asterisk">*</span></label>
-                            <input type="text" class="form-control" name="username" id="username" required>
+                        <div class="stepper-step" data-step="3">
+                            <div class="stepper-circle">3</div>
+                            <div class="stepper-label">Assignment</div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" id="email">
+                    </div>
+
+                    <!-- Step 1: Personal Info -->
+                    <div class="step-section active" data-step="1">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name <span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" name="first_name" id="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" name="last_name" id="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="email">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Password <span class="required-asterisk" id="pwdRequired">*</span></label>
-                            <input type="password" class="form-control" name="password" id="password" minlength="6">
-                            <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
+                    </div>
+
+                    <!-- Step 2: Account Setup -->
+                    <div class="step-section" data-step="2">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Username <span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" name="username" id="username" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Password <span class="required-asterisk" id="pwdRequired">*</span></label>
+                                <input type="password" class="form-control" name="password" id="password" minlength="6">
+                                <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Role <span class="required-asterisk">*</span></label>
+                                <select class="form-select" name="role" id="role" required onchange="toggleRepFields()">
+                                    <option value="">Select Role</option>
+                                    <option value="admin">Administrator</option>
+                                    <option value="nurse">School Nurse/Staff</option>
+                                    <option value="rep">Class Representative</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Role <span class="required-asterisk">*</span></label>
-                            <select class="form-select" name="role" id="role" required onchange="toggleRepFields()">
-                                <option value="">Select Role</option>
-                                <option value="admin">Administrator</option>
-                                <option value="nurse">School Nurse/Staff</option>
-                                <option value="rep">Class Representative</option>
-                            </select>
-                        </div>
-                        <div id="repFields" style="display:none;">
+                    </div>
+
+                    <!-- Step 3: Assignment -->
+                    <div class="step-section" data-step="3">
+                        <div id="repFields">
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-12">
                                     <label class="form-label">Assigned Program</label>
                                     <select class="form-select" name="assigned_program_id" id="assignedProgram">
                                         <option value="">Select Program</option>
@@ -329,7 +358,7 @@ endif; ?>
 endforeach; ?>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <label class="form-label">Year Level</label>
                                     <select class="form-select" name="assigned_year_level_id" id="assignedYearLevel">
                                         <option value="">Select</option>
@@ -339,19 +368,31 @@ endforeach; ?>
 endforeach; ?>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <label class="form-label">Section</label>
                                     <input type="text" class="form-control" name="assigned_section" id="assignedSection" placeholder="e.g. A">
                                 </div>
                             </div>
                         </div>
+                        <div id="noRepMessage" class="text-center text-muted py-4" style="display:none;">
+                            <i class="bi bi-info-circle fs-4 d-block mb-2 opacity-50"></i>
+                            <p class="mb-0 fs-sm">Assignment is only applicable for<br><strong>Class Representative</strong> role.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
-                        <i class="bi bi-check-lg me-1"></i>Save User
+                    <button type="button" class="btn btn-outline-secondary" id="userStepBack" style="display:none;" onclick="userStepNav(-1)">
+                        <i class="bi bi-arrow-left me-1"></i>Back
                     </button>
+                    <div class="ms-auto d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="userStepNext" onclick="userStepNav(1)">
+                            Next<i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none;">
+                            <i class="bi bi-check-lg me-1"></i>Save User
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -362,10 +403,45 @@ endforeach; ?>
 
 <script>
 const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+let currentUserStep = 1;
+const totalUserSteps = 3;
+
+function goToUserStep(step) {
+    currentUserStep = step;
+    // Update stepper indicators
+    document.querySelectorAll('#userStepper .stepper-step').forEach(s => {
+        const sStep = parseInt(s.dataset.step);
+        s.classList.remove('active', 'completed');
+        if (sStep === step) s.classList.add('active');
+        else if (sStep < step) s.classList.add('completed');
+    });
+    // Update completed circles with check icon
+    document.querySelectorAll('#userStepper .stepper-step').forEach(s => {
+        const sStep = parseInt(s.dataset.step);
+        const circle = s.querySelector('.stepper-circle');
+        if (sStep < step) circle.innerHTML = '<i class="bi bi-check-lg"></i>';
+        else circle.textContent = sStep;
+    });
+    // Show/hide step sections
+    document.querySelectorAll('#userModal .step-section').forEach(sec => {
+        sec.classList.toggle('active', parseInt(sec.dataset.step) === step);
+    });
+    // Show/hide nav buttons
+    document.getElementById('userStepBack').style.display = step > 1 ? '' : 'none';
+    document.getElementById('userStepNext').style.display = step < totalUserSteps ? '' : 'none';
+    document.getElementById('submitBtn').style.display = step === totalUserSteps ? '' : 'none';
+}
+
+function userStepNav(dir) {
+    const next = currentUserStep + dir;
+    if (next < 1 || next > totalUserSteps) return;
+    goToUserStep(next);
+}
 
 function toggleRepFields() {
-    document.getElementById('repFields').style.display = 
-        document.getElementById('role').value === 'rep' ? 'block' : 'none';
+    const isRep = document.getElementById('role').value === 'rep';
+    document.getElementById('repFields').style.display = isRep ? 'block' : 'none';
+    document.getElementById('noRepMessage').style.display = isRep ? 'none' : 'block';
 }
 
 function openUserModal() {
@@ -377,7 +453,9 @@ function openUserModal() {
     document.getElementById('pwdRequired').style.display = 'inline';
     document.getElementById('pwdHint').textContent = 'Minimum 6 characters.';
     document.getElementById('repFields').style.display = 'none';
+    document.getElementById('noRepMessage').style.display = 'block';
     document.getElementById('userForm').classList.remove('was-validated');
+    goToUserStep(1);
     userModal.show();
 }
 
@@ -409,6 +487,7 @@ function editUser(id) {
                 document.getElementById('assignedSection').value = u.assigned_section || '';
                 toggleRepFields();
                 document.getElementById('userForm').classList.remove('was-validated');
+                goToUserStep(1);
                 userModal.show();
             }
         });

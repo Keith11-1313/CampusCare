@@ -803,6 +803,161 @@ a:hover {
     font-size: 0.85rem !important;
 }
 
+/* ---- Process Timeline / Stepper ---- */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 1rem 1.25rem;
+    margin-bottom: 0;
+    counter-reset: step;
+    position: relative;
+}
+
+.stepper-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    z-index: 1;
+}
+
+/* Connecting line between steps */
+.stepper-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: calc(50% + 20px);
+    width: calc(100% - 40px);
+    height: 2px;
+    background: #d5dcd9;
+    transition: background 0.4s ease;
+}
+
+.stepper-step.completed:not(:last-child)::after {
+    background: var(--cc-primary);
+}
+
+/* Step circle */
+.stepper-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #f0f4f3;
+    color: #9ca3af;
+    border: 2px solid #d5dcd9;
+    transition: all 0.35s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.stepper-step.active .stepper-circle {
+    background: var(--cc-primary);
+    color: #fff;
+    border-color: var(--cc-primary);
+    box-shadow: 0 0 0 4px rgba(0, 90, 156, 0.15);
+    transform: scale(1.08);
+}
+
+.stepper-step.completed .stepper-circle {
+    background: var(--cc-primary);
+    color: #fff;
+    border-color: var(--cc-primary);
+}
+
+/* Step label */
+.stepper-label {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: center;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.stepper-step.active .stepper-label {
+    color: var(--cc-primary);
+}
+
+.stepper-step.completed .stepper-label {
+    color: var(--cc-primary);
+}
+
+/* Step sections - show/hide */
+.step-section {
+    display: none;
+    animation: stepFadeIn 0.3s ease forwards;
+}
+
+.step-section.active {
+    display: block;
+}
+
+@keyframes stepFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Stepper navigation buttons */
+.stepper-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+}
+
+.stepper-nav .btn {
+    min-width: 110px;
+}
+
+/* Stepper inside modal adjustments */
+.modal .stepper {
+    padding: 0.25rem 0.5rem 1rem;
+    margin: 0 -0.5rem;
+    border-bottom: 1px solid #eef2f1;
+    margin-bottom: 1.25rem;
+}
+
+/* Mobile stepper */
+@media (max-width: 575.98px) {
+    .stepper {
+        padding: 0.25rem 0.25rem 1rem;
+    }
+
+    .stepper-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+
+    .stepper-label {
+        font-size: 0.62rem;
+        letter-spacing: 0.2px;
+    }
+
+    .stepper-step:not(:last-child)::after {
+        top: 15px;
+        left: calc(50% + 16px);
+        width: calc(100% - 32px);
+    }
+}
+
 /* ---- Animations ---- */
 @keyframes fadeInUp {
     from {
