@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function(){
     new Chart(document.getElementById('monthlyChart'), {
         type:'bar', data:{
             labels: monthData.map(d=>d.month),
-            datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(13,110,63,0.7)',borderColor:'#0d6e3f',borderWidth:1,borderRadius:6}]
+            datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
 

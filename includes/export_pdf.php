@@ -58,41 +58,65 @@ while (ob_get_level()) {
     <meta charset="UTF-8">
     <title>CampusCare - Visits Report</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
+<style>
+        /* General medical-themed font stack */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; font-size: 11px; color: #333; padding: 20px; }
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #0d6e3f; padding-bottom: 10px; }
-        .header h1 { color: #0d6e3f; font-size: 20px; margin-bottom: 3px; }
+        body { font-family: 'Inter', Arial, sans-serif; font-size: 11px; color: #333; padding: 20px; background-color: #fff; }
+
+        /* Header with Clinical Blue */
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #005a9c; padding-bottom: 10px; }
+        .header h1 { color: #005a9c; font-size: 20px; margin-bottom: 3px; }
         .header p { font-size: 12px; color: #666; }
+
+        /* Section Headings */
         .section { margin-bottom: 20px; }
-        .section h2 { font-size: 14px; color: #0d6e3f; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+        .section h2 { font-size: 14px; color: #005a9c; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-bottom: 10px; }
+
+        /* Table Styles - Professional Navy */
         table { width: 100%; border-collapse: collapse; font-size: 10px; }
-        th { background: #0d6e3f; color: white; padding: 6px 8px; text-align: left; }
-        td { padding: 5px 8px; border-bottom: 1px solid #eee; }
-        tr:nth-child(even) { background: #f9f9f9; }
+        th { background: #005a9c; color: white; padding: 6px 8px; text-align: left; }
+        td { padding: 5px 8px; border-bottom: 1px solid #f1f5f9; }
+        tr:nth-child(even) { background: #f8fafc; }
+
+        /* Stats Section - Soft Blue Backgrounds */
         .stats { display: flex; gap: 20px; margin-bottom: 20px; }
-        .stat-box { background: #f0f8f4; padding: 10px 15px; border-radius: 5px; flex: 1; text-align: center; border: 1px solid #d4edda; }
-        .stat-box .value { font-size: 22px; font-weight: bold; color: #0d6e3f; }
-        .stat-box .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-box { 
+            background: #f0f7ff; /* Very light clinical blue */
+            padding: 10px 15px; 
+            border-radius: 5px; 
+            flex: 1; 
+            text-align: center; 
+            border: 1px solid #d1e3f8; 
+        }
+        .stat-box .value { font-size: 22px; font-weight: bold; color: #005a9c; }
+        .stat-box .label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Chart Containers */
         .charts-row { display: flex; gap: 20px; margin-bottom: 20px; }
-        .chart-box { flex: 1; background: #fff; border: 1px solid #eee; border-radius: 6px; padding: 15px; }
+        .chart-box { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; }
         .chart-box.wide { flex: 2; }
-        .chart-box h3 { font-size: 12px; color: #0d6e3f; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .chart-box h3 { font-size: 12px; color: #003d6b; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         .chart-box canvas { width: 100% !important; height: 220px !important; }
-        .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #999; border-top: 1px solid #ddd; padding-top: 8px; }
+
+        /* Footer */
+        .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px; }
+        
         .no-print { margin-bottom: 15px; text-align: center; }
+
         @media print {
             .no-print { display: none; }
             body { padding: 0; }
             .charts-row { break-inside: avoid; }
             .section { break-inside: avoid; }
+            .stat-box { border: 1px solid #ddd; background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
+            th { background: #005a9c !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
     <div class="no-print" style="padding:15px 0;">
-        <button onclick="window.print()" style="padding:10px 30px;background:#0d6e3f;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;">
-            🖨️ Print / Save as PDF
+        <button onclick="window.print()" style="padding:10px 30px;background:#005a9c;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;">
+            Print / Save as PDF
         </button>
         <button onclick="goBack()" style="padding:10px 20px;background:#6c757d;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;margin-left:10px;">← Back to Reports</button>
     </div>
@@ -112,18 +136,18 @@ while (ob_get_level()) {
     <!-- Charts -->
     <div class="charts-row">
         <div class="chart-box wide">
-            <h3>📊 Visits by Month (Last 12 Months)</h3>
+            <h3>Visits by Month (Last 12 Months)</h3>
             <canvas id="monthlyChart"></canvas>
         </div>
         <div class="chart-box">
-            <h3>🍩 Visits by Program</h3>
+            <h3>Visits by Program</h3>
             <canvas id="programChart"></canvas>
         </div>
     </div>
 
     <div class="section">
         <div class="chart-box" style="border:1px solid #eee; border-radius:6px; padding:15px; margin-bottom:20px;">
-            <h3>📋 Top Health Complaints</h3>
+            <h3>Top Health Complaints</h3>
             <canvas id="complaintsChart" style="height:250px !important;"></canvas>
         </div>
     </div>
@@ -172,7 +196,7 @@ endforeach; ?>
     new Chart(document.getElementById('monthlyChart'), {
         type:'bar', data:{
             labels: monthData.map(d=>d.month),
-            datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(13,110,63,0.7)',borderColor:'#0d6e3f',borderWidth:1,borderRadius:6}]
+            datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
 
