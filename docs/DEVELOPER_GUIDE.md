@@ -72,7 +72,7 @@ CampusCare/
 │   ├── year_levels.php     # Year levels management
 │   ├── access_logs.php     # Audit trail viewer
 │   ├── archive.php         # Archived/soft-deleted records
-│   └── reports.php         # Charts + CSV/PDF export
+│   └── reports.php         # Charts + PDF export
 │
 ├── nurse/                  # Nurse/Staff module (role: nurse)
 │   ├── dashboard.php       # Nurse dashboard
@@ -84,7 +84,7 @@ CampusCare/
 │
 ├── rep/                    # Class Representative module (role: rep)
 │   ├── dashboard.php       # Rep dashboard
-│   └── students.php        # Scoped student CRUD
+│   └── students.php        # Scoped student CRUD + CSV export
 │
 ├── config/
 │   ├── config.php          # Constants: DB, app settings, paths, timezone
@@ -97,12 +97,14 @@ CampusCare/
 │   ├── header.php          # HTML <head>, Bootstrap CSS, top navbar
 │   ├── sidebar.php         # Role-aware sidebar navigation
 │   ├── footer.php          # JS bundle, flash message rendering
-│   ├── export_csv.php      # CSV report download endpoint
-│   └── export_pdf.php      # HTML-based printable PDF report
+│   ├── export_csv.php      # CSV report download endpoint (admin)
+│   ├── export_pdf.php      # HTML-based printable PDF report (admin)
+│   └── export_students_csv.php  # CSV student records export (rep)
 │
 ├── database/
 │   ├── campuscare.sql      # Full database schema (13 tables)
-│   └── seed_data.sql       # Sample data for development
+│   ├── seed_data.sql       # Sample data for development
+│   └── student_data.csv    # Student data template
 │
 ├── css/style.css           # Custom CSS (design system, components)
 ├── js/app.js               # Shared JavaScript utilities
@@ -866,4 +868,4 @@ error_reporting(E_ALL);
 
 ---
 
-*Last updated: February 2026*
+*Last updated: March 2026*

@@ -10,9 +10,9 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 
 | Role | Capabilities |
 |------|-------------|
-| **Admin** | Dashboard, user management (CRUD), programs & year levels, access logs, archives, reports (Chart.js + CSV/PDF export) |
+| **Admin** | Dashboard, user management (CRUD), programs & year levels, access logs, archives, reports (Chart.js + PDF export) |
 | **Nurse/Staff** | Dashboard, student search & profile (allergies, conditions, medications, immunizations, emergency contacts), visit logging, visit history, public content management (announcements, FAQs, first-aid, emergency contacts, clinic hours) |
-| **Class Rep** | Dashboard, student CRUD (scoped to assigned program/year/section) |
+| **Class Rep** | Dashboard, student CRUD (scoped to assigned program/year/section), CSV export of student records |
 | **Public** | Landing page with announcements, FAQs, first-aid guidelines, emergency contacts, clinic hours |
 
 ## Security
@@ -136,11 +136,13 @@ CampusCare/
 │   ├── header.php          # Page header template
 │   ├── sidebar.php         # Role-aware sidebar
 │   ├── footer.php          # Page footer template
-│   ├── export_csv.php      # CSV report export
-│   └── export_pdf.php      # PDF report export
+│   ├── export_csv.php      # CSV report export (admin)
+│   ├── export_pdf.php      # PDF report export (admin)
+│   └── export_students_csv.php  # CSV student records export (rep)
 ├── database/
 │   ├── campuscare.sql      # Database schema
-│   └── seed_data.sql       # Sample data
+│   ├── seed_data.sql       # Sample data
+│   └── student_data.csv    # Student data template
 ├── css/style.css           # Custom styles
 ├── js/app.js               # Main JavaScript
 ├── index.php               # Public landing page
