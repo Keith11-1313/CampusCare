@@ -1,7 +1,7 @@
 <?php
 /**
  * CampusCare - Reports (Admin)
- * Charts + CSV/PDF export
+ * Charts + PDF export
  */
 $pageTitle = 'Reports';
 require_once __DIR__ . '/../includes/header.php';
