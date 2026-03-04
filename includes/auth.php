@@ -22,7 +22,8 @@ function isLoggedIn()
 function requireLogin()
 {
     if (!isLoggedIn()) {
-        setFlashMessage('error', 'Please log in to access this page.');
+        //setFlashMessage('error', 'Please log in to access this page.');
+        //removed access denied message
         header('Location: ' . BASE_URL . '/login.php');
         exit;
     }
@@ -41,7 +42,7 @@ function requireRole($roles)
     }
 
     if (!in_array($_SESSION['user_role'], $roles)) {
-        setFlashMessage('error', 'You do not have permission to access this page.');
+        //setFlashMessage('error', 'You do not have permission to access this page.');
         // Redirect to appropriate dashboard based on role
         $redirect = getDashboardUrl($_SESSION['user_role']);
         header('Location: ' . $redirect);
