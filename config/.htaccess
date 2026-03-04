@@ -1,0 +1,3 @@
+# Block all direct browser access to config files
+Order deny,allow
+Deny from all
