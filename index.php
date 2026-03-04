@@ -24,6 +24,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System. View announcements, FAQs, first-aid guidelines, and emergency contacts.">
     <title><?php echo APP_NAME; ?> - <?php echo APP_TAGLINE; ?></title>
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

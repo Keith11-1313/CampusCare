@@ -19,6 +19,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System">
     <title><?php echo e($pageTitle); ?></title>
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap/dist/css/bootstrap.min.css">
