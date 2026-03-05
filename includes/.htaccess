@@ -1,0 +1,19 @@
+# Block all direct browser access to include files
+Order deny,allow
+Deny from all
+
+# Allow direct access to export files (they have their own requireRole() auth checks)
+<Files "export_pdf.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+<Files "export_csv.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+<Files "export_students_csv.php">
+    Order allow,deny
+    Allow from all
+</Files>
