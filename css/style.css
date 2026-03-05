@@ -45,6 +45,26 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     display: none !important;
 }
 
+/* ---- Hide browser native validation icons ---- */
+/* Suppresses the red "!" icon browsers inject into :invalid fields,
+   which overlaps the custom password-toggle button on the login form.
+   Bootstrap's red border + .invalid-feedback text are used instead. */
+input::-webkit-validation-bubble,
+input::-webkit-validation-bubble-message,
+input::-webkit-validation-bubble-arrow,
+input::-webkit-validation-bubble-arrow-clipper {
+    display: none !important;
+}
+
+input:invalid {
+    box-shadow: none !important;
+    /* Removes Firefox's native red glow */
+}
+
+input:-moz-ui-invalid {
+    box-shadow: none !important;
+}
+
 /* ---- Base Styles ---- */
 * {
     margin: 0;
@@ -398,6 +418,20 @@ a:hover {
     border-color: var(--cc-danger);
 }
 
+/* Remove Bootstrap's injected validation icons (red "!" and green "✓" SVG background-images)
+   so they don't overlap custom right-side elements like the password toggle. */
+.was-validated .form-control:invalid,
+.was-validated .form-control:valid,
+.was-validated .form-select:invalid,
+.was-validated .form-select:valid,
+.form-control.is-invalid,
+.form-control.is-valid,
+.form-select.is-invalid,
+.form-select.is-valid {
+    background-image: none !important;
+    padding-right: 0.85rem !important;
+}
+
 .invalid-feedback {
     font-size: 0.78rem;
 }
@@ -632,25 +666,74 @@ a:hover {
 
 /* ---- Login Floating Blobs ---- */
 @keyframes blobFloat1 {
-    0%   { transform: translate(0, 0) scale(1); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-    25%  { transform: translate(30px, -40px) scale(1.05); border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-    50%  { transform: translate(60px, 20px) scale(0.95); border-radius: 50% 40% 60% 30% / 40% 70% 30% 60%; }
-    75%  { transform: translate(20px, 50px) scale(1.08); border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%; }
-    100% { transform: translate(0, 0) scale(1); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+
+    25% {
+        transform: translate(30px, -40px) scale(1.05);
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+
+    50% {
+        transform: translate(60px, 20px) scale(0.95);
+        border-radius: 50% 40% 60% 30% / 40% 70% 30% 60%;
+    }
+
+    75% {
+        transform: translate(20px, 50px) scale(1.08);
+        border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
 }
 
 @keyframes blobFloat2 {
-    0%   { transform: translate(0, 0) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
-    33%  { transform: translate(-40px, 30px) scale(1.1); border-radius: 70% 30% 40% 60% / 60% 40% 50% 50%; }
-    66%  { transform: translate(20px, -50px) scale(0.9); border-radius: 30% 70% 60% 40% / 50% 30% 70% 40%; }
-    100% { transform: translate(0, 0) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+
+    33% {
+        transform: translate(-40px, 30px) scale(1.1);
+        border-radius: 70% 30% 40% 60% / 60% 40% 50% 50%;
+    }
+
+    66% {
+        transform: translate(20px, -50px) scale(0.9);
+        border-radius: 30% 70% 60% 40% / 50% 30% 70% 40%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
 }
 
 @keyframes blobFloat3 {
-    0%   { transform: translate(0, 0) scale(1); border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%; }
-    40%  { transform: translate(50px, 30px) scale(1.05); border-radius: 70% 30% 50% 50% / 30% 50% 70% 50%; }
-    80%  { transform: translate(-20px, -40px) scale(0.95); border-radius: 30% 70% 40% 60% / 60% 40% 50% 50%; }
-    100% { transform: translate(0, 0) scale(1); border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%;
+    }
+
+    40% {
+        transform: translate(50px, 30px) scale(1.05);
+        border-radius: 70% 30% 50% 50% / 30% 50% 70% 50%;
+    }
+
+    80% {
+        transform: translate(-20px, -40px) scale(0.95);
+        border-radius: 30% 70% 40% 60% / 60% 40% 50% 50%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%;
+    }
 }
 
 .login-blob {
@@ -664,7 +747,7 @@ a:hover {
 .login-blob-1 {
     width: 380px;
     height: 380px;
-    background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.9), rgba(160,210,255,0.5));
+    background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.9), rgba(160, 210, 255, 0.5));
     top: -100px;
     left: -80px;
     animation: blobFloat1 14s ease-in-out infinite;
@@ -673,7 +756,7 @@ a:hover {
 .login-blob-2 {
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle at 60% 40%, rgba(255,255,255,0.8), rgba(130,190,255,0.4));
+    background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.8), rgba(130, 190, 255, 0.4));
     bottom: -80px;
     right: -60px;
     animation: blobFloat2 18s ease-in-out infinite;
@@ -683,7 +766,7 @@ a:hover {
 .login-blob-3 {
     width: 220px;
     height: 220px;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7), rgba(100,170,255,0.3));
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(100, 170, 255, 0.3));
     top: 50%;
     right: 8%;
     animation: blobFloat3 22s ease-in-out infinite;
