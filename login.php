@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | <?php echo APP_NAME; ?></title>
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -75,10 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="login-wrapper">
+        <!-- Floating background blobs -->
+        <div class="login-blob login-blob-1"></div>
+        <div class="login-blob login-blob-2"></div>
+        <div class="login-blob login-blob-3"></div>
         <div class="login-card animate-fade-in">
             <!-- Logo -->
             <div class="login-logo">
-                <i class="bi bi-heart-pulse-fill"></i>
+                <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:44px;height:44px;object-fit:contain;">
             </div>
             
             <div class="text-center mb-4">

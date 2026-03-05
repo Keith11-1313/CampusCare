@@ -19,7 +19,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System">
     <title><?php echo e($pageTitle); ?></title>
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -45,7 +45,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
 
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" href="<?php echo getDashboardUrl($currentUser['role']); ?>">
-            <i class="bi bi-heart-pulse-fill me-2"></i>
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2">
             <span class="fw-bold"><?php echo APP_NAME; ?></span>
         </a>
 

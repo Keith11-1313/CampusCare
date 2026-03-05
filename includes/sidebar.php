@@ -14,7 +14,7 @@ $userRole = $_SESSION['user_role'] ?? '';
 <aside class="cc-sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="d-flex align-items-center px-3 py-3">
-            <i class="bi bi-heart-pulse-fill text-white fs-4 me-2"></i>
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2">
             <div>
                 <h6 class="text-white mb-0 fw-bold"><?php echo APP_NAME; ?></h6>
                 <small class="text-white-50" style="font-size: 0.65rem;">Clinic Management</small>
