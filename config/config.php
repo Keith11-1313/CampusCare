@@ -5,10 +5,10 @@
  */
 
 // Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'campuscare');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'sql206.infinityfree.com');
+define('DB_NAME', 'if0_41299817_campuscare');
+define('DB_USER', 'if0_41299817');
+define('DB_PASS', 'campuscare');
 define('DB_CHARSET', 'utf8mb4');
 
 // Application Settings
