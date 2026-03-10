@@ -198,7 +198,7 @@ endif; ?>
 else:
     foreach ($students as $s): ?>
 <tr>
-<td><code><?php echo e($s['student_id']); ?></code></td>
+<td><span class="font-monospace"><?php echo e($s['student_id']); ?></span></td>
 <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . ($s['middle_name'] ? substr($s['middle_name'], 0, 1) . '. ' : '') . $s['last_name']); ?></td>
 <td><?php echo e($s['gender']); ?></td>
 <td><small><?php echo formatDate($s['date_of_birth']); ?></small></td>

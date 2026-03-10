@@ -10,6 +10,9 @@ $db = Database::getInstance();
 
 $search = trim($_GET['search'] ?? '');
 $programFilter = $_GET['program'] ?? '';
+$yearLevelFilter = $_GET['year_level'] ?? '';
+$sectionFilter = $_GET['section'] ?? '';
+$genderFilter = $_GET['gender'] ?? '';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
@@ -25,6 +28,18 @@ if (!empty($programFilter)) {
     $where .= " AND s.program_id = ?";
     $params[] = $programFilter;
 }
+if (!empty($yearLevelFilter)) {
+    $where .= " AND s.year_level_id = ?";
+    $params[] = $yearLevelFilter;
+}
+if (!empty($sectionFilter)) {
+    $where .= " AND s.section = ?";
+    $params[] = $sectionFilter;
+}
+if (!empty($genderFilter)) {
+    $where .= " AND s.gender = ?";
+    $params[] = $genderFilter;
+}
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
 $totalPages = ceil($total / $perPage);
@@ -39,6 +54,8 @@ $students = $db->fetchAll(
     $params
 );
 $programs = $db->fetchAll("SELECT * FROM programs WHERE status='active' ORDER BY code");
+$yearLevels = $db->fetchAll("SELECT * FROM year_levels WHERE status='active' ORDER BY order_num");
+$sections = $db->fetchAll("SELECT DISTINCT section FROM students WHERE status='active' AND section IS NOT NULL AND section != '' ORDER BY section");
 
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -51,11 +68,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div>
 
 <div class="filter-bar"><form method="GET" class="row g-2 align-items-end">
-<div class="col-md-5"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by Student ID or Name..." value="<?php echo e($search); ?>" autofocus></div></div>
-<div class="col-md-3"><select class="form-select" name="program"><option value="">All Programs</option><?php foreach ($programs as $p): ?><option value="<?php echo $p['id']; ?>" <?php echo $programFilter == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option><?php
+<div class="col-md-3"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by Student ID or Name..." value="<?php echo e($search); ?>" autofocus></div></div>
+<div class="col-md-2"><select class="form-select" name="program"><option value="">All Programs</option><?php foreach ($programs as $p): ?><option value="<?php echo $p['id']; ?>" <?php echo $programFilter == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option><?php
 endforeach; ?></select></div>
-<div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Search</button></div>
-<?php if ($search || $programFilter): ?><div class="col-md-2"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
+<div class="col-md-2"><select class="form-select" name="year_level"><option value="">All Year Levels</option><?php foreach ($yearLevels as $yl): ?><option value="<?php echo $yl['id']; ?>" <?php echo $yearLevelFilter == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option><?php
+endforeach; ?></select></div>
+<div class="col-md-2"><select class="form-select" name="section"><option value="">All Sections</option><?php foreach ($sections as $sec): ?><option value="<?php echo e($sec['section']); ?>" <?php echo $sectionFilter == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option><?php
+endforeach; ?></select></div>
+<div class="col-md-2"><select class="form-select" name="gender"><option value="">All Genders</option><option value="Male" <?php echo $genderFilter === 'Male' ? 'selected' : ''; ?>>Male</option><option value="Female" <?php echo $genderFilter === 'Female' ? 'selected' : ''; ?>>Female</option></select></div>
+<div class="col-md-1 mt-1"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Filter</button></div>
+<?php if ($search || $programFilter || $yearLevelFilter || $sectionFilter || $genderFilter): ?><div class="col-md-12 mt-12"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
 endif; ?>
 </form></div>
 
@@ -67,7 +89,7 @@ endif; ?>
 else:
     foreach ($students as $s): ?>
 <tr>
-<td><code><?php echo e($s['student_id']); ?></code></td>
+<td><span class="font-monospace"><?php echo e($s['student_id']); ?></span></td>
 <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . ($s['middle_name'] ? substr($s['middle_name'], 0, 1) . '. ' : '') . $s['last_name']); ?></td>
 <td><?php echo e($s['program_code'] ?? 'N/A'); ?></td>
 <td><?php echo e(($s['year_level_name'] ?? '') . ' ' . ($s['section'] ?? '')); ?></td>
@@ -83,7 +105,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter)); ?></div><?php
 endif; ?>
 </div>
 <p class="text-muted small mt-2">Showing <?php echo count($students); ?> of <?php echo number_format($total); ?> active students.</p>

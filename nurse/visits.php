@@ -45,11 +45,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Visits</li></ol></nav></div>
 
 <div class="filter-bar"><form method="GET" class="row g-2 align-items-end">
-<div class="col-md-3"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo e($search); ?>"></div></div>
+<div class="col-md-4"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo e($search); ?>"></div></div>
 <div class="col-md-2"><select class="form-select" name="status"><option value="">All Status</option><option value="Completed" <?php echo $statusFilter === 'Completed' ? 'selected' : ''; ?>>Completed</option><option value="Follow-up" <?php echo $statusFilter === 'Follow-up' ? 'selected' : ''; ?>>Follow-up</option><option value="Referred" <?php echo $statusFilter === 'Referred' ? 'selected' : ''; ?>>Referred</option></select></div>
 <div class="col-md-2"><input type="date" class="form-control" name="date_from" value="<?php echo e($dateFrom); ?>"></div>
 <div class="col-md-2"><input type="date" class="form-control" name="date_to" value="<?php echo e($dateTo); ?>"></div>
-<div class="col-md-1"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel"></i></button></div>
+<div class="col-md-1 mt-1"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Filter</button></div>
 <?php if ($search || $statusFilter || $dateFrom || $dateTo): ?><div class="col-md-1"><a href="visits.php" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg"></i></a></div><?php
 endif; ?>
 </form></div>
