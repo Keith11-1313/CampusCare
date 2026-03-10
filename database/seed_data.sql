@@ -9,15 +9,45 @@ USE `campuscare`;
 -- Seed: Programs
 -- ============================================================
 INSERT INTO `programs` (`code`, `name`) VALUES
-('BSIT', 'Bachelor of Science in Information Technology'),
-('BSCS', 'Bachelor of Science in Computer Science'),
-('BSN', 'Bachelor of Science in Nursing'),
-('BSBA', 'Bachelor of Science in Business Administration'),
-('BSED', 'Bachelor of Science in Education'),
-('BSCE', 'Bachelor of Science in Civil Engineering'),
+-- College of Business and Accountancy
 ('BSA', 'Bachelor of Science in Accountancy'),
-('BSCRIM', 'Bachelor of Science in Criminology');
+('BSAIS', 'Bachelor of Science in Accounting Information System'),
+('BSBAFM', 'Bachelor of Science in Business Administration, Major in Financial Management'),
+('BSBAHRM', 'Bachelor of Science in Business Administration, Major in Human Resource Management'),
+('BSBAMM', 'Bachelor of Science in Business Administration, Major in Marketing Management'),
+('BSENTREP', 'Bachelor of Science in Entrepreneurship'),
+('BSHM', 'Bachelor of Science in Hospitality Management'),
+('BSOA', 'Bachelor of Science in Office Administration'),
+('BSTM', 'Bachelor of Science in Tourism Management'),
 
+-- College of Criminal Justice Education
+('BSCRIM', 'Bachelor of Science in Criminology'),
+('BSISM', 'Bachelor of Science in Industrial Security Management'),
+
+-- College of Education
+('BSEENG', 'Bachelor in Secondary Education Major in English'),
+('BSEEC', 'Bachelor in Secondary Education Major in English - Chinese'),
+('BSESCI', 'Bachelor in Secondary Education Major in Science'),
+('BSETLE', 'Bachelor in Secondary Education Major in Technology and Livelihood Education'),
+('BECE', 'Bachelor of Early Childhood Education'),
+
+-- College of Engineering
+('BSCPE', 'Bachelor of Science in Computer Engineering'),
+('BSEE', 'Bachelor of Science in Electrical Engineering'),
+('BSECE', 'Bachelor of Science in Electronics Engineering'),
+('BSIE', 'Bachelor of Science in Industrial Engineering'),
+
+-- College of Liberal Arts and Sciences
+('ABPOLSCI', 'AB Political Science'),
+('BACOMM', 'BA Communication'),
+('BPA', 'Bachelor of Public Administration'),
+('BSCS', 'Bachelor of Science in Computer Science'),
+('BSEMC', 'Bachelor of Science in Entertainment and Multimedia Computing'),
+('BSIS', 'Bachelor of Science in Information System'),
+('BSIT', 'Bachelor of Science in Information Technology'),
+('BSMATH', 'Bachelor of Science in Mathematics'),
+('BSPSYCH', 'Bachelor of Science in Psychology'),
+('BSSW', 'Bachelor of Science in Social Work');
 -- ============================================================
 -- Seed: Year Levels
 -- ============================================================
@@ -26,7 +56,6 @@ INSERT INTO `year_levels` (`name`, `order_num`) VALUES
 ('2nd Year', 2),
 ('3rd Year', 3),
 ('4th Year', 4),
-('5th Year', 5);
 
 -- ============================================================
 -- Seed: Users
@@ -82,10 +111,6 @@ INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `middle_name`, 
 ('2024-00018', 'Rachel', 'Aguilar', 'Navarro', '2004-12-18', 'Female', 7, 1, 'B', '09341234567', 'rachel.aguilar@student.edu', '666 V. Concepcion St, Manila', 'A-', 'active', 2),
 ('2024-00019', 'Francis', 'Navarro', NULL, '2003-04-20', 'Male', 3, 3, 'A', '09351234567', 'francis.navarro@student.edu', '777 Algeciras St, Manila', 'B+', 'active', 2),
 ('2024-00020', 'Samantha', 'Castro', 'Lim', '2004-09-14', 'Female', 8, 2, 'A', '09361234567', 'samantha.castro@student.edu', '888 Morayta St, Manila', 'AB+', 'active', 2);
-
--- Archived student for testing
-INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `date_of_birth`, `gender`, `program_id`, `year_level_id`, `section`, `blood_type`, `status`, `created_by`) VALUES
-('2022-99999', 'Graduated', 'Student', '2000-01-01', 'Male', 1, 4, 'A', 'O+', 'archived', 1);
 
 -- ============================================================
 -- Seed: Allergies
