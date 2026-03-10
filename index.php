@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Public Landing Page
- * Guest-accessible page showing announcements, FAQs, first-aid, emergency contacts, clinic hours
- */
-
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -24,7 +19,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System. View announcements, FAQs, first-aid guidelines, and emergency contacts.">
     <title><?php echo APP_NAME; ?> - <?php echo APP_TAGLINE; ?></title>
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -35,7 +30,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <nav class="navbar navbar-expand-lg navbar-dark public-navbar fixed-top" style="box-shadow: 0 2px 15px rgba(0,0,0,0.15);">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-                <i class="bi bi-heart-pulse-fill me-2 fs-4"></i><?php echo APP_NAME; ?>
+                <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
                 <span class="navbar-toggler-icon"></span>

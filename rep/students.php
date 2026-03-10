@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Student Management (Class Representative)
- * CRUD for student records within rep's assigned program/year/section
- */
 $pageTitle = 'My Students';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('rep');
@@ -184,7 +180,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div>
 
 <div class="filter-bar"><form method="GET" class="row g-2">
-<div class="col-md-6"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>"></div></div>
+<div class="col-md-10"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>"></div></div>
 <div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100">Search</button></div>
 <?php if ($search): ?><div class="col-md-2"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
 endif; ?>
@@ -198,7 +194,7 @@ endif; ?>
 else:
     foreach ($students as $s): ?>
 <tr>
-<td><code><?php echo e($s['student_id']); ?></code></td>
+<td><span class="font-monospace"><?php echo e($s['student_id']); ?></span></td>
 <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . ($s['middle_name'] ? substr($s['middle_name'], 0, 1) . '. ' : '') . $s['last_name']); ?></td>
 <td><?php echo e($s['gender']); ?></td>
 <td><small><?php echo formatDate($s['date_of_birth']); ?></small></td>

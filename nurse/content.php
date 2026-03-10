@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Content Management (Nurse)
- * Manages announcements, FAQs, first-aid guidelines, emergency contacts, clinic hours
- */
 $pageTitle = 'Manage Content';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

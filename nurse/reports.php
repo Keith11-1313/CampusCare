@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Reports';
 require_once __DIR__ . '/../includes/header.php';
-requireRole('admin');
+requireRole('nurse');
 $db = Database::getInstance();
 
 // Handle export requests

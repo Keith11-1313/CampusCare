@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Class Representative Dashboard
- */
 $pageTitle = 'Rep Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('rep');
@@ -29,7 +26,6 @@ if ($section) {
 }
 
 $totalStudents = $db->fetchColumn("SELECT COUNT(*) FROM students s $whereClause", $params);
-$studentsWithAllergies = $db->fetchColumn("SELECT COUNT(DISTINCT a.student_id) FROM allergies a JOIN students s ON a.student_id=s.id $whereClause", $params);
 $recentAdded = $db->fetchAll("SELECT s.*, p.code as program_code, yl.name as year_level_name FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $whereClause ORDER BY s.created_at DESC LIMIT 5", $params);
 
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -39,9 +35,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <p class="text-muted mb-0">Welcome, <?php echo e($user['first_name']); ?>! You manage students in <?php echo e(($user['program_code'] ?? '') . ' ' . ($user['year_level_name'] ?? '') . ' Sec. ' . ($user['assigned_section'] ?? '')); ?>.</p></div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-4"><div class="stat-card stat-card-primary animate-fade-in"><div class="d-flex justify-content-between"><div><div class="stat-label">My Students</div><div class="stat-value"><?php echo $totalStudents; ?></div></div><div class="stat-icon"><i class="bi bi-people-fill"></i></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="stat-card stat-card-accent animate-fade-in animate-delay-1"><div class="d-flex justify-content-between"><div><div class="stat-label">With Allergies</div><div class="stat-value"><?php echo $studentsWithAllergies; ?></div></div><div class="stat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div></div></div></div>
-    <div class="col-sm-6 col-xl-4"><div class="stat-card stat-card-secondary animate-fade-in animate-delay-2"><div class="d-flex justify-content-between"><div><div class="stat-label">Assignment</div><div class="stat-value fs-sm"><?php echo e(($user['program_code'] ?? 'N/A') . ' ' . ($user['year_level_name'] ?? '')); ?></div></div><div class="stat-icon"><i class="bi bi-mortarboard-fill"></i></div></div></div></div>
+    <div class="col-sm-6 col-xl-6"><div class="stat-card stat-card-primary animate-fade-in"><div class="d-flex justify-content-between"><div><div class="stat-label">Students</div><div class="stat-value"><?php echo $totalStudents; ?></div></div><div class="stat-icon"><i class="bi bi-people-fill"></i></div></div></div></div>
+    <div class="col-sm-6 col-xl-6"><div class="stat-card stat-card-secondary animate-fade-in animate-delay-2"><div class="d-flex justify-content-between"><div><div class="stat-label">Assigned</div><div class="stat-value fs-sm"><?php echo e(($user['program_code'] ?? 'N/A') . ' ' . ($user['year_level_name'] ?? '')); ?></div></div><div class="stat-icon"><i class="bi bi-mortarboard-fill"></i></div></div></div></div>
 </div>
 
 <div class="row g-4">

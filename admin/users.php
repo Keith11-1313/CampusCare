@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - User Management (Admin)
- * CRUD for user accounts with search, filter, and SweetAlert2 interactions
- */
-
 $pageTitle = 'User Management';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

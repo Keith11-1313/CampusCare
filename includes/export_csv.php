@@ -1,8 +1,5 @@
 <?php
-/**
- * CampusCare - CSV Export Helper
- * Generates downloadable CSV of visit data
- */
+//this file will not be used until further notice
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireRole('admin');

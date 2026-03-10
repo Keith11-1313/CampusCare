@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Students CSV Export Helper
- * Generates downloadable CSV of student records
- */
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireRole('rep');

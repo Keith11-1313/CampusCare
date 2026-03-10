@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Year Levels Management (Admin)
- */
-
 $pageTitle = 'Year Levels';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

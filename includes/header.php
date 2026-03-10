@@ -9,30 +9,6 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/functions.php';
 
-// --- Security Headers ---
-// Prevent clickjacking: disallow embedding this site in iframes
-header("X-Frame-Options: DENY");
-
-// Prevent MIME-type sniffing: browser must trust declared content-type
-header("X-Content-Type-Options: nosniff");
-
-// Control referrer info sent to other sites: only send origin, not full path
-header("Referrer-Policy: strict-origin-when-cross-origin");
-
-// Restrict browser features the site doesn't need
-header("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()");
-
-// Content Security Policy: allow only trusted sources for scripts, styles, fonts, images
-header("Content-Security-Policy: "
-    . "default-src 'self'; "
-    . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
-    . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-    . "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; "
-    . "img-src 'self' data:; "
-    . "connect-src 'self'; "
-    . "frame-ancestors 'none';"
-);
-
 $pageTitle = isset($pageTitle) ? $pageTitle . ' | ' . APP_NAME : APP_NAME;
 $currentUser = isLoggedIn() ? getCurrentUser() : null;
 ?>
@@ -43,7 +19,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System">
     <title><?php echo e($pageTitle); ?></title>
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -69,7 +45,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
 
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" href="<?php echo getDashboardUrl($currentUser['role']); ?>">
-            <i class="bi bi-heart-pulse-fill me-2"></i>
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2">
             <span class="fw-bold"><?php echo APP_NAME; ?></span>
         </a>
 

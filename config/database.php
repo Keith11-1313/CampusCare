@@ -1,8 +1,6 @@
 <?php
-/**
- * CampusCare - Database Connection
- * PDO-based database connection with prepared statement support
- */
+// CampusCare - Database Connection
+// PDO-based database connection with prepared statement support
 
 require_once __DIR__ . '/config.php';
 
@@ -21,15 +19,16 @@ class Database
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+            // Force MySQL session timezone to UTC so NOW() always stores UTC timestamps.
+            // PHP formatDateTime() then explicitly converts UTC → Asia/Manila for display.
+            $this->pdo->exec("SET time_zone = '+00:00'");
         }
         catch (PDOException $e) {
             die("Database connection failed: " . $e->getMessage());
         }
     }
 
-    /**
-     * Get singleton database instance
-     */
+    // Get singleton database instance
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -38,9 +37,7 @@ class Database
         return self::$instance;
     }
 
-    /**
-     * Get the PDO connection object
-     */
+    // Get the PDO connection object
     public function getConnection()
     {
         return $this->pdo;

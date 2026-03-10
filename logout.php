@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Logout
- * Destroys session and logs the action
- */
-
 require_once __DIR__ . '/includes/auth.php';
 
 if (isLoggedIn()) {

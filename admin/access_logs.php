@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Access Logs Viewer (Admin)
- */
 $pageTitle = 'Access Logs';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Nurse Dashboard
- */
 $pageTitle = 'Nurse Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Admin Dashboard
- * Shows summary statistics, recent activity, and quick links
- */
-
 $pageTitle = 'Admin Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

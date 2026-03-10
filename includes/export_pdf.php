@@ -1,13 +1,8 @@
 <?php
-/**
- * CampusCare - PDF Export Helper
- * Generates a printable PDF report with charts and data tables
- * Uses Chart.js to render charts in the browser, then window.print() to save as PDF
- */
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-requireRole('admin');
+requireRole(['admin', 'nurse']);
 
 $db = Database::getInstance();
 
@@ -57,7 +52,7 @@ while (ob_get_level()) {
 <head>
     <meta charset="UTF-8">
     <title>CampusCare - Visits Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
         /* General medical-themed font stack */
         * { margin: 0; padding: 0; box-sizing: border-box; }
