@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Database Connection
- * PDO-based database connection with prepared statement support
- */
-
 require_once __DIR__ . '/config.php';
 
 class Database

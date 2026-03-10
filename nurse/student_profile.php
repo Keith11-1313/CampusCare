@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Student Health Profile (Nurse)
- * Full profile with tabs: info, allergies, conditions, medications, immunizations, emergency contacts, visits
- */
 $pageTitle = 'Student Profile';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

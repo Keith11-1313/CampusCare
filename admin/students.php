@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Student Records (Admin)
- * Browse all active students and archive them
- */
 $pageTitle = 'Student Records';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

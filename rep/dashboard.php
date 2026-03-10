@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Class Representative Dashboard
- */
 $pageTitle = 'Rep Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('rep');

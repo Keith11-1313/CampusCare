@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Programs Management (Admin)
- * CRUD for academic programs/courses
- */
-
 $pageTitle = 'Programs Management';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

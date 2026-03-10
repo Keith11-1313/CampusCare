@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Public Landing Page
- * Guest-accessible page showing announcements, FAQs, first-aid, emergency contacts, clinic hours
- */
-
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';

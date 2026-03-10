@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Login Page
- * Handles user authentication with form validation and SweetAlert2 feedback
- */
-
 require_once __DIR__ . '/includes/auth.php';
 
 // Redirect if already logged in

@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Student Search & Records (Nurse)
- */
 $pageTitle = 'Student Records';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Visit History (Nurse)
- */
 $pageTitle = 'Visit History';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

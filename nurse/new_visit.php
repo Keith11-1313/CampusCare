@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - New Visit / Consultation Form (Nurse)
- */
 $pageTitle = 'Record New Visit';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('nurse');

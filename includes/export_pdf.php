@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - PDF Export Helper
- * Generates a printable PDF report with charts and data tables
- * Uses Chart.js to render charts in the browser, then window.print() to save as PDF
- */
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';

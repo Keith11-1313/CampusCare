@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Change Password
- * Allows logged-in users to change their password
- */
-
 $pageTitle = 'Change Password';
 require_once __DIR__ . '/includes/header.php';
 requireLogin();

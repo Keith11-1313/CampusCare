@@ -1,7 +1,4 @@
 <?php
-/**
- * CampusCare - Archive Student Records (Admin)
- */
 $pageTitle = 'Archived Records';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');

@@ -1,9 +1,4 @@
 <?php
-/**
- * CampusCare - Authentication Helpers
- * Functions for login status, role checking, and user retrieval
- */
-
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/functions.php';

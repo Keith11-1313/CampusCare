@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Configuration File
- * Contains database credentials and application settings
- */
 
 // Database Configuration
 define('DB_HOST', 'localhost');
@@ -16,7 +12,7 @@ define('APP_NAME', 'CampusCare');
 define('APP_TAGLINE', 'School Clinic Patient Information Record System');
 define('APP_VERSION', '1.0.0');
 
-// Base URL - adjust if project is in a subdirectory
+// Base URL - adjust for deployment
 define('BASE_URL', '/CampusCare');
 
 // Session Configuration

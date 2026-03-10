@@ -1,8 +1,4 @@
 <?php
-/**
- * CampusCare - Student Management (Class Representative)
- * CRUD for student records within rep's assigned program/year/section
- */
 $pageTitle = 'My Students';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('rep');
