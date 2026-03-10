@@ -184,7 +184,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div>
 
 <div class="filter-bar"><form method="GET" class="row g-2">
-<div class="col-md-6"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>"></div></div>
+<div class="col-md-10"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>"></div></div>
 <div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100">Search</button></div>
 <?php if ($search): ?><div class="col-md-2"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
 endif; ?>
