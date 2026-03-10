@@ -40,6 +40,9 @@ $userRole = $_SESSION['user_role'] ?? '';
         <a href="<?php echo BASE_URL; ?>/admin/year_levels.php" class="sidebar-link <?php echo isActivePage('year_levels.php'); ?>">
             <i class="bi bi-layers"></i><span>Year Levels</span>
         </a>
+        <a href="<?php echo BASE_URL; ?>/admin/students.php" class="sidebar-link <?php echo isActivePage('students.php'); ?>">
+            <i class="bi bi-person-badge"></i><span>Student Records</span>
+        </a>
         <a href="<?php echo BASE_URL; ?>/admin/archive.php" class="sidebar-link <?php echo isActivePage('archive.php'); ?>">
             <i class="bi bi-archive"></i><span>Archived Records</span>
         </a>

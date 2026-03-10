@@ -40,8 +40,12 @@ $students = $db->fetchAll("SELECT s.*, p.code as program_code, yl.name as year_l
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
-<div class="page-header"><h1><i class="bi bi-archive me-2"></i>Archived Records</h1>
-<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archive</li></ol></nav></div>
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-archive me-2"></i>Archived Records</h1>
+        <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archive</li></ol></nav>
+    </div>
+</div>
 
 <div class="filter-bar"><form method="GET" class="row g-2"><div class="col-md-5"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search archived students..." value="<?php echo e($search); ?>"></div></div><div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100">Search</button></div></form></div>
 
@@ -71,10 +75,39 @@ endif; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
-function restoreStudent(id,sid){
-    showConfirm('Restore Student?','Restore student '+sid+' to active records?','Yes, Restore','question').then(r=>{
-        if(r.isConfirmed){const fd=new FormData();fd.append('action','restore');fd.append('id',id);fd.append('csrf_token','<?php echo getCSRFToken(); ?>');
-        fetch('archive.php',{method:'POST',body:fd}).then(r=>r.json()).then(d=>{showToast(d.success?'success':'error',d.message);if(d.success)setTimeout(()=>location.reload(),800);});}
+const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
+
+function restoreStudent(id, sid) {
+    showConfirm('Restore Student?', 'Restore student ' + sid + ' to active records?', 'Yes, Restore', 'question').then(r => {
+        if (r.isConfirmed) {
+            const fd = new FormData();
+            fd.append('action', 'restore');
+            fd.append('id', id);
+            fd.append('csrf_token', CSRF_TOKEN);
+            fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
+                showToast(d.success ? 'success' : 'error', d.message);
+                if (d.success) setTimeout(() => location.reload(), 800);
+            });
+        }
+    });
+}
+
+function archiveStudent(id, sid) {
+    showConfirm(
+        'Archive Student?',
+        'Archive student <strong>' + sid + '</strong>? They will be removed from active records but can be restored here.',
+        'Yes, Archive',
+        'warning'
+    ).then(r => {
+        if (r.isConfirmed) {
+            const fd = new FormData();
+            fd.append('action', 'archive');
+            fd.append('id', id);
+            fd.append('csrf_token', CSRF_TOKEN);
+            fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
+                showToast(d.success ? 'success' : 'error', d.message);
+            });
+        }
     });
 }
 </script>
