@@ -1,1 +1,5 @@
 node_modules/
+#not track the node modules folder
+
+#.env 
+# use if theres .env folder for hosting
