@@ -43,9 +43,12 @@ Place the `CampusCare` folder in your web server's document root (e.g., `htdocs`
 
 ### 2. Install Frontend Dependencies
 
-```bash
+```powershell
 cd CampusCare
-npm install
+npm install bootstrap
+npm install bootstrap-icons
+npm install sweetalert2
+npm install chart.js
 ```
 
 ### 3. Create the Database
@@ -149,7 +152,8 @@ CampusCare/
 ├── login.php               # Login page
 ├── logout.php              # Logout handler
 ├── change_password.php     # Change password
-└── package.json            # npm dependencies
+├── package.json            # npm dependencies
+└── .gitignore              # gitignore file
 ```
 
 ## Tech Stack
