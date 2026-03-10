@@ -74,6 +74,11 @@ elseif ($userRole === 'nurse'): ?>
             <i class="bi bi-person-badge"></i><span>Student Records</span>
         </a>
 
+        <div class="sidebar-section-title">Analytics</div>
+        <a href="<?php echo BASE_URL; ?>/nurse/reports.php" class="sidebar-link <?php echo isActivePage('reports.php'); ?>">
+            <i class="bi bi-graph-up"></i><span>Reports</span>
+        </a>
+
         <div class="sidebar-section-title">Public Information</div>
         <a href="<?php echo BASE_URL; ?>/nurse/content.php?tab=announcements" class="sidebar-link <?php echo isActivePage('content.php'); ?>">
             <i class="bi bi-megaphone"></i><span>Manage Content</span>
