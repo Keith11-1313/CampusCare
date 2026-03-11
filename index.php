@@ -281,8 +281,8 @@ endforeach; ?>
     <!-- Footer -->
     <footer class="py-4" style="background: #1a2332; color: rgba(255,255,255,0.6);">
         <div class="container text-center">
-            <p class="mb-1"><i class="bi bi-heart-pulse-fill me-1"></i> <?php echo APP_NAME; ?> &copy; <?php echo date('Y'); ?></p>
-            <small><?php echo APP_TAGLINE; ?></small>
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:24px;height:24px;object-fit:contain;" class="mb-1">
+            <small> · <?php echo APP_NAME; ?> · <?php echo date('Y'); ?></small>
         </div>
     </footer>
 
