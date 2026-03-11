@@ -33,14 +33,31 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Access Logs</li></ol></nav></div>
 
 <div class="filter-bar">
-<form method="GET" class="row g-2 align-items-end">
-<div class="col-md-4"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo e($search); ?>"></div></div>
-<div class="col-md-3"><select class="form-select" name="action_filter"><option value="">All Actions</option><?php foreach ($actions as $a): ?><option value="<?php echo e($a['action']); ?>" <?php echo $actionFilter === $a['action'] ? 'selected' : ''; ?>><?php echo e($a['action']); ?></option><?php
-endforeach; ?></select></div>
-<div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button></div>
-<?php if ($search || $actionFilter): ?><div class="col-md-2"><a href="access_logs.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
+    <form method="GET" class="row g-2 align-items-end">
+        <div class="col-md-9">
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo e($search); ?>">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="action_filter">
+                <option value="">All Actions</option><?php foreach ($actions as $a): ?>
+                <option value="<?php echo e($a['action']); ?>" <?php echo $actionFilter === $a['action'] ? 'selected' : ''; ?>><?php echo e($a['action']); ?></option><?php
+endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-1 mt-1">
+            <?php if ($search || $actionFilter): ?>
+                <a href="access_logs.php" class="btn btn-outline-secondary w-100">Clear</a>
+            <?php
+else: ?>
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <?php
 endif; ?>
-</form></div>
+        </div>
+    </form>
+</div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive">
 <table class="table table-hover mb-0">

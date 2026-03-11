@@ -63,19 +63,54 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<div class="filter-bar"><form method="GET" class="row g-2 align-items-end">
-<div class="col-md-3"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by Student ID or Name..." value="<?php echo e($search); ?>" autofocus></div></div>
-<div class="col-md-2"><select class="form-select" name="program"><option value="">All Programs</option><?php foreach ($programs as $p): ?><option value="<?php echo $p['id']; ?>" <?php echo $programFilter == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option><?php
-endforeach; ?></select></div>
-<div class="col-md-2"><select class="form-select" name="year_level"><option value="">All Year Levels</option><?php foreach ($yearLevels as $yl): ?><option value="<?php echo $yl['id']; ?>" <?php echo $yearLevelFilter == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option><?php
-endforeach; ?></select></div>
-<div class="col-md-2"><select class="form-select" name="section"><option value="">All Sections</option><?php foreach ($sections as $sec): ?><option value="<?php echo e($sec['section']); ?>" <?php echo $sectionFilter == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option><?php
-endforeach; ?></select></div>
-<div class="col-md-2"><select class="form-select" name="gender"><option value="">All Genders</option><option value="Male" <?php echo $genderFilter === 'Male' ? 'selected' : ''; ?>>Male</option><option value="Female" <?php echo $genderFilter === 'Female' ? 'selected' : ''; ?>>Female</option></select></div>
-<div class="col-md-1 mt-1"><button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Filter</button></div>
-<?php if ($search || $programFilter || $yearLevelFilter || $sectionFilter || $genderFilter): ?><div class="col-md-12 mt-12"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
+<div class="filter-bar">
+    <form method="GET" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" name="search" placeholder="Search by Student ID or Name..." value="<?php echo e($search); ?>" autofocus>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="program">
+                <option value="">All Programs</option><?php foreach ($programs as $p): ?>
+                    <option value="<?php echo $p['id']; ?>" <?php echo $programFilter == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option>
+                <?php
+endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="year_level">
+                <option value="">All Year Levels</option><?php foreach ($yearLevels as $yl): ?>
+                    <option value="<?php echo $yl['id']; ?>" <?php echo $yearLevelFilter == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option><?php
+endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="section">
+                <option value="">All Sections</option><?php foreach ($sections as $sec): ?>
+                    <option value="<?php echo e($sec['section']); ?>" <?php echo $sectionFilter == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option><?php
+endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="gender">
+                <option value="">All Genders</option>
+                <option value="Male" <?php echo $genderFilter === 'Male' ? 'selected' : ''; ?>>Male</option>
+                <option value="Female" <?php echo $genderFilter === 'Female' ? 'selected' : ''; ?>>Female</option>
+            </select>
+        </div>
+        <div class="col-md-1 mt-1">
+            <?php if ($search || $programFilter || $yearLevelFilter || $sectionFilter || $genderFilter): ?>
+                <a href="students.php" class="btn btn-outline-secondary w-100">Clear</a>
+            <?php
+else: ?>
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <?php
 endif; ?>
-</form></div>
+        </div>
+    </form>
+</div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
 <thead><tr><th>Student ID</th><th>Name</th><th>Program</th><th>Year / Section</th><th>Gender</th><th>Blood Type</th><th class="text-center">Actions</th></tr></thead>
