@@ -99,13 +99,6 @@ elseif ($userRole === 'rep'): ?>
         <?php
 endif; ?>
     </nav>
-
-    <!-- Sidebar Footer -->
-    <div class="sidebar-footer">
-        <div class="small text-white-50 text-center py-2">
-            <i class="bi bi-heart-pulse"></i> <?php echo APP_NAME; ?> v<?php echo APP_VERSION; ?>
-        </div>
-    </div>
 </aside>
 
 <!-- Main Content Wrapper -->
