@@ -112,40 +112,56 @@ http://localhost/CampusCare
 ```
 CampusCare/
 ├── admin/                  # Admin module
-│   ├── dashboard.php
-│   ├── users.php
-│   ├── programs.php
-│   ├── year_levels.php
 │   ├── access_logs.php
 │   ├── archive.php
-│   └── reports.php
-├── nurse/                  # Nurse/Staff module
 │   ├── dashboard.php
+│   ├── programs.php
+│   ├── reports.php
 │   ├── students.php
-│   ├── student_profile.php
+│   ├── users.php
+│   └── year_levels.php
+├── nurse/                  # Nurse/Staff module
+│   ├── content.php
+│   ├── dashboard.php
 │   ├── new_visit.php
-│   ├── visits.php
-│   └── content.php
+│   ├── reports.php
+│   ├── student_profile.php
+│   ├── students.php
+│   └── visits.php
 ├── rep/                    # Class Representative module
 │   ├── dashboard.php
 │   └── students.php
+├── assets/                 # Static assets
+│   ├── clinic1.jpg
+│   ├── clinic2.jpg
+│   ├── clinic3.jpg
+│   ├── clinic4.jpg
+│   └── logo-main-w.png
 ├── config/
+│   ├── .htaccess           # Deny direct access
 │   ├── config.php          # App config & DB credentials
 │   └── database.php        # PDO singleton
 ├── includes/
-│   ├── session.php         # Session & CSRF management
+│   ├── .htaccess           # Deny direct access
 │   ├── auth.php            # Auth helpers & RBAC
-│   ├── functions.php       # Utility functions
-│   ├── header.php          # Page header template
-│   ├── sidebar.php         # Role-aware sidebar
-│   ├── footer.php          # Page footer template
 │   ├── export_csv.php      # CSV report export (admin)
 │   ├── export_pdf.php      # PDF report export (admin)
-│   └── export_students_csv.php  # CSV student records export (rep)
+│   ├── export_students_csv.php  # CSV student records export (rep)
+│   ├── footer.php          # Page footer template
+│   ├── functions.php       # Utility functions
+│   ├── header.php          # Page header template
+│   ├── session.php         # Session & CSRF management
+│   └── sidebar.php         # Role-aware sidebar
 ├── database/
-│   ├── campuscare.sql      # Database schema
-│   ├── seed_data.sql       # Sample data
-│   └── student_data.csv    # Student data template
+│   ├── demo-data/          # Demo/testing data
+│   │   ├── campuscare.sql
+│   │   ├── programs.pdf
+│   │   └── seed_data.sql
+│   └── real-data/          # Production data & scripts
+│       ├── bulk_seed_data.sql
+│       ├── campuscare.sql
+│       ├── generate_seed.py
+│       └── seed_data.sql
 ├── css/style.css           # Custom styles
 ├── js/app.js               # Main JavaScript
 ├── index.php               # Public landing page
