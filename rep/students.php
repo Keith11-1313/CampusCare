@@ -179,12 +179,25 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<div class="filter-bar"><form method="GET" class="row g-2">
-<div class="col-md-10"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>"></div></div>
-<div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100">Search</button></div>
-<?php if ($search): ?><div class="col-md-2"><a href="students.php" class="btn btn-outline-secondary w-100">Clear</a></div><?php
+<div class="filter-bar">
+    <form method="GET" class="row g-2">
+        <div class="col-md-11">
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>">
+            </div>
+        </div>
+        <div class="col-md-1">
+            <?php if ($search): ?>
+                <a href="students.php" class="btn btn-outline-secondary w-100">Clear</a>
+            <?php
+else: ?>
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <?php
 endif; ?>
-</form></div>
+        </div>
+    </form>
+</div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
 <thead><tr><th>Student ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Blood Type</th><th>Contact</th><th class="text-center">Actions</th></tr></thead>
