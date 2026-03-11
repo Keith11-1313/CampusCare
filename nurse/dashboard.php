@@ -77,7 +77,8 @@ endif; ?>
         <div class="card-body">
             <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start"><i class="bi bi-plus-circle me-2"></i>Record New Visit</a>
             <a href="<?php echo BASE_URL; ?>/nurse/students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start"><i class="bi bi-search me-2"></i>Search Students</a>
-            <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="btn btn-outline-primary btn-sm w-100 text-start"><i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
+            <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start"><i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
+            <a href="<?php echo BASE_URL; ?>/nurse/reports.php" class="btn btn-outline-primary btn-sm w-100 text-start"><i class="bi bi-graph-up me-2"></i>Reports & Analytics</a>
         </div></div>
     </div>
 </div>

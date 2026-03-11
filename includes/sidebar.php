@@ -76,7 +76,7 @@ elseif ($userRole === 'nurse'): ?>
 
         <div class="sidebar-section-title">Analytics</div>
         <a href="<?php echo BASE_URL; ?>/nurse/reports.php" class="sidebar-link <?php echo isActivePage('reports.php'); ?>">
-            <i class="bi bi-graph-up"></i><span>Reports</span>
+            <i class="bi bi-graph-up"></i><span>Reports & Analytics</span>
         </a>
 
         <div class="sidebar-section-title">Public Information</div>
