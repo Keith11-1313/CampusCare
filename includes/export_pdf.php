@@ -52,7 +52,7 @@ while (ob_get_level()) {
 <head>
     <meta charset="UTF-8">
     <title>CampusCare - Visits Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
         /* General medical-themed font stack */
         * { margin: 0; padding: 0; box-sizing: border-box; }

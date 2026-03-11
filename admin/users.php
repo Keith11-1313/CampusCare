@@ -152,7 +152,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <!-- Filter Bar -->
 <div class="filter-bar">
     <form method="GET" class="row g-2 align-items-end">
-        <div class="col-md-4">
+        <div class="col-md-7">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" class="form-control" name="search" placeholder="Search users..." value="<?php echo e($search); ?>">
@@ -173,15 +173,15 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <option value="inactive" <?php echo $statusFilter === 'inactive' ? 'selected' : ''; ?>>Inactive</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
-        </div>
-        <?php if ($search || $roleFilter || $statusFilter): ?>
-        <div class="col-md-2">
-            <a href="users.php" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg me-1"></i>Clear</a>
-        </div>
-        <?php
+        <div class="col-md-1 mt-1">
+            <?php if ($search || $roleFilter || $statusFilter): ?>
+                <a href="users.php" class="btn btn-outline-secondary w-100">Clear</a>
+            <?php
+else: ?>
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <?php
 endif; ?>
+        </div>
     </form>
 </div>
 
