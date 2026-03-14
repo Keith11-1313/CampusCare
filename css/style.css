@@ -1,4 +1,6 @@
 /* ---- CSS Variables / Design Tokens ---- */
+/* Defines the global design tokens (colors, sizes, shadows, transitions, radii)
+   used throughout the entire application for consistent theming. */
 :root {
     --cc-primary: #005a9c;
     --cc-primary-light: #2d89cf;
@@ -24,6 +26,8 @@
 }
 
 /* ---- Hide browser native password toggle ---- */
+/* Hides the default browser-provided password reveal button (Edge/Chrome)
+   so it doesn't conflict with a custom toggle button. */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-webkit-credentials-auto-fill-button {
     display: none !important;
@@ -40,22 +44,28 @@ input::-webkit-validation-bubble-arrow-clipper {
     display: none !important;
 }
 
+/* Removes Firefox's native red glow on invalid inputs so only
+   Bootstrap-style validation feedback is shown. */
 input:invalid {
     box-shadow: none !important;
-    /* Removes Firefox's native red glow */
 }
 
+/* Same as above, specifically targeting Firefox's :-moz-ui-invalid state. */
 input:-moz-ui-invalid {
     box-shadow: none !important;
 }
 
 /* ---- Base Styles ---- */
+/* Universal reset: removes default margins/padding and sets border-box sizing
+   so padding is included in element widths/heights. */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Sets the global font stack, background color, text color,
+   and hides horizontal overflow for the entire page. */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--cc-body-bg);
@@ -63,21 +73,28 @@ body {
     overflow-x: hidden;
 }
 
+/* Adds top padding equal to the navbar height on pages that have
+   a fixed sidebar layout, preventing content from hiding under the navbar. */
 body.has-sidebar {
     padding-top: var(--cc-navbar-height);
 }
 
+/* Default link styling: uses the primary brand color with no underline
+   and a smooth transition for hover effects. */
 a {
     color: var(--cc-primary);
     text-decoration: none;
     transition: var(--cc-transition);
 }
 
+/* Darkens links on hover for visual feedback. */
 a:hover {
     color: var(--cc-primary-dark);
 }
 
 /* ---- Top Navbar ---- */
+/* The fixed top navigation bar with a gradient background,
+   fixed height, shadow, and high z-index to stay above content. */
 .cc-navbar {
     background: linear-gradient(135deg, var(--cc-primary-dark) 0%, var(--cc-primary) 50%, var(--cc-primary-light) 100%);
     height: var(--cc-navbar-height);
@@ -86,11 +103,15 @@ a:hover {
     border: none;
 }
 
+/* Styles the brand/logo text inside the navbar with slightly larger
+   font size and letter spacing. */
 .cc-navbar .navbar-brand {
     font-size: 1.15rem;
     letter-spacing: 0.3px;
 }
 
+/* Circular avatar icon in the navbar showing a user's initials,
+   with a semi-transparent background and white border. */
 .user-avatar {
     width: 36px;
     height: 36px;
@@ -106,6 +127,8 @@ a:hover {
 }
 
 /* ---- Sidebar ---- */
+/* Fixed left-side navigation panel that stretches from below the navbar
+   to the bottom of the viewport with a dark gradient background. */
 .cc-sidebar {
     position: fixed;
     top: var(--cc-navbar-height);
@@ -121,26 +144,34 @@ a:hover {
     flex-direction: column;
 }
 
+/* Slim custom scrollbar for the sidebar (WebKit browsers). */
 .cc-sidebar::-webkit-scrollbar {
     width: 4px;
 }
 
+/* Semi-transparent scrollbar thumb for the sidebar. */
 .cc-sidebar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
 }
 
+/* Sidebar header area (hidden by default since the top navbar
+   already displays the brand). */
 .sidebar-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: none;
     /* Hidden since navbar shows brand */
 }
 
+/* Wrapper for the sidebar's navigation links; takes up
+   remaining vertical space with vertical padding. */
 .sidebar-nav {
     flex: 1;
     padding: 0.75rem 0;
 }
 
+/* Small uppercase label used to group sidebar links into
+   logical sections (e.g., "Main", "Records"). */
 .sidebar-section-title {
     padding: 1rem 1.25rem 0.4rem;
     font-size: 0.65rem;
@@ -150,6 +181,8 @@ a:hover {
     color: rgba(255, 255, 255, 0.35);
 }
 
+/* Individual navigation link inside the sidebar with a left
+   border highlight, smooth transitions, and muted text. */
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -162,12 +195,16 @@ a:hover {
     text-decoration: none;
 }
 
+/* Hover state for sidebar links: brightens text and reveals
+   the left border indicator. */
 .sidebar-link:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
     border-left-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Active/current-page state for sidebar links: uses a primary-tinted
+   background, bold text, and a colored left border. */
 .sidebar-link.active {
     background: rgba(0, 90, 156, 0.2);
     color: #fff;
@@ -175,6 +212,8 @@ a:hover {
     font-weight: 600;
 }
 
+/* Icon inside each sidebar link: fixed width for alignment,
+   with a right margin to separate it from the label text. */
 .sidebar-link i {
     font-size: 1.1rem;
     width: 28px;
@@ -182,11 +221,15 @@ a:hover {
     text-align: center;
 }
 
+/* Footer area at the bottom of the sidebar (e.g., logout link),
+   pushed to the bottom via margin-top: auto. */
 .sidebar-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     margin-top: auto;
 }
 
+/* Semi-transparent dark overlay that covers the page behind the sidebar
+   on mobile; hidden by default and shown when the sidebar is open. */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -199,6 +242,8 @@ a:hover {
 }
 
 /* ---- Main Content ---- */
+/* Primary content area that sits to the right of the sidebar,
+   with padding and a minimum height to fill the viewport. */
 .cc-main-content {
     margin-left: var(--cc-sidebar-width);
     padding: 1.5rem;
@@ -207,10 +252,12 @@ a:hover {
 }
 
 /* ---- Page Header ---- */
+/* Container for the page title and breadcrumb at the top of each page. */
 .page-header {
     margin-bottom: 1.5rem;
 }
 
+/* Page title styling: large bold text in a dark color. */
 .page-header h1 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -218,16 +265,20 @@ a:hover {
     margin-bottom: 0.25rem;
 }
 
+/* Small breadcrumb navigation below the page title. */
 .page-header .breadcrumb {
     font-size: 0.8rem;
     margin-bottom: 0;
 }
 
+/* Breadcrumb link colored with the primary brand color. */
 .page-header .breadcrumb-item a {
     color: var(--cc-primary);
 }
 
 /* ---- Cards ---- */
+/* Base card component: borderless with rounded corners,
+   subtle shadow, and a hover transition. */
 .card {
     border: none;
     border-radius: var(--cc-radius);
@@ -236,10 +287,12 @@ a:hover {
     background: #fff;
 }
 
+/* Cards lift slightly with a deeper shadow on hover. */
 .card:hover {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* Card header with transparent background and a light bottom border. */
 .card-header {
     background: transparent;
     border-bottom: 1px solid #eef2f1;
@@ -247,11 +300,14 @@ a:hover {
     font-weight: 600;
 }
 
+/* Standard card body padding. */
 .card-body {
     padding: 1.25rem;
 }
 
 /* ---- Stat Cards (Dashboard) ---- */
+/* Dashboard statistics card: rounded, padded, with overflow hidden
+   for decorative elements and a smooth hover transition. */
 .stat-card {
     border-radius: var(--cc-radius);
     padding: 1.5rem;
@@ -261,11 +317,14 @@ a:hover {
     border: none;
 }
 
+/* Stat card lifts up and gains a stronger shadow on hover. */
 .stat-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
+/* Icon container inside a stat card: a rounded square that
+   centers the icon with flexbox. */
 .stat-card .stat-icon {
     width: 56px;
     height: 56px;
@@ -276,12 +335,15 @@ a:hover {
     font-size: 1.5rem;
 }
 
+/* Large bold number displayed as the main statistic value. */
 .stat-card .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
     line-height: 1.2;
 }
 
+/* Small uppercase label below the stat value describing what
+   the number represents (e.g., "Total Students"). */
 .stat-card .stat-label {
     font-size: 0.78rem;
     font-weight: 500;
@@ -290,63 +352,78 @@ a:hover {
     letter-spacing: 0.5px;
 }
 
+/* Primary stat card variant: green-tinted gradient background. */
 .stat-card-primary {
     background: linear-gradient(135deg, #e8f5ee 0%, #d4efdf 100%);
 }
 
+/* Primary stat card icon: solid primary-colored background with white icon. */
 .stat-card-primary .stat-icon {
     background: var(--cc-primary);
     color: #fff;
 }
 
+/* Primary stat card value: dark shade of the primary color. */
 .stat-card-primary .stat-value {
     color: var(--cc-primary-dark);
 }
 
+/* Secondary stat card variant: blue-tinted gradient background. */
 .stat-card-secondary {
     background: linear-gradient(135deg, #e3f2fd 0%, #d1e8fc 100%);
 }
 
+/* Secondary stat card icon: solid secondary-colored background with white icon. */
 .stat-card-secondary .stat-icon {
     background: var(--cc-secondary);
     color: #fff;
 }
 
+/* Secondary stat card value: deep blue color. */
 .stat-card-secondary .stat-value {
     color: #0d5987;
 }
 
+/* Accent stat card variant: warm yellow gradient background. */
 .stat-card-accent {
     background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
 }
 
+/* Accent stat card icon: amber/brown background with white icon. */
 .stat-card-accent .stat-icon {
     background: #b8700a;
     color: #fff;
 }
 
+/* Accent stat card value: amber/brown text color. */
 .stat-card-accent .stat-value {
     color: #b8700a;
 }
 
+/* Danger stat card variant: red-tinted gradient background. */
 .stat-card-danger {
     background: linear-gradient(135deg, #fdecea 0%, #fadbd8 100%);
 }
 
+/* Danger stat card icon: solid danger-colored background with white icon. */
 .stat-card-danger .stat-icon {
     background: var(--cc-danger);
     color: #fff;
 }
 
+/* Danger stat card value: dark red text color. */
 .stat-card-danger .stat-value {
     color: #922b21;
 }
 
 /* ---- Tables ---- */
+/* Base table: slightly smaller font size for compact data display. */
 .table {
     font-size: 0.875rem;
 }
 
+/* Table header cells: light gray background, uppercase labels,
+   small font, with a bottom border and no text wrapping. */
 .table thead th {
     background: #f8faf9;
     font-weight: 600;
@@ -359,16 +436,19 @@ a:hover {
     white-space: nowrap;
 }
 
+/* Table body cells: vertically centered with a subtle bottom border. */
 .table tbody td {
     padding: 0.75rem 1rem;
     vertical-align: middle;
     border-bottom: 1px solid #f0f4f3;
 }
 
+/* Highlights the table row with a light background on hover. */
 .table tbody tr:hover {
     background-color: #f8faf9;
 }
 
+/* Compact action buttons (e.g., Edit, Delete) inside table rows. */
 .table-action-btns .btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
@@ -376,6 +456,7 @@ a:hover {
 }
 
 /* ---- Forms ---- */
+/* Form field label: medium weight, small font, muted color. */
 .form-label {
     font-weight: 500;
     font-size: 0.85rem;
@@ -383,6 +464,8 @@ a:hover {
     margin-bottom: 0.35rem;
 }
 
+/* Text inputs and select dropdowns: rounded with a light border,
+   comfortable padding, and a focus transition. */
 .form-control,
 .form-select {
     border-radius: var(--cc-radius-sm);
@@ -392,18 +475,22 @@ a:hover {
     transition: var(--cc-transition);
 }
 
+/* Focus state for inputs/selects: primary-colored border with
+   a subtle ring glow for accessibility. */
 .form-control:focus,
 .form-select:focus {
     border-color: var(--cc-primary);
     box-shadow: 0 0 0 3px rgba(13, 110, 63, 0.12);
 }
 
+/* Invalid input state: red border to indicate validation error. */
 .form-control.is-invalid {
     border-color: var(--cc-danger);
 }
 
-/* Remove Bootstrap's injected validation icons (red "!" and green "✓" SVG background-images)
-   so they don't overlap custom right-side elements like the password toggle. */
+/* Remove Bootstrap's injected validation icons (red "!" and green "✓" SVG
+   background-images) so they don't overlap custom right-side elements
+   like the password toggle. */
 .was-validated .form-control:invalid,
 .was-validated .form-control:valid,
 .was-validated .form-select:invalid,
@@ -416,16 +503,20 @@ a:hover {
     padding-right: 0.85rem !important;
 }
 
+/* Validation error message text: small red text below the field. */
 .invalid-feedback {
     font-size: 0.78rem;
 }
 
+/* Red asterisk appended to required field labels. */
 .required-asterisk {
     color: var(--cc-danger);
     font-weight: 700;
 }
 
 /* ---- Buttons ---- */
+/* Base button: rounded corners, medium weight, compact size,
+   with a smooth transition for hover/active states. */
 .btn {
     border-radius: var(--cc-radius-sm);
     font-weight: 500;
@@ -434,11 +525,13 @@ a:hover {
     transition: var(--cc-transition);
 }
 
+/* Primary filled button using the brand color. */
 .btn-primary {
     background: var(--cc-primary);
     border-color: var(--cc-primary);
 }
 
+/* Primary button hover: darkens, lifts up, and adds a colored shadow. */
 .btn-primary:hover {
     background: var(--cc-primary-dark);
     border-color: var(--cc-primary-dark);
@@ -446,36 +539,45 @@ a:hover {
     box-shadow: 0 4px 12px rgba(13, 110, 63, 0.3);
 }
 
+/* Outline variant of the primary button: transparent background
+   with a primary-colored border and text. */
 .btn-outline-primary {
     color: var(--cc-primary);
     border-color: var(--cc-primary);
 }
 
+/* Outline primary button hover: fills with the primary color. */
 .btn-outline-primary:hover {
     background: var(--cc-primary);
     border-color: var(--cc-primary);
 }
 
+/* Secondary filled button using the secondary brand color. */
 .btn-secondary {
     background: var(--cc-secondary);
     border-color: var(--cc-secondary);
 }
 
+/* Success filled button (green) for positive actions. */
 .btn-success {
     background: var(--cc-success);
     border-color: var(--cc-success);
 }
 
+/* Danger filled button (red) for destructive actions. */
 .btn-danger {
     background: var(--cc-danger);
     border-color: var(--cc-danger);
 }
 
+/* Warning filled button (orange/yellow) for cautionary actions. */
 .btn-warning {
     background: var(--cc-warning);
     border-color: var(--cc-warning);
 }
 
+/* Square icon-only button: fixed dimensions with centered content,
+   used for compact actions like edit/delete icons. */
 .btn-icon {
     width: 36px;
     height: 36px;
@@ -487,6 +589,8 @@ a:hover {
 }
 
 /* ---- Badges ---- */
+/* Small labels/tags used for status indicators, counts, etc.
+   Medium weight with compact padding and rounded corners. */
 .badge {
     font-weight: 500;
     font-size: 0.72rem;
@@ -495,10 +599,13 @@ a:hover {
 }
 
 /* ---- Search Box / Filters ---- */
+/* Wrapper for a search input with a positioned icon inside. */
 .search-box {
     position: relative;
 }
 
+/* Magnifying-glass icon positioned inside the left side of
+   the search input field. */
 .search-box .search-icon {
     position: absolute;
     left: 12px;
@@ -508,10 +615,13 @@ a:hover {
     z-index: 1;
 }
 
+/* Adds left padding to the search input to make room for the icon. */
 .search-box input {
     padding-left: 38px;
 }
 
+/* Container bar for filter controls (dropdowns, search, buttons)
+   with a white background, shadow, and bottom margin. */
 .filter-bar {
     background: #fff;
     border-radius: var(--cc-radius);
@@ -521,27 +631,34 @@ a:hover {
 }
 
 /* ---- Modals ---- */
+/* Modal dialog content wrapper: rounded, borderless, with a
+   pronounced shadow for the floating-card effect. */
 .modal-content {
     border-radius: var(--cc-radius);
     border: none;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 
+/* Modal header: light bottom border with generous padding. */
 .modal-header {
     border-bottom: 1px solid #eef2f1;
     padding: 1rem 1.5rem;
 }
 
+/* Modal body: generous padding for form content or messages. */
 .modal-body {
     padding: 1.5rem;
 }
 
+/* Modal footer: light top border for action buttons area. */
 .modal-footer {
     border-top: 1px solid #eef2f1;
     padding: 1rem 1.5rem;
 }
 
 /* ---- Charts ---- */
+/* Responsive container for chart.js or similar chart libraries,
+   with a fixed height and full width. */
 .chart-container {
     position: relative;
     height: 350px;
@@ -549,6 +666,8 @@ a:hover {
 }
 
 /* ---- Profile Section ---- */
+/* Gradient banner at the top of a student/user profile card
+   with rounded top corners and white text. */
 .profile-header {
     background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary-light));
     border-radius: var(--cc-radius) var(--cc-radius) 0 0;
@@ -556,6 +675,8 @@ a:hover {
     color: #fff;
 }
 
+/* Large circular avatar on the profile page showing the user's
+   initials, with a semi-transparent background and white border. */
 .profile-avatar {
     width: 80px;
     height: 80px;
@@ -569,15 +690,20 @@ a:hover {
     border: 3px solid rgba(255, 255, 255, 0.4);
 }
 
+/* A single row of profile information (label + value pair)
+   with a subtle bottom border separator. */
 .info-item {
     padding: 0.65rem 0;
     border-bottom: 1px solid #f0f4f3;
 }
 
+/* Removes the bottom border from the last info item. */
 .info-item:last-child {
     border-bottom: none;
 }
 
+/* Small uppercase label above a profile info value
+   (e.g., "Student ID", "Course"). */
 .info-label {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -587,12 +713,15 @@ a:hover {
     margin-bottom: 0.15rem;
 }
 
+/* The actual data value displayed under a profile info label. */
 .info-value {
     font-size: 0.9rem;
     color: #2c3e50;
 }
 
 /* ---- Health Record Tabs ---- */
+/* Tab navigation links: borderless with a bottom highlight line;
+   muted color by default with medium weight text. */
 .nav-tabs .nav-link {
     border: none;
     color: #6b7c93;
@@ -603,18 +732,24 @@ a:hover {
     border-radius: 0;
 }
 
+/* Active tab: primary-colored text and a solid bottom border
+   to indicate the currently selected tab. */
 .nav-tabs .nav-link.active {
     color: var(--cc-primary);
     border-bottom-color: var(--cc-primary);
     background: transparent;
 }
 
+/* Tab hover state: text turns primary-colored with a faint
+   bottom border preview. */
 .nav-tabs .nav-link:hover {
     color: var(--cc-primary);
     border-bottom-color: rgba(13, 110, 63, 0.3);
 }
 
 /* ---- Login Page ---- */
+/* Full-viewport wrapper for the login page with centered content,
+   a blue gradient background, and decorative pseudo-element circles. */
 .login-wrapper {
     min-height: 100vh;
     display: flex;
@@ -626,6 +761,8 @@ a:hover {
     overflow: hidden;
 }
 
+/* Decorative radial-gradient circle in the top-right corner
+   of the login page background. */
 .login-wrapper::before {
     content: '';
     position: absolute;
@@ -637,6 +774,8 @@ a:hover {
     border-radius: 50%;
 }
 
+/* Decorative radial-gradient circle in the bottom-left corner
+   of the login page background. */
 .login-wrapper::after {
     content: '';
     position: absolute;
@@ -649,6 +788,8 @@ a:hover {
 }
 
 /* ---- Login Floating Blobs ---- */
+/* Keyframe animation for the first decorative blob: drifts around
+   while morphing its border-radius for an organic shape effect. */
 @keyframes blobFloat1 {
     0% {
         transform: translate(0, 0) scale(1);
@@ -676,6 +817,8 @@ a:hover {
     }
 }
 
+/* Keyframe animation for the second decorative blob with a
+   different drift pattern and timing. */
 @keyframes blobFloat2 {
     0% {
         transform: translate(0, 0) scale(1);
@@ -698,6 +841,8 @@ a:hover {
     }
 }
 
+/* Keyframe animation for the third decorative blob with
+   yet another unique drift and morphing pattern. */
 @keyframes blobFloat3 {
     0% {
         transform: translate(0, 0) scale(1);
@@ -720,6 +865,8 @@ a:hover {
     }
 }
 
+/* Base class for the decorative floating blobs on the login page:
+   absolutely positioned, non-interactive, blurred, and semi-transparent. */
 .login-blob {
     position: absolute;
     pointer-events: none;
@@ -728,6 +875,8 @@ a:hover {
     filter: blur(2px);
 }
 
+/* First blob: large, positioned top-left, uses the blobFloat1 animation
+   with a 14-second infinite loop. */
 .login-blob-1 {
     width: 380px;
     height: 380px;
@@ -737,6 +886,8 @@ a:hover {
     animation: blobFloat1 14s ease-in-out infinite;
 }
 
+/* Second blob: medium-sized, positioned bottom-right, uses the
+   blobFloat2 animation with an 18-second infinite loop. */
 .login-blob-2 {
     width: 300px;
     height: 300px;
@@ -747,6 +898,8 @@ a:hover {
     opacity: 0.10;
 }
 
+/* Third blob: small, positioned center-right, uses the blobFloat3
+   animation with a 22-second infinite loop. */
 .login-blob-3 {
     width: 220px;
     height: 220px;
@@ -757,6 +910,8 @@ a:hover {
     opacity: 0.08;
 }
 
+/* The login form card: white, extra-rounded, with a strong shadow,
+   centered on the page above the decorative blobs (z-index: 1). */
 .login-card {
     background: #fff;
     border-radius: 20px;
@@ -768,6 +923,8 @@ a:hover {
     z-index: 1;
 }
 
+/* Logo badge at the top of the login card: a rounded gradient square
+   with a centered white icon and a colored shadow. */
 .login-card .login-logo {
     width: 70px;
     height: 70px;
@@ -783,23 +940,29 @@ a:hover {
 }
 
 /* ---- Public / Guest Page ---- */
+/* Navbar for the public-facing guest pages with a primary gradient. */
 .public-navbar {
     background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary));
     padding: 1rem 0;
 }
 
+/* Hero section on the public page with a dark background
+   (serves as a base for the carousel overlay). */
 .public-hero {
     background: #000;
 }
 
+/* Generic section wrapper for the public page with vertical padding. */
 .public-section {
     padding: 4rem 0;
 }
 
+/* Alternating sections on the public page get a white background. */
 .public-section:nth-child(even) {
     background: #fff;
 }
 
+/* Large bold heading used in public page sections. */
 .section-title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -807,12 +970,15 @@ a:hover {
     margin-bottom: 0.5rem;
 }
 
+/* Muted subtitle text placed below a section title. */
 .section-subtitle {
     color: #6b7c93;
     font-size: 0.95rem;
     margin-bottom: 2rem;
 }
 
+/* Card component for the public page: full height, borderless,
+   with rounded corners and a hover lift effect. */
 .public-card {
     border: none;
     border-radius: var(--cc-radius);
@@ -822,12 +988,15 @@ a:hover {
     overflow: hidden;
 }
 
+/* Public card hover: lifts up and gains a deeper shadow. */
 .public-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* ---- Hero Section ---- */
+/* Full-size background image overlay for carousel slides,
+   using cover sizing and centered positioning. */
 .carousel-img-overlay {
     width: 100%;
     height: 100%;
@@ -836,7 +1005,8 @@ a:hover {
     position: relative;
 }
 
-/* Dark Overlay so text stays readable on photos */
+/* Dark gradient overlay on top of carousel images so that
+   white text remains readable. */
 .carousel-img-overlay::after {
     content: '';
     position: absolute;
@@ -848,89 +1018,116 @@ a:hover {
 }
 
 /* ---- Empty State ---- */
+/* Centered placeholder shown when a list or table has no data,
+   with muted text and generous padding. */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
     color: #9ca3af;
 }
 
+/* Large, faded icon displayed above the empty-state message. */
 .empty-state i {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.4;
 }
 
+/* Descriptive text in the empty-state component. */
 .empty-state p {
     font-size: 0.9rem;
 }
 
 /* ---- Responsive ---- */
+/* Tablet breakpoint (≤991.98px): hides the sidebar off-screen
+   by default and allows the main content to span full width. */
 @media (max-width: 991.98px) {
+
+    /* Slides the sidebar off the left edge of the screen. */
     .cc-sidebar {
         transform: translateX(-100%);
     }
 
+    /* When toggled open on mobile, slides the sidebar back into view. */
     .cc-sidebar.show {
         transform: translateX(0);
     }
 
+    /* Shows the dark overlay behind the sidebar when it is open. */
     .sidebar-overlay.show {
         display: block;
     }
 
+    /* Removes the left margin so content fills the full width. */
     .cc-main-content {
         margin-left: 0;
     }
 }
 
+/* Small-screen breakpoint (≤575.98px): reduces padding and sizes
+   for a more compact mobile layout. */
 @media (max-width: 575.98px) {
+
+    /* Tighter padding for the main content area on small screens. */
     .cc-main-content {
         padding: 1rem;
     }
 
+    /* Reduced padding on stat cards for small screens. */
     .stat-card {
         padding: 1rem;
     }
 
+    /* Smaller stat value text on small screens. */
     .stat-card .stat-value {
         font-size: 1.4rem;
     }
 
+    /* Reduced padding on the login card for small screens. */
     .login-card {
         padding: 1.75rem;
     }
 
+    /* Less vertical padding on the public hero section. */
     .public-hero {
         padding: 3rem 0 2.5rem;
     }
 }
 
 /* ---- Utilities ---- */
+/* Utility: forces the primary brand color on text. */
 .text-primary-cc {
     color: var(--cc-primary) !important;
 }
 
+/* Utility: forces the primary brand color as a background. */
 .bg-primary-cc {
     background-color: var(--cc-primary) !important;
 }
 
+/* Utility: forces a muted gray text color. */
 .text-muted-cc {
     color: #6b7c93 !important;
 }
 
+/* Utility: forces font-weight 600 (semi-bold). */
 .fw-600 {
     font-weight: 600 !important;
 }
 
+/* Utility: extra-small font size (0.75rem). */
 .fs-xs {
     font-size: 0.75rem !important;
 }
 
+/* Utility: small font size (0.85rem). */
 .fs-sm {
     font-size: 0.85rem !important;
 }
 
 /* ---- Process Timeline / Stepper ---- */
+/* Horizontal multi-step progress indicator: a flex row of step
+   circles connected by lines, used in multi-step forms. */
 .stepper {
     display: flex;
     align-items: center;
@@ -941,6 +1138,8 @@ a:hover {
     position: relative;
 }
 
+/* Individual step in the stepper: a flex column containing a
+   circle and a label, each taking equal width. */
 .stepper-step {
     display: flex;
     flex-direction: column;
@@ -950,7 +1149,8 @@ a:hover {
     z-index: 1;
 }
 
-/* Connecting line between steps */
+/* Connecting line between steps: a horizontal pseudo-element
+   positioned between each step circle (except the last). */
 .stepper-step:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -962,11 +1162,13 @@ a:hover {
     transition: background 0.4s ease;
 }
 
+/* Completed step's connecting line turns primary-colored. */
 .stepper-step.completed:not(:last-child)::after {
     background: var(--cc-primary);
 }
 
-/* Step circle */
+/* Step circle: the numbered/icon circle for each step,
+   gray by default with a dashed-style border. */
 .stepper-circle {
     width: 36px;
     height: 36px;
@@ -984,6 +1186,8 @@ a:hover {
     z-index: 2;
 }
 
+/* Active step circle: primary-colored background with a focus
+   ring (box-shadow) and a slight scale-up effect. */
 .stepper-step.active .stepper-circle {
     background: var(--cc-primary);
     color: #fff;
@@ -992,13 +1196,16 @@ a:hover {
     transform: scale(1.08);
 }
 
+/* Completed step circle: solid primary background without the
+   focus ring (already past this step). */
 .stepper-step.completed .stepper-circle {
     background: var(--cc-primary);
     color: #fff;
     border-color: var(--cc-primary);
 }
 
-/* Step label */
+/* Step label text below each circle: small, uppercase, muted,
+   centered, non-wrapping. */
 .stepper-label {
     margin-top: 0.5rem;
     font-size: 0.72rem;
@@ -1011,24 +1218,29 @@ a:hover {
     transition: color 0.3s ease;
 }
 
+/* Active step label: highlighted with the primary color. */
 .stepper-step.active .stepper-label {
     color: var(--cc-primary);
 }
 
+/* Completed step label: also highlighted with the primary color. */
 .stepper-step.completed .stepper-label {
     color: var(--cc-primary);
 }
 
-/* Step sections - show/hide */
+/* Step content section: hidden by default, shown when active,
+   with a fade-in slide animation. */
 .step-section {
     display: none;
     animation: stepFadeIn 0.3s ease forwards;
 }
 
+/* Makes the active step section visible. */
 .step-section.active {
     display: block;
 }
 
+/* Fade-in and slide-right animation for revealing step content. */
 @keyframes stepFadeIn {
     from {
         opacity: 0;
@@ -1041,7 +1253,8 @@ a:hover {
     }
 }
 
-/* Stepper navigation buttons */
+/* Navigation buttons row below the stepper (Back / Next / Submit):
+   spaced apart with flex and top padding. */
 .stepper-nav {
     display: flex;
     justify-content: space-between;
@@ -1049,11 +1262,15 @@ a:hover {
     padding-top: 0.5rem;
 }
 
+/* Minimum width for stepper navigation buttons so they
+   stay consistently sized. */
 .stepper-nav .btn {
     min-width: 110px;
 }
 
-/* Stepper inside modal adjustments */
+/* Adjustments when the stepper is placed inside a modal:
+   tighter padding, negative margin to align with modal edges,
+   and a bottom border separator. */
 .modal .stepper {
     padding: 0.25rem 0.5rem 1rem;
     margin: 0 -0.5rem;
@@ -1061,23 +1278,29 @@ a:hover {
     margin-bottom: 1.25rem;
 }
 
-/* Mobile stepper */
+/* Mobile stepper adjustments (≤575.98px): smaller circles,
+   labels, and connector lines to fit narrow screens. */
 @media (max-width: 575.98px) {
+
+    /* Tighter horizontal padding on the stepper. */
     .stepper {
         padding: 0.25rem 0.25rem 1rem;
     }
 
+    /* Smaller step circles on mobile. */
     .stepper-circle {
         width: 30px;
         height: 30px;
         font-size: 0.7rem;
     }
 
+    /* Smaller step labels on mobile. */
     .stepper-label {
         font-size: 0.62rem;
         letter-spacing: 0.2px;
     }
 
+    /* Adjusted connector line position and width for smaller circles. */
     .stepper-step:not(:last-child)::after {
         top: 15px;
         left: calc(50% + 16px);
@@ -1086,6 +1309,7 @@ a:hover {
 }
 
 /* ---- Animations ---- */
+/* Keyframe: element fades in while sliding upward. */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -1098,29 +1322,37 @@ a:hover {
     }
 }
 
+/* Applies the fadeInUp animation (0.4s) to an element. */
 .animate-fade-in {
     animation: fadeInUp 0.4s ease forwards;
 }
 
+/* Animation delay utility: 0.1 second delay (used for staggered entrances). */
 .animate-delay-1 {
     animation-delay: 0.1s;
 }
 
+/* Animation delay utility: 0.2 second delay. */
 .animate-delay-2 {
     animation-delay: 0.2s;
 }
 
+/* Animation delay utility: 0.3 second delay. */
 .animate-delay-3 {
     animation-delay: 0.3s;
 }
 
+/* Animation delay utility: 0.4 second delay. */
 .animate-delay-4 {
     animation-delay: 0.4s;
 }
 
 /* ---- Print Styles ---- */
+/* When printing: hides the navbar, sidebar, overlay, and any
+   elements marked with .no-print; resets layout for paper output. */
 @media print {
 
+    /* Hide navigation and non-printable elements. */
     .cc-navbar,
     .cc-sidebar,
     .sidebar-overlay,
@@ -1128,12 +1360,170 @@ a:hover {
         display: none !important;
     }
 
+    /* Remove sidebar offset and padding for full-width print. */
     .cc-main-content {
         margin-left: 0 !important;
         padding: 0 !important;
     }
 
+    /* Remove navbar offset on the body. */
     body {
         padding-top: 0 !important;
     }
+}
+
+/* ---- Student Autocomplete ---- */
+/* Outer wrapper for the student autocomplete widget;
+   positioned relatively to anchor the dropdown. */
+.student-autocomplete {
+    position: relative;
+}
+
+/* Inner wrapper around the autocomplete input field,
+   positioned relatively to anchor the icon and clear button. */
+.student-ac-input-wrap {
+    position: relative;
+}
+
+/* Search icon inside the autocomplete input: positioned on the
+   left side, vertically centered, non-interactive. */
+.student-ac-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.9rem;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Autocomplete text input: extra left/right padding to make
+   room for the search icon and the clear button. */
+.student-ac-input {
+    padding-left: 38px !important;
+    padding-right: 38px !important;
+}
+
+/* Clear ("×") button inside the autocomplete input: positioned
+   on the right side, styled as a minimal icon button. */
+.student-ac-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    transition: var(--cc-transition);
+}
+
+/* Clear button hover: gains a light background and darker icon. */
+.student-ac-clear:hover {
+    background: #f0f4f3;
+    color: #2c3e50;
+}
+
+/* Dropdown list that appears below the autocomplete input
+   showing matching student results; hidden by default. */
+.student-ac-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    background: #fff;
+    border: 1.5px solid #d5dcd9;
+    border-top: none;
+    border-radius: 0 0 var(--cc-radius-sm) var(--cc-radius-sm);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+/* Makes the autocomplete dropdown visible when it has the .show class. */
+.student-ac-dropdown.show {
+    display: block;
+}
+
+/* Slim scrollbar for the autocomplete dropdown (WebKit). */
+.student-ac-dropdown::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Light scrollbar thumb for the autocomplete dropdown. */
+.student-ac-dropdown::-webkit-scrollbar-thumb {
+    background: #d5dcd9;
+    border-radius: 3px;
+}
+
+/* Individual student item row in the autocomplete dropdown:
+   flex layout with a gap, pointer cursor, and a bottom border. */
+.student-ac-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+/* Removes the border from the last item in the dropdown. */
+.student-ac-item:last-child {
+    border-bottom: none;
+}
+
+/* Hover and keyboard-active state for a student item:
+   highlighted with the primary background tint. */
+.student-ac-item:hover,
+.student-ac-item.active {
+    background: var(--cc-primary-bg);
+}
+
+/* Student ID badge inside each autocomplete item: small, bold,
+   primary-colored text on a tinted background pill. */
+.student-ac-item-id {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cc-primary);
+    background: var(--cc-primary-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+/* Deepens the ID badge background when the item is
+   hovered or keyboard-active. */
+.student-ac-item.active .student-ac-item-id,
+.student-ac-item:hover .student-ac-item-id {
+    background: rgba(13, 110, 63, 0.12);
+}
+
+/* Student name text inside each autocomplete item. */
+.student-ac-item-name {
+    font-size: 0.875rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Message shown in the dropdown when no students match the query. */
+.student-ac-empty {
+    padding: 1rem 0.85rem;
+    font-size: 0.85rem;
+    color: #6b7c93;
+    text-align: center;
+}
+
+/* Invalid state for the autocomplete input: red border to indicate
+   that a valid student has not been selected. */
+.student-ac-input.is-invalid {
+    border-color: var(--cc-danger);
 }
