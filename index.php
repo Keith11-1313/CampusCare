@@ -53,7 +53,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     </nav>
 
     <!-- Hero Section -->
-    <section class="public-hero p-0 position-relative overflow-hidden" style="min-height: 80vh;">
+    <section class="public-hero p-0 position-relative overflow-hidden" style="min-height: 100vh;">
         <div id="heroBgCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" data-bs-ride="carousel" data-bs-interval="3000" style="z-index: 1;">
             <div class="carousel-inner h-100">
                 <div class="carousel-item active h-100">
@@ -71,7 +71,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
             </div>
         </div>
 
-        <div class="container position-relative" style="z-index: 2; padding-top: 10rem; padding-bottom: 10rem;">
+        <div class="container position-relative d-flex align-items-center" style="z-index: 2; min-height: 100vh;">
             <div class="row">
                 <div class="col-lg-7 text-white">
                     <h1 class="display-5 fw-bold mb-3 animate-fade-in"><?php echo APP_NAME; ?></h1>
