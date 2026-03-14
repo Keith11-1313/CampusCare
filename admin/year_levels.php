@@ -48,8 +48,12 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead><tr><th>Name</th><th>Students</th><th>Status</th><th class="text-center">Actions</th></tr></thead>
+                <thead><tr><th style="width:35%">Name</th><th style="width:35%">Students</th><th style="width:15%">Status</th><th style="width:15%" class="text-center">Actions</th></tr></thead>
                 <tbody>
+                    <?php if (empty($yearLevels)): ?>
+                    <tr><td colspan="4" class="text-center text-muted py-4">No year levels found.</td></tr>
+                    <?php
+else: ?>
                     <?php foreach ($yearLevels as $yl): ?>
                     <tr>
 
@@ -62,7 +66,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         </td>
                     </tr>
                     <?php
-endforeach; ?>
+    endforeach; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>

@@ -126,11 +126,11 @@ endif; ?>
 else:
     foreach ($students as $s): ?>
 <tr>
-<td><code><?php echo e($s['student_id']); ?></code></td>
+<td><span class="font-monospace"><?php echo e($s['student_id']); ?></span></td>
 <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . $s['last_name']); ?></td>
 <td><?php echo e($s['program_code'] ?? 'N/A'); ?></td>
 <td><?php echo e(($s['year_level_name'] ?? '') . ' ' . ($s['section'] ?? '')); ?></td>
-<td class="text-center"><button class="btn btn-sm btn-outline-success" onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>')"><i class="bi bi-arrow-counterclockwise me-1"></i>Restore</button></td>
+<td class="text-center"><button class="btn btn-sm btn-outline-success" onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>','<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')"><i class="bi bi-arrow-counterclockwise"></i></button></td>
 </tr>
 <?php
     endforeach;
@@ -145,8 +145,8 @@ endif; ?>
 <script>
 const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
-function restoreStudent(id, sid) {
-    showConfirm('Restore Student?', 'Restore student ' + sid + ' to active records?', 'Yes, Restore', 'question').then(r => {
+function restoreStudent(id, sid, name) {
+    showConfirm('Restore Student?', 'Restore <strong>' + name + '</strong> (' + sid + ') to active records?', 'Yes, Restore', 'question').then(r => {
         if (r.isConfirmed) {
             const fd = new FormData();
             fd.append('action', 'restore');

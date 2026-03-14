@@ -113,7 +113,7 @@ function scheduleToast(icon, title) {
 function showConfirm(title, text, confirmText, icon) {
     return Swal.fire({
         title: title || 'Are you sure?',
-        text: text || 'This action cannot be undone.',
+        html: text || 'This action cannot be undone.',
         icon: icon || 'warning',
         showCancelButton: true,
         confirmButtonColor: '#0d6e3f',
