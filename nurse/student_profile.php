@@ -333,7 +333,7 @@ function deleteRecord(table, id) {
             fetch(studentUrl, {method:'POST',body:fd}).then(r=>r.json()).then(d => {
                 if (d.success) {
                     showToast('success', d.message);
-                    setTimeout(()=>location.reload(), 800);
+                    setTimeout(()=>location.reload(), 3000);
                 } else {
                     showAlert('error', 'Error', d.message);
                 }
@@ -358,7 +358,7 @@ Object.entries(formIds).forEach(([table, formId]) => {
             if (d.success) {
                 modals[table].hide();
                 showToast('success', d.message);
-                setTimeout(()=>location.reload(), 800);
+                setTimeout(()=>location.reload(), 3000);
             } else {
                 showAlert('error', 'Error', d.message);
             }

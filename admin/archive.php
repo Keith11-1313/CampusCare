@@ -154,7 +154,7 @@ function restoreStudent(id, sid) {
             fd.append('csrf_token', CSRF_TOKEN);
             fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
                 showToast(d.success ? 'success' : 'error', d.message);
-                if (d.success) setTimeout(() => location.reload(), 800);
+                if (d.success) setTimeout(() => location.reload(), 3000);
             });
         }
     });

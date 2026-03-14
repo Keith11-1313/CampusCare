@@ -321,7 +321,7 @@ a:hover {
 }
 
 .stat-card-accent .stat-icon {
-    background: var(--cc-accent);
+    background: #b8700a;
     color: #fff;
 }
 

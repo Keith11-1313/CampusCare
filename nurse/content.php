@@ -141,22 +141,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="tab-content">
 <!-- Announcements Tab -->
 <div class="tab-pane fade <?php echo $tab === 'announcements' ? 'show active' : ''; ?>" id="announcementsTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>Announcements</span><button class="btn btn-sm btn-primary" onclick="addAnnouncement()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Title</th><th>Status</th><th>Created By</th><th>Date</th><th class="text-center">Actions</th></tr></thead>
-<tbody>
-<?php foreach ($announcements as $a): ?>
-<tr><td class="fw-semibold"><?php echo e(substr($a['title'], 0, 50)); ?></td><td><?php echo statusBadge($a['status']); ?></td>
-<td><small><?php echo e(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? '')); ?></small></td>
-<td><small><?php echo formatDate($a['created_at']); ?></small></td>
-<td class="text-center table-action-btns">
-<button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-pencil"></i></button>
-<button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-trash"></i></button>
-</td></tr>
-<?php
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between"><span>Announcements</span><button class="btn btn-sm btn-primary" onclick="addAnnouncement()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+            <div class="card-body p-0"><div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Title</th><th>Status</th><th>Created By</th><th>Date</th><th class="text-center">Actions</th></tr></thead>
+                    <tbody>
+                        <?php foreach ($announcements as $a): ?>
+                            <tr><td class="fw-semibold"><?php echo e(substr($a['title'], 0, 50)); ?></td><td><?php echo statusBadge($a['status']); ?></td>
+                            <td><small><?php echo e(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? '')); ?></small></td>
+                            <td><small><?php echo formatDate($a['created_at']); ?></small></td>
+                            <td class="text-center table-action-btns">
+                                <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-trash"></i></button>
+                            </td></tr>
+                        <?php
 endforeach; ?>
-</tbody></table></div></div></div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- FAQs Tab -->
@@ -325,7 +330,7 @@ function postAction(data) {
 function handleResult(d) {
     if (d.success) {
         showToast('success', d.message);
-        setTimeout(()=>location.reload(), 800);
+        setTimeout(()=>location.reload(), 3000);
     } else {
         showAlert('error', 'Error', d.message);
     }
@@ -336,7 +341,7 @@ function deleteItem(section, id) {
         if(r.isConfirmed){
             const fd=new FormData();fd.append('action','delete');fd.append('section',section);fd.append('id',id);
             postAction(fd).then(d=>{
-                if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+                if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
                 else showAlert('error','Error',d.message);
             });
         }
@@ -399,7 +404,7 @@ function submitModalForm(formId, modalInstance) {
     document.getElementById(formId).addEventListener('submit', function(e){
         e.preventDefault();
         postAction(new FormData(this)).then(d=>{
-            if(d.success){ modalInstance.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+            if(d.success){ modalInstance.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
             else showAlert('error','Error',d.message);
         });
     });
@@ -412,7 +417,7 @@ submitModalForm('emergencyForm', emergencyModal);
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
     postAction(new FormData(this)).then(d=>{
-        if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+        if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
         else showAlert('error','Error',d.message);
     });
 });

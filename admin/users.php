@@ -505,7 +505,7 @@ function toggleUserStatus(id, currentStatus, username) {
                 .then(r => r.json())
                 .then(data => {
                     showToast(data.success ? 'success' : 'error', data.message);
-                    if (data.success) setTimeout(() => location.reload(), 800);
+                    if (data.success) setTimeout(() => location.reload(), 3000);
                 });
         }
     });
@@ -528,7 +528,7 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
             if (data.success) {
                 userModal.hide();
                 showToast('success', data.message);
-                setTimeout(() => location.reload(), 800);
+                setTimeout(() => location.reload(), 3000);
             } else {
                 showToast('error', data.message);
             }
