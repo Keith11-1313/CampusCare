@@ -127,8 +127,8 @@ else:
 <td><?php echo e($s['gender']); ?></td>
 <td><?php echo e($s['blood_type'] ?? '—'); ?></td>
 <td class="text-center">
-    <button class="btn btn-sm btn-outline-danger" onclick="archiveStudent(<?php echo $s['id']; ?>, '<?php echo e($s['student_id']); ?>')">
-        <i class="bi bi-archive me-1"></i>Archive
+    <button class="btn btn-sm btn-outline-danger" onclick="archiveStudent(<?php echo $s['id']; ?>, '<?php echo e($s['student_id']); ?>', '<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')">
+        <i class="bi bi-archive"></i>
     </button>
 </td>
 </tr>
@@ -146,10 +146,10 @@ endif; ?>
 <script>
 const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
-function archiveStudent(id, sid) {
+function archiveStudent(id, sid, name) {
     showConfirm(
         'Archive Student?',
-        'Archive student <strong>' + sid + '</strong>? They will be removed from active records but can be restored later.',
+        'Archive <strong>' + name + '</strong> (' + sid + ')? They will be removed from active records but can be restored later.',
         'Yes, Archive',
         'warning'
     ).then(r => {
@@ -161,7 +161,8 @@ function archiveStudent(id, sid) {
             fetch('<?php echo BASE_URL; ?>/admin/archive.php', { method: 'POST', body: fd })
                 .then(r => r.json())
                 .then(d => {
-                    if (d.success) scheduleToast('success', d.message);\n                    else showToast('error', d.message);
+                    if (d.success) scheduleToast('success', d.message);
+                    else showToast('error', d.message);
                 });
         }
     });
