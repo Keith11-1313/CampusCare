@@ -58,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$students = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' ORDER BY last_name LIMIT 500");
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
@@ -97,14 +96,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-person me-2"></i>Patient Information</h6>
     <div class="mb-3">
         <label class="form-label">Student <span class="required-asterisk">*</span></label>
-        <select class="form-select" name="student_id" id="studentSelect" required>
-            <option value="">Select Student...</option>
-            <?php foreach ($students as $s): ?>
-            <option value="<?php echo $s['id']; ?>" <?php echo($preStudent && $preStudent['id'] == $s['id']) ? 'selected' : ''; ?>><?php echo e($s['student_id'] . ' — ' . $s['last_name'] . ', ' . $s['first_name']); ?></option>
-            <?php
-endforeach; ?>
-        </select>
-        <div class="invalid-feedback">Please select a student.</div>
+        <div class="student-autocomplete" id="studentAutocomplete">
+            <div class="student-ac-input-wrap search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" id="studentSearchInput"
+                       placeholder="Search by name or student ID..."
+                       autocomplete="off"
+                       <?php if ($preStudent): ?>
+                       value="<?php echo e($preStudent['student_id'] . ' — ' . $preStudent['last_name'] . ', ' . $preStudent['first_name']); ?>"
+                       <?php endif; ?>>
+            </div>
+            <input type="hidden" name="student_id" id="studentIdHidden" value="<?php echo $preStudent ? $preStudent['id'] : ''; ?>" required>
+            <div class="student-ac-dropdown" id="studentDropdown"></div>
+            <div class="invalid-feedback" style="display:none;" id="studentInvalidFeedback">Please select a student.</div>
+        </div>
     </div>
 </div>
 
@@ -165,25 +170,21 @@ const totalVisitSteps = 4;
 
 function goToVisitStep(step) {
     currentVisitStep = step;
-    // Update stepper indicators
     document.querySelectorAll('#visitStepper .stepper-step').forEach(s => {
         const sStep = parseInt(s.dataset.step);
         s.classList.remove('active', 'completed');
         if (sStep === step) s.classList.add('active');
         else if (sStep < step) s.classList.add('completed');
     });
-    // Update completed circles with check icon
     document.querySelectorAll('#visitStepper .stepper-step').forEach(s => {
         const sStep = parseInt(s.dataset.step);
         const circle = s.querySelector('.stepper-circle');
         if (sStep < step) circle.innerHTML = '<i class="bi bi-check-lg"></i>';
         else circle.textContent = sStep;
     });
-    // Show/hide step sections
     document.querySelectorAll('.step-section').forEach(sec => {
         sec.classList.toggle('active', parseInt(sec.dataset.step) === step);
     });
-    // Show/hide nav buttons
     document.getElementById('visitStepBack').style.display = step > 1 ? '' : 'none';
     document.getElementById('visitStepNext').style.display = step < totalVisitSteps ? '' : 'none';
     document.getElementById('visitSubmitBtn').style.display = step === totalVisitSteps ? '' : 'none';
@@ -194,5 +195,121 @@ function visitStepNav(dir) {
     if (next < 1 || next > totalVisitSteps) return;
     goToVisitStep(next);
 }
+
+// ── Student Autocomplete ──
+(function() {
+    const input    = document.getElementById('studentSearchInput');
+    const hidden   = document.getElementById('studentIdHidden');
+    const dropdown = document.getElementById('studentDropdown');
+    const feedback = document.getElementById('studentInvalidFeedback');
+    let debounce   = null;
+    let activeIdx  = -1;
+
+    input.addEventListener('input', function() {
+        const q = this.value.trim();
+        hidden.value = '';
+        feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+
+        clearTimeout(debounce);
+        if (q.length < 1) { closeDropdown(); return; }
+
+        debounce = setTimeout(() => {
+            fetch('new_visit.php?search_student=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(data => renderDropdown(data.results || []))
+                .catch(() => closeDropdown());
+        }, 250);
+    });
+
+    input.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.student-ac-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            highlightItem(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIdx = Math.max(activeIdx - 1, 0);
+            highlightItem(items);
+        } else if (e.key === 'Enter' && activeIdx >= 0) {
+            e.preventDefault();
+            items[activeIdx].click();
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function renderDropdown(results) {
+        activeIdx = -1;
+        if (!results.length) {
+            dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-info-circle me-2"></i>No students found</div>';
+            dropdown.classList.add('show');
+            return;
+        }
+        dropdown.innerHTML = results.map((s, i) =>
+            `<div class="student-ac-item" data-id="${s.id}" data-index="${i}">
+                <span class="student-ac-item-id">${escHtml(s.student_id)}</span><span> — </span>
+                <span class="student-ac-item-name">${escHtml(s.last_name)}, ${escHtml(s.first_name)}</span>
+            </div>`
+        ).join('');
+        dropdown.classList.add('show');
+
+        dropdown.querySelectorAll('.student-ac-item').forEach(item => {
+            item.addEventListener('click', function() {
+                selectStudent(this.dataset.id,
+                    this.querySelector('.student-ac-item-id').textContent,
+                    this.querySelector('.student-ac-item-name').textContent);
+            });
+        });
+    }
+
+    function selectStudent(id, sid, name) {
+        hidden.value = id;
+        input.value = sid + ' — ' + name;
+        feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+        closeDropdown();
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('show');
+        dropdown.innerHTML = '';
+        activeIdx = -1;
+    }
+
+    function highlightItem(items) {
+        items.forEach(i => i.classList.remove('active'));
+        if (items[activeIdx]) {
+            items[activeIdx].classList.add('active');
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function escHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#studentAutocomplete')) closeDropdown();
+    });
+
+    // Validate before form submit
+    document.querySelector('form.needs-validation').addEventListener('submit', function(e) {
+        if (!hidden.value) {
+            e.preventDefault();
+            e.stopPropagation();
+            input.classList.add('is-invalid');
+            feedback.style.display = 'block';
+            goToVisitStep(1);
+            input.focus();
+        }
+    });
+})();
 </script>
 
