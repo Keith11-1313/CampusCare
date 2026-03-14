@@ -485,8 +485,44 @@ function goToUserStep(step) {
 function userStepNav(dir) {
     const next = currentUserStep + dir;
     if (next < 1 || next > totalUserSteps) return;
+
+    // Validate current step before moving forward
+    if (dir === 1) {
+        const currentSection = document.querySelector(`.step-section[data-step="${currentUserStep}"]`);
+        const requiredFields = currentSection.querySelectorAll('[required]');
+        let stepValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+            // Also check HTML5 validity (e.g. email format, minlength)
+            if (!field.checkValidity()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            }
+        });
+
+        if (!stepValid) {
+            // Shake the current step section for visual feedback
+            currentSection.style.animation = 'none';
+            currentSection.offsetHeight; // trigger reflow
+            currentSection.style.animation = 'shake 0.4s ease';
+            return;
+        }
+    }
+
     goToUserStep(next);
 }
+
+// Clear validation errors on input/change within stepper fields
+document.querySelectorAll('#userForm .step-section input[required], #userForm .step-section select[required]').forEach(field => {
+    field.addEventListener('input', () => field.classList.remove('is-invalid'));
+    field.addEventListener('change', () => field.classList.remove('is-invalid'));
+});
 
 function toggleRepFields() {
     const isRep = document.getElementById('role').value === 'rep';

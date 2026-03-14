@@ -193,8 +193,53 @@ function goToVisitStep(step) {
 function visitStepNav(dir) {
     const next = currentVisitStep + dir;
     if (next < 1 || next > totalVisitSteps) return;
+
+    // Validate current step before moving forward
+    if (dir === 1) {
+        const currentSection = document.querySelector(`.step-section[data-step="${currentVisitStep}"]`);
+        let stepValid = true;
+
+        // Check standard required fields (input, select, textarea)
+        const requiredFields = currentSection.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            // For hidden student_id input, validate via the visible search input
+            if (field.type === 'hidden' && field.id === 'studentIdHidden') {
+                if (!field.value) {
+                    stepValid = false;
+                    const searchInput = document.getElementById('studentSearchInput');
+                    searchInput.classList.add('is-invalid');
+                    document.getElementById('studentInvalidFeedback').style.display = 'block';
+                }
+                return;
+            }
+            if (!field.value.trim()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+            if (!field.checkValidity()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            }
+        });
+
+        if (!stepValid) {
+            currentSection.style.animation = 'none';
+            currentSection.offsetHeight;
+            currentSection.style.animation = 'shake 0.4s ease';
+            return;
+        }
+    }
+
     goToVisitStep(next);
 }
+
+// Clear validation errors on input/change within visit stepper fields
+document.querySelectorAll('form.needs-validation .step-section input[required], form.needs-validation .step-section select[required], form.needs-validation .step-section textarea[required]').forEach(field => {
+    field.addEventListener('input', () => field.classList.remove('is-invalid'));
+    field.addEventListener('change', () => field.classList.remove('is-invalid'));
+});
 
 // ── Student Autocomplete ──
 (function() {
