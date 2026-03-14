@@ -132,8 +132,8 @@ endforeach; ?>
                     fetch('year_levels.php', { method: 'POST', body: fd })
                         .then(r => r.json())
                         .then(d => {
-                            showToast(d.success ? 'success' : 'error', d.message);
-                            if (d.success) setTimeout(() => location.reload(), 3000);
+                            if (d.success) scheduleToast('success', d.message);
+                            else showToast('error', d.message);
                         });
                 }
             });
@@ -147,8 +147,7 @@ endforeach; ?>
             .then(d => {
                 if (d.success) {
                     ylModal.hide();
-                    showToast('success', d.message);
-                    setTimeout(() => location.reload(), 3000);
+                    scheduleToast('success', d.message);
                 } else {
                     showToast('error', d.message);
                 }

@@ -306,7 +306,7 @@ function editStudent(id){
 document.getElementById('studentForm').addEventListener('submit',function(e){
     e.preventDefault();
     fetch('students.php',{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{
-        if(d.success){studentModal.hide();showToast('success',d.message);setTimeout(()=>location.reload(),3000);}
+        if(d.success){studentModal.hide();scheduleToast('success',d.message);}
         else showToast('error',d.message);
     });
 });

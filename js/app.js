@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Show any toast that was scheduled before a page reload
+    const pendingToast = sessionStorage.getItem('pendingToast');
+    if (pendingToast) {
+        sessionStorage.removeItem('pendingToast');
+        const { icon, title } = JSON.parse(pendingToast);
+        showToast(icon, title);
+    }
+
     // Auto-dismiss alerts after page load
     initFormValidation();
 });
@@ -88,6 +96,15 @@ function showToast(icon, title) {
         }
     });
     return Toast.fire({ icon: icon, title: title });
+}
+
+/**
+ * Schedule a toast to show after the next page reload.
+ * Saves the toast data in sessionStorage, then immediately reloads.
+ */
+function scheduleToast(icon, title) {
+    sessionStorage.setItem('pendingToast', JSON.stringify({ icon, title }));
+    location.reload();
 }
 
 /**

@@ -499,8 +499,8 @@ function toggleUserStatus(id, currentStatus, username) {
             fetch('users.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(data => {
-                    showToast(data.success ? 'success' : 'error', data.message);
-                    if (data.success) setTimeout(() => location.reload(), 3000);
+                    if (data.success) scheduleToast('success', data.message);
+                    else showToast('error', data.message);
                 });
         }
     });
@@ -522,8 +522,7 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
         .then(data => {
             if (data.success) {
                 userModal.hide();
-                showToast('success', data.message);
-                setTimeout(() => location.reload(), 3000);
+                scheduleToast('success', data.message);
             } else {
                 showToast('error', data.message);
             }

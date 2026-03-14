@@ -164,8 +164,8 @@ function toggleProgramStatus(id) {
             const fd = new FormData();
             fd.append('action', 'toggle_status'); fd.append('id', id); fd.append('csrf_token', '<?php echo getCSRFToken(); ?>');
             fetch('programs.php', {method:'POST', body:fd}).then(r=>r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
-                if (d.success) setTimeout(() => location.reload(), 3000);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });
@@ -174,7 +174,7 @@ function toggleProgramStatus(id) {
 document.getElementById('programForm').addEventListener('submit', function(e) {
     e.preventDefault();
     fetch('programs.php', {method:'POST', body: new FormData(this)}).then(r=>r.json()).then(d => {
-        if (d.success) { programModal.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
+        if (d.success) { programModal.hide(); scheduleToast('success', d.message); }
         else showToast('error', d.message);
     });
 });

@@ -332,8 +332,7 @@ function deleteRecord(table, id) {
             fd.append('action','delete'); fd.append('table',table); fd.append('record_id',id); fd.append('csrf_token',csrf);
             fetch(studentUrl, {method:'POST',body:fd}).then(r=>r.json()).then(d => {
                 if (d.success) {
-                    showToast('success', d.message);
-                    setTimeout(()=>location.reload(), 3000);
+                    scheduleToast('success', d.message);
                 } else {
                     showAlert('error', 'Error', d.message);
                 }
@@ -357,8 +356,7 @@ Object.entries(formIds).forEach(([table, formId]) => {
         fetch(studentUrl, {method:'POST', body: new FormData(this)}).then(r=>r.json()).then(d => {
             if (d.success) {
                 modals[table].hide();
-                showToast('success', d.message);
-                setTimeout(()=>location.reload(), 3000);
+                scheduleToast('success', d.message);
             } else {
                 showAlert('error', 'Error', d.message);
             }

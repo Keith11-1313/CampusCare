@@ -329,8 +329,7 @@ function postAction(data) {
 
 function handleResult(d) {
     if (d.success) {
-        showToast('success', d.message);
-        setTimeout(()=>location.reload(), 3000);
+        scheduleToast('success', d.message);
     } else {
         showAlert('error', 'Error', d.message);
     }
@@ -341,7 +340,7 @@ function deleteItem(section, id) {
         if(r.isConfirmed){
             const fd=new FormData();fd.append('action','delete');fd.append('section',section);fd.append('id',id);
             postAction(fd).then(d=>{
-                if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
+                if(d.success){ scheduleToast('success', d.message); }
                 else showAlert('error','Error',d.message);
             });
         }
@@ -404,7 +403,7 @@ function submitModalForm(formId, modalInstance) {
     document.getElementById(formId).addEventListener('submit', function(e){
         e.preventDefault();
         postAction(new FormData(this)).then(d=>{
-            if(d.success){ modalInstance.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
+            if(d.success){ modalInstance.hide(); scheduleToast('success', d.message); }
             else showAlert('error','Error',d.message);
         });
     });
@@ -417,7 +416,7 @@ submitModalForm('emergencyForm', emergencyModal);
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
     postAction(new FormData(this)).then(d=>{
-        if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 3000); }
+        if(d.success){ scheduleToast('success', d.message); }
         else showAlert('error','Error',d.message);
     });
 });

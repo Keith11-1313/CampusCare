@@ -153,8 +153,8 @@ function restoreStudent(id, sid) {
             fd.append('id', id);
             fd.append('csrf_token', CSRF_TOKEN);
             fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
-                if (d.success) setTimeout(() => location.reload(), 3000);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });
@@ -173,7 +173,8 @@ function archiveStudent(id, sid) {
             fd.append('id', id);
             fd.append('csrf_token', CSRF_TOKEN);
             fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });
