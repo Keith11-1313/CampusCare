@@ -246,7 +246,7 @@ else: ?>
                             <?php
         endif; ?>
                         </td>
-                        <td><small><?php echo $u['last_login'] ? formatDateTime($u['last_login'], 'M d, h:i A') : 'Never'; ?></small></td>
+                        <td><small><?php echo $u['last_login'] ? formatDateTime($u['last_login'], 'M d Y, h:i A') : 'Never'; ?></small></td>
                         <td>
                             <?php echo statusBadge($u['status']); ?>
                             <?php if ($u['status'] === 'inactive' && !empty($u['deactivation_reason'])): ?>
