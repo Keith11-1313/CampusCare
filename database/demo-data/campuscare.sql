@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `assigned_year_level_id` INT(11) DEFAULT NULL,
   `assigned_section` VARCHAR(20) DEFAULT NULL,
   `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  `deactivation_reason` VARCHAR(255) DEFAULT NULL,
   `last_login` DATETIME DEFAULT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

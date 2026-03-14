@@ -90,9 +90,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
         $currentStatus = $db->fetchColumn("SELECT status FROM users WHERE id = ?", [$id]);
         $newStatus = ($currentStatus === 'active') ? 'inactive' : 'active';
-        $db->query("UPDATE users SET status = ? WHERE id = ?", [$newStatus, $id]);
+
+        if ($newStatus === 'inactive') {
+            $reason = trim($_POST['deactivation_reason'] ?? '');
+            if (empty($reason)) {
+                jsonResponse(['success' => false, 'message' => 'Please select a reason for deactivation.']);
+            }
+            $db->query("UPDATE users SET status = ?, deactivation_reason = ? WHERE id = ?", [$newStatus, $reason, $id]);
+        }
+        else {
+            $db->query("UPDATE users SET status = ?, deactivation_reason = NULL WHERE id = ?", [$newStatus, $id]);
+        }
+
         $statusAction = $newStatus === 'active' ? 'activate_user' : 'deactivate_user';
-        logAccess($_SESSION['user_id'], $statusAction, "Changed user ID $id status to $newStatus");
+        $logDesc = "Changed user ID $id status to $newStatus";
+        if ($newStatus === 'inactive' && !empty($reason)) {
+            $logDesc .= " (Reason: $reason)";
+        }
+        logAccess($_SESSION['user_id'], $statusAction, $logDesc);
         jsonResponse(['success' => true, 'message' => 'User ' . ($newStatus === 'active' ? 'activated' : 'deactivated') . ' successfully.']);
     }
 
@@ -232,7 +247,13 @@ else: ?>
         endif; ?>
                         </td>
                         <td><small><?php echo $u['last_login'] ? formatDateTime($u['last_login'], 'M d, h:i A') : 'Never'; ?></small></td>
-                        <td><?php echo statusBadge($u['status']); ?></td>
+                        <td>
+                            <?php echo statusBadge($u['status']); ?>
+                            <?php if ($u['status'] === 'inactive' && !empty($u['deactivation_reason'])): ?>
+                            <br><small class="text-muted"><i class="bi bi-info-circle me-1"></i><?php echo e($u['deactivation_reason']); ?></small>
+                            <?php
+        endif; ?>
+                        </td>
                         <td class="text-center table-action-btns">
                             <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editUser(<?php echo $u['id']; ?>)" title="Edit">
                                 <i class="bi bi-pencil"></i>
@@ -389,6 +410,45 @@ endforeach; ?>
     </div>
 </div>
 
+<!-- Deactivation Reason Modal -->
+<div class="modal fade" id="deactivateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></i>Deactivate User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">You are about to deactivate <strong id="deactivateUsername"></strong>.</p>
+                <div class="mb-3">
+                    <label class="form-label">Reason for Deactivation <span class="required-asterisk">*</span></label>
+                    <select class="form-select" id="deactivationReason" required>
+                        <option value="">Select a reason...</option>
+                        <option value="Violation of policies">Violation of policies</option>
+                        <option value="End of employment/enrollment">End of employment/enrollment</option>
+                        <option value="Account inactivity">Account inactivity</option>
+                        <option value="Requested by user">Requested by user</option>
+                        <option value="Security concern">Security concern</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a reason.</div>
+                </div>
+                <div class="mb-0" id="otherReasonGroup" style="display:none;">
+                    <label class="form-label">Please specify <span class="required-asterisk">*</span></label>
+                    <textarea class="form-control" id="otherReasonText" rows="3" placeholder="Enter reason for deactivation..."></textarea>
+                    <div class="invalid-feedback">Please provide a reason.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="confirmDeactivateBtn">
+                    <i class="bi bi-person-slash me-1"></i>Deactivate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
@@ -483,27 +543,83 @@ function editUser(id) {
         });
 }
 
+const deactivateModal = new bootstrap.Modal(document.getElementById('deactivateModal'));
+let deactivateUserId = null;
+
 function toggleUserStatus(id, currentStatus, username) {
-    const action = currentStatus === 'active' ? 'deactivate' : 'activate';
-    showConfirm(
-        action.charAt(0).toUpperCase() + action.slice(1) + ' User?',
-        `Are you sure you want to ${action} "${username}"?`,
-        `Yes, ${action}`
-    ).then(result => {
-        if (result.isConfirmed) {
-            const formData = new FormData();
-            formData.append('action', 'toggle_status');
-            formData.append('id', id);
-            formData.append('csrf_token', '<?php echo getCSRFToken(); ?>');
-            
-            fetch('users.php', { method: 'POST', body: formData })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) scheduleToast('success', data.message);
-                    else showToast('error', data.message);
-                });
+    if (currentStatus === 'active') {
+        // Deactivating — show Bootstrap modal with reason dropdown
+        deactivateUserId = id;
+        document.getElementById('deactivateUsername').textContent = username;
+        document.getElementById('deactivationReason').value = '';
+        document.getElementById('deactivationReason').classList.remove('is-invalid');
+        document.getElementById('otherReasonGroup').style.display = 'none';
+        document.getElementById('otherReasonText').value = '';
+        document.getElementById('otherReasonText').classList.remove('is-invalid');
+        deactivateModal.show();
+    } else {
+        // Activating — simple confirm
+        showConfirm('Activate User?', `Are you sure you want to activate "${username}"?`, 'Yes, activate').then(result => {
+            if (result.isConfirmed) {
+                submitToggleStatus(id, '');
+            }
+        });
+    }
+}
+
+// Show/hide "Other" comment textarea
+document.getElementById('deactivationReason').addEventListener('change', function() {
+    if (this.value) this.classList.remove('is-invalid');
+    const otherGroup = document.getElementById('otherReasonGroup');
+    if (this.value === 'Other') {
+        otherGroup.style.display = 'block';
+        document.getElementById('otherReasonText').value = '';
+    } else {
+        otherGroup.style.display = 'none';
+    }
+});
+
+document.getElementById('confirmDeactivateBtn').addEventListener('click', function() {
+    const select = document.getElementById('deactivationReason');
+    const otherText = document.getElementById('otherReasonText');
+    let reason = select.value;
+
+    if (!reason) {
+        select.classList.add('is-invalid');
+        return;
+    }
+
+    if (reason === 'Other') {
+        const comment = otherText.value.trim();
+        if (!comment) {
+            otherText.classList.add('is-invalid');
+            return;
         }
-    });
+        reason = 'Other: ' + comment;
+    }
+
+    deactivateModal.hide();
+    submitToggleStatus(deactivateUserId, reason);
+});
+
+// Remove validation styling on textarea input
+document.getElementById('otherReasonText').addEventListener('input', function() {
+    if (this.value.trim()) this.classList.remove('is-invalid');
+});
+
+function submitToggleStatus(id, reason) {
+    const formData = new FormData();
+    formData.append('action', 'toggle_status');
+    formData.append('id', id);
+    formData.append('csrf_token', '<?php echo getCSRFToken(); ?>');
+    if (reason) formData.append('deactivation_reason', reason);
+
+    fetch('users.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) scheduleToast('success', data.message);
+            else showToast('error', data.message);
+        });
 }
 
 // Form submission via AJAX
