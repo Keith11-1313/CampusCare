@@ -11,14 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'save') {
         $id = intval($_POST['id'] ?? 0);
         $name = trim($_POST['name'] ?? '');
-        $orderNum = intval($_POST['order_num'] ?? 0);
         if (empty($name))
             jsonResponse(['success' => false, 'message' => 'Name is required.']);
         if ($id > 0) {
-            $db->query("UPDATE year_levels SET name=?, order_num=? WHERE id=?", [$name, $orderNum, $id]);
+            $db->query("UPDATE year_levels SET name=? WHERE id=?", [$name, $id]);
         }
         else {
-            $db->query("INSERT INTO year_levels (name, order_num) VALUES (?,?)", [$name, $orderNum]);
+            $db->query("INSERT INTO year_levels (name) VALUES (?)", [$name]);
         }
         jsonResponse(['success' => true, 'message' => 'Year level saved.']);
     }
@@ -49,17 +48,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead><tr><th>Order</th><th>Name</th><th>Students</th><th>Status</th><th class="text-center">Actions</th></tr></thead>
+                <thead><tr><th>Name</th><th>Students</th><th>Status</th><th class="text-center">Actions</th></tr></thead>
                 <tbody>
                     <?php foreach ($yearLevels as $yl): ?>
                     <tr>
-                        <td><?php echo $yl['order_num']; ?></td>
+
                         <td class="fw-semibold"><?php echo e($yl['name']); ?></td>
                         <td><span class="badge bg-light text-dark"><?php echo $yl['student_count']; ?></span></td>
                         <td><?php echo statusBadge($yl['status']); ?></td>
                         <td class="text-center table-action-btns">
                             <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editYL(<?php echo $yl['id']; ?>)"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-<?php echo $yl['status'] === 'active' ? 'warning' : 'success'; ?> btn-icon" onclick="toggleStatus(<?php echo $yl['id']; ?>)"><i class="bi bi-<?php echo $yl['status'] === 'active' ? 'eye-slash' : 'eye'; ?>"></i></button>
+                            <button class="btn btn-sm btn-outline-<?php echo $yl['status'] === 'active' ? 'warning' : 'success'; ?> btn-icon" onclick="toggleStatus(<?php echo $yl['id']; ?>, '<?php echo $yl['status']; ?>')"><i class="bi bi-<?php echo $yl['status'] === 'active' ? 'eye-slash' : 'eye'; ?>"></i></button>
                         </td>
                     </tr>
                     <?php
@@ -77,7 +76,7 @@ endforeach; ?>
             <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
             <input type="hidden" name="action" value="save"><input type="hidden" name="id" id="ylId" value="0">
             <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="ylName" required placeholder="e.g. 1st Year"></div>
-            <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="order_num" id="ylOrder" value="0"></div>
+
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
     </form>
@@ -86,10 +85,73 @@ endforeach; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
-const ylModal = new bootstrap.Modal(document.getElementById('ylModal'));
-function openModal(){document.getElementById('ylModalTitle').textContent='Add Year Level';document.getElementById('ylId').value=0;document.getElementById('ylForm').reset();ylModal.show();}
-function editYL(id){const fd=new FormData();fd.append('action','get');fd.append('id',id);fd.append('csrf_token','<?php echo getCSRFToken(); ?>');
-fetch('year_levels.php',{method:'POST',body:fd}).then(r=>r.json()).then(d=>{if(d.success){document.getElementById('ylModalTitle').textContent='Edit Year Level';document.getElementById('ylId').value=d.year_level.id;document.getElementById('ylName').value=d.year_level.name;document.getElementById('ylOrder').value=d.year_level.order_num;ylModal.show();}});}
-function toggleStatus(id){showConfirm('Toggle Status?','Change status?','Yes').then(r=>{if(r.isConfirmed){const fd=new FormData();fd.append('action','toggle_status');fd.append('id',id);fd.append('csrf_token','<?php echo getCSRFToken(); ?>');fetch('year_levels.php',{method:'POST',body:fd}).then(r=>r.json()).then(d=>{showToast(d.success?'success':'error',d.message);if(d.success)setTimeout(()=>location.reload(),3000);});}});}
-document.getElementById('ylForm').addEventListener('submit',function(e){e.preventDefault();fetch('year_levels.php',{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{if(d.success){ylModal.hide();showToast('success',d.message);setTimeout(()=>location.reload(),3000);}else showToast('error',d.message);});});
+    const ylModal = new bootstrap.Modal(document.getElementById('ylModal'));
+    const ylTable = document.getElementById('ylTable');
+
+    function openModal() {
+        document.getElementById('ylModalTitle').textContent = 'Add Year Level';
+        document.getElementById('ylId').value = 0;
+        document.getElementById('ylForm').reset();
+        ylModal.show();
+    }
+
+    function editYL(id) {
+        const fd = new FormData();
+        fd.append('action', 'get');
+        fd.append('id', id);
+        fd.append('csrf_token', '<?php echo getCSRFToken(); ?>');
+
+        fetch('year_levels.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    document.getElementById('ylModalTitle').textContent = 'Edit Year Level';
+                    document.getElementById('ylId').value = d.year_level.id;
+                    document.getElementById('ylName').value = d.year_level.name;
+                    ylModal.show();
+                }
+            });
+    }
+
+    function toggleStatus(id, currentStatus) {
+        const isActive = currentStatus === 'active';
+        const title = isActive ? 'Deactivate Year Level?' : 'Reactivate Year Level?';
+        const message = isActive
+            ? 'This year level will be hidden from selection forms.'
+            : 'This year level will be available in selection forms again.';
+        const confirmBtn = isActive ? 'Yes, Deactivate' : 'Yes, Reactivate';
+
+        showConfirm(title, message, confirmBtn)
+            .then(r => {
+                if (r.isConfirmed) {
+                    const fd = new FormData();
+                    fd.append('action', 'toggle_status');
+                    fd.append('id', id);
+                    fd.append('csrf_token', '<?php echo getCSRFToken(); ?>');
+
+                    fetch('year_levels.php', { method: 'POST', body: fd })
+                        .then(r => r.json())
+                        .then(d => {
+                            showToast(d.success ? 'success' : 'error', d.message);
+                            if (d.success) setTimeout(() => location.reload(), 3000);
+                        });
+                }
+            });
+    }
+
+    document.getElementById('ylForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        fetch('year_levels.php', { method: 'POST', body: new FormData(this) })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    ylModal.hide();
+                    showToast('success', d.message);
+                    setTimeout(() => location.reload(), 3000);
+                } else {
+                    showToast('error', d.message);
+                }
+            });
+    });
 </script>
