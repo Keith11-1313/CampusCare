@@ -209,15 +209,10 @@ else: ?>
                     <?php foreach ($users as $u): ?>
                     <tr>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div class="user-avatar me-2" style="width:32px;height:32px;font-size:0.65rem;background:var(--cc-primary-bg);color:var(--cc-primary);">
-                                    <?php echo strtoupper(substr($u['first_name'], 0, 1) . substr($u['last_name'], 0, 1)); ?>
-                                </div>
                                 <div>
                                     <div class="fw-semibold"><?php echo e($u['first_name'] . ' ' . $u['last_name']); ?></div>
                                     <small class="text-muted"><?php echo e($u['email']); ?></small>
                                 </div>
-                            </div>
                         </td>
                         <td><code><?php echo e($u['username']); ?></code></td>
                         <td><?php echo getRoleDisplayName($u['role']); ?></td>

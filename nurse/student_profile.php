@@ -65,7 +65,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="card mb-4">
     <div class="profile-header">
         <div class="d-flex align-items-center">
-            <div class="profile-avatar me-3"><?php echo strtoupper(substr($student['first_name'], 0, 1) . substr($student['last_name'], 0, 1)); ?></div>
+
             <div>
                 <h3 class="mb-1"><?php echo e($student['first_name'] . ' ' . ($student['middle_name'] ? $student['middle_name'] . ' ' : '') . $student['last_name']); ?></h3>
                 <div class="opacity-75"><i class="bi bi-hash me-1"></i><?php echo e($student['student_id']); ?> &nbsp;|&nbsp; <?php echo e($student['program_code'] ?? 'N/A'); ?> — <?php echo e($student['year_level_name'] ?? ''); ?> <?php echo e($student['section'] ?? ''); ?></div>

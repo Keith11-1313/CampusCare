@@ -449,6 +449,10 @@ a:hover {
 }
 
 /* Compact action buttons (e.g., Edit, Delete) inside table rows. */
+.table-action-btns {
+    white-space: nowrap;
+}
+
 .table-action-btns .btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
