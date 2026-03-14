@@ -89,7 +89,7 @@ else: ?>
                         <td class="text-center table-action-btns">
                             <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editProgram(<?php echo $p['id']; ?>)"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-sm btn-outline-<?php echo $p['status'] === 'active' ? 'warning' : 'success'; ?> btn-icon" 
-                                    onclick="toggleProgramStatus(<?php echo $p['id']; ?>)">
+                                    onclick="toggleProgramStatus(<?php echo $p['id']; ?>, '<?php echo $p['status']; ?>')">
                                 <i class="bi bi-<?php echo $p['status'] === 'active' ? 'eye-slash' : 'eye'; ?>"></i>
                             </button>
                         </td>
@@ -158,8 +158,15 @@ function editProgram(id) {
     });
 }
 
-function toggleProgramStatus(id) {
-    showConfirm('Toggle Status?', 'Change this program\'s status?', 'Yes').then(r => {
+function toggleProgramStatus(id, currentStatus) {
+    const isActive = currentStatus === 'active';
+    const title = isActive ? 'Deactivate Program?' : 'Reactivate Program?';
+    const message = isActive
+        ? 'This program will be hidden from selection forms.'
+        : 'This program will be available in selection forms again.';
+    const confirmBtn = isActive ? 'Yes, Deactivate' : 'Yes, Reactivate';
+
+    showConfirm(title, message, confirmBtn).then(r => {
         if (r.isConfirmed) {
             const fd = new FormData();
             fd.append('action', 'toggle_status'); fd.append('id', id); fd.append('csrf_token', '<?php echo getCSRFToken(); ?>');
