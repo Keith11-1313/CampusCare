@@ -35,6 +35,10 @@ if (!empty($dateTo)) {
 $total = $db->fetchColumn("SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id $where", $params);
 $totalPages = ceil($total / $perPage);
 $visits = $db->fetchAll("SELECT v.*, s.student_id as sid, s.first_name, s.last_name, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v JOIN students s ON v.student_id=s.id LEFT JOIN users u ON v.attended_by=u.id $where ORDER BY v.visit_date DESC LIMIT $perPage OFFSET $offset", $params);
+
+// HIPAA §164.312(b): Log PHI access — record who viewed visit history
+logAccess($_SESSION['user_id'], 'view_visit_history', 'Viewed visit history (page ' . $page . ')' . (!empty($search) ? ' search: ' . $search : ''));
+
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 

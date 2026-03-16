@@ -14,6 +14,9 @@ if (!$student) {
     redirect(BASE_URL . '/nurse/students.php', 'error', 'Student not found.');
 }
 
+// HIPAA §164.312(b): Log PHI access — record who viewed this student's health profile
+logAccess($_SESSION['user_id'], 'view_student_profile', 'Viewed health profile for student ' . $student['student_id']);
+
 // Handle AJAX operations for health records
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!validateCSRFToken($_POST['csrf_token'] ?? ''))
@@ -43,6 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'delete') {
         $recordId = intval($_POST['record_id'] ?? 0);
         $db->query("DELETE FROM $table WHERE id=? AND student_id=?", [$recordId, $studentId]);
+        // HIPAA §164.312(b): Log health record deletion for audit trail
+        logAccess($_SESSION['user_id'], 'delete_health_record', "Deleted $table record #$recordId for student " . $student['student_id']);
         jsonResponse(['success' => true, 'message' => 'Record deleted.']);
     }
 }
