@@ -43,7 +43,61 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div><h1><i class="bi bi-graph-up me-2"></i>Reports & Analytics</h1>
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Reports</li></ol></nav></div>
     <div>
-        <a href="?export=pdf" class="btn btn-outline-danger"><i class="bi bi-filetype-pdf me-1"></i>Export PDF</a>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal">
+            <i class="bi bi-filetype-pdf me-1"></i>Export PDF
+        </button>
+    </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportModalLabel"><i class="bi bi-printer me-2 text-danger"></i>Export Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="GET">
+                <input type="hidden" name="export" value="pdf">
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Select the sections you want to include in the exported report.</p>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="summary" id="secSummary" checked>
+                        <label class="form-check-label" for="secSummary">Summary Statistics</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="visits_month" id="secVisitsMonth" checked>
+                        <label class="form-check-label" for="secVisitsMonth">Visits by Month Chart</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="visits_program" id="secVisitsProgram" checked>
+                        <label class="form-check-label" for="secVisitsProgram">Visits by Program Chart</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_complaints" id="secComplaints" checked>
+                        <label class="form-check-label" for="secComplaints">Top Health Complaints (Chart & Table)</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records" id="secRecords" checked>
+                        <label class="form-check-label" for="secRecords">Visit Records Table</label>
+                    </div>
+                    
+                    <hr class="my-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="page_breaks" value="1" id="pageBreaks" checked>
+                        <label class="form-check-label fw-bold" for="pageBreaks">Add page break between sections</label>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelectorAll('input[name=\'sections[]\']').forEach(cb => cb.checked = true)">Select All</button>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>Generate</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

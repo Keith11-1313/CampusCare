@@ -47,6 +47,10 @@ while (ob_get_level()) {
     ob_end_clean();
 }
 ?>
+<?php
+$sections = isset($_GET['sections']) && is_array($_GET['sections']) ? $_GET['sections'] : ['summary', 'visits_month', 'visits_program', 'top_complaints', 'visit_records'];
+$usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,6 +102,12 @@ while (ob_get_level()) {
         
         .no-print { margin-bottom: 15px; text-align: center; }
 
+        <?php if ($usePageBreaks): ?>
+        .page-break { page-break-before: always; }
+        <?php else: ?>
+        .page-break { margin-top: 30px; }
+        <?php endif; ?>
+
         @media print {
             .no-print { display: none; }
             body { padding: 0; }
@@ -121,48 +131,60 @@ while (ob_get_level()) {
         <p>Generated on <?php echo date('F d, Y h:i A'); ?> | Total Records: <?php echo $totalVisits; ?></p>
     </div>
 
+    <?php
+    $hasPreviousSection = false;
+    ?>
+
     <!-- Summary Stats -->
-    <div class="stats">
+    <?php if (in_array('summary', $sections)): ?>
+    <div class="stats <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="stat-box"><div class="value"><?php echo number_format($totalVisits); ?></div><div class="label">Total Visits</div></div>
         <div class="stat-box"><div class="value"><?php echo number_format($totalStudentsWithVisits); ?></div><div class="label">Unique Patients</div></div>
         <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?></div><div class="label">Avg Visits/Day</div></div>
     </div>
+    <?php $hasPreviousSection = true; endif; ?>
 
-    <!-- Charts -->
-    <div class="charts-row">
+    <!-- Charts Row -->
+    <?php if (in_array('visits_month', $sections) || in_array('visits_program', $sections)): ?>
+    <div class="charts-row <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <?php if (in_array('visits_month', $sections)): ?>
         <div class="chart-box wide">
             <h3>Visits by Month (Last 12 Months)</h3>
             <canvas id="monthlyChart"></canvas>
         </div>
+        <?php endif; ?>
+        
+        <?php if (in_array('visits_program', $sections)): ?>
         <div class="chart-box">
             <h3>Visits by Program</h3>
             <canvas id="programChart"></canvas>
         </div>
+        <?php endif; ?>
     </div>
+    <?php $hasPreviousSection = true; endif; ?>
 
-    <div class="section">
+    <!-- Top Complaints -->
+    <?php if (in_array('top_complaints', $sections)): ?>
+    <div class="section <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="chart-box" style="border:1px solid #eee; border-radius:6px; padding:15px; margin-bottom:20px;">
             <h3>Top Health Complaints</h3>
             <canvas id="complaintsChart" style="height:250px !important;"></canvas>
         </div>
-    </div>
-
-    <!-- Top Complaints Table -->
-    <div class="section">
-        <h2>Top Health Complaints</h2>
+        <h2>Top Health Complaints (Data)</h2>
         <table>
             <thead><tr><th>#</th><th>Complaint</th><th>Occurrences</th></tr></thead>
             <tbody>
             <?php foreach ($topComplaints as $i => $c): ?>
             <tr><td><?php echo $i + 1; ?></td><td><?php echo e($c['complaint']); ?></td><td><?php echo $c['cnt']; ?></td></tr>
-            <?php
-endforeach; ?>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </div>
+    <?php $hasPreviousSection = true; endif; ?>
 
     <!-- Visit Records Table -->
-    <div class="section">
+    <?php if (in_array('visit_records', $sections)): ?>
+    <div class="section <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
         <h2>Visit Records</h2>
         <table>
             <thead><tr><th>Date</th><th>Student ID</th><th>Name</th><th>Program</th><th>Complaint</th><th>Status</th><th>Nurse</th></tr></thead>
@@ -177,16 +199,18 @@ endforeach; ?>
                 <td><?php echo e($v['status']); ?></td>
                 <td><?php echo e($v['attended_by']); ?></td>
             </tr>
-            <?php
-endforeach; ?>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </div>
+    <?php endif; ?>
 
     <div class="footer">CampusCare — School Clinic Patient Information & Medicine Record System</div>
 
     <script>
+    <script>
     // Monthly visits bar chart
+    <?php if (in_array('visits_month', $sections)): ?>
     const monthData = <?php echo json_encode($visitsByMonth); ?>;
     new Chart(document.getElementById('monthlyChart'), {
         type:'bar', data:{
@@ -194,8 +218,10 @@ endforeach; ?>
             datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
+    <?php endif; ?>
 
     // Program visits doughnut chart
+    <?php if (in_array('visits_program', $sections)): ?>
     const progData = <?php echo json_encode($visitsByProgram); ?>;
     const colors = ['#0d6e3f','#1a73a7','#e8910c','#c0392b','#8e44ad','#27ae60','#f39c12','#2c3e50'];
     new Chart(document.getElementById('programChart'), {
@@ -204,8 +230,10 @@ endforeach; ?>
             datasets:[{data:progData.map(d=>d.count),backgroundColor:colors.slice(0,progData.length)}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}
     });
+    <?php endif; ?>
 
     // Top complaints horizontal bar chart
+    <?php if (in_array('top_complaints', $sections)): ?>
     const compData = <?php echo json_encode($topComplaints); ?>;
     new Chart(document.getElementById('complaintsChart'), {
         type:'bar', data:{
@@ -213,6 +241,7 @@ endforeach; ?>
             datasets:[{label:'Occurrences',data:compData.map(d=>d.cnt),backgroundColor:'rgba(26,115,167,0.7)',borderColor:'#1a73a7',borderWidth:1,borderRadius:6}]
         }, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
+    <?php endif; ?>
 
     function goBack() {
         if (window.history.length > 1) {
