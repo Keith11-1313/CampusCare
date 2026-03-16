@@ -184,16 +184,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records" id="secRecords" checked>
                         <label class="form-check-label" for="secRecords">Visit Records Table</label>
                     </div>
-                    
-                    <hr class="my-3">
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="page_breaks" value="1" id="pageBreaks" checked>
-                        <label class="form-check-label fw-bold" for="pageBreaks">Add page break between sections</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="landscape" value="1" id="landscapeMode">
-                        <label class="form-check-label fw-bold" for="landscapeMode">Landscape orientation</label>
-                    </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelectorAll('input[name=\'sections[]\']').forEach(cb => cb.checked = true)">Select All</button>
