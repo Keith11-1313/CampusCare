@@ -1,7 +1,7 @@
 node_modules/
 #not track the node modules folder
 
-.json
+*.json
 #not track the json files
 
 #.env 
