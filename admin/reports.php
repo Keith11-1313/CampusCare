@@ -94,12 +94,79 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     // Top complaints
-    const compData = <?php echo json_encode($topComplaints); ?>;
+    const rawCompData = <?php echo json_encode($topComplaints); ?>;
+    
+    // Sort and rearrange for Podium: [Rank 2, Rank 1, Rank 3, Rank 4, ...]
+    let podiumData = [];
+    if (rawCompData.length > 0) {
+        let top3 = rawCompData.slice(0, 3);
+        let rest = rawCompData.slice(3, 10);
+        
+        // Rearrange top 3: [1, 0, 2] -> [Rank 2, Rank 1, Rank 3]
+        if (top3.length === 3) podiumData = [top3[1], top3[0], top3[2]];
+        else if (top3.length === 2) podiumData = [top3[1], top3[0]];
+        else podiumData = [top3[0]];
+        
+        podiumData = podiumData.concat(rest);
+    }
+    
+    // Extract category name
+    const formatLabel = (label) => label.split(':')[0].substring(0, 20);
+    
+    // Colors for podium
+    const getColors = (data) => {
+        let maxCount = Math.max(...data.map(d => d.count));
+        return data.map((d, index) => {
+            if (d.count === maxCount) return 'rgba(241, 196, 15, 0.8)'; // Gold
+            if (index === 0 && data.length > 2) return 'rgba(189, 195, 199, 0.8)'; // Silver
+            if (index === 2 && data.length > 2) return 'rgba(211, 84, 0, 0.8)'; // Bronze
+            if (index === 0 && data.length === 2) return 'rgba(189, 195, 199, 0.8)'; // Silver
+            return 'rgba(26,115,167,0.5)'; // Regular color for others
+        });
+    };
+
     new Chart(document.getElementById('complaintsChart'), {
-        type:'bar', data:{
-            labels: compData.map(d=>d.complaint.substring(0,30)),
-            datasets:[{label:'Occurrences',data:compData.map(d=>d.count),backgroundColor:'rgba(26,115,167,0.7)',borderColor:'#1a73a7',borderWidth:1,borderRadius:6}]
-        }, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+        type: 'bar', // Vertical bar for podium
+        data: {
+            labels: podiumData.map(d => formatLabel(d.complaint)),
+            datasets: [{
+                label: 'Occurrences',
+                data: podiumData.map(d => d.count),
+                backgroundColor: getColors(podiumData),
+                borderColor: getColors(podiumData).map(c => c.replace('0.8', '1').replace('0.5', '1')),
+                borderWidth: 1,
+                borderRadius: {topLeft: 8, topRight: 8}
+            }]
+        }, 
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ' ' + context.raw + ' visits';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 1 },
+                    grid: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
     });
 });
 </script>
