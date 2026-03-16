@@ -259,10 +259,12 @@ endif; ?>
                 <input type="file" class="form-control" name="csv_file" id="csvFile" accept=".csv" required>
                 <div class="form-text">Upload a .csv file with student data.</div>
             </div>
-            <div class="alert alert-info small mb-0 py-2">
+            <div class="alert alert-info small mb-3 py-2">
                 <i class="bi bi-info-circle me-1"></i><strong>Required columns:</strong> student_id, first_name, last_name, gender, date_of_birth<br>
-                <strong>Optional columns:</strong> middle_name, blood_type, contact_number, email, address<br>
-                <a href="#" onclick="downloadTemplate(); return false;" class="alert-link"><i class="bi bi-download me-1"></i>Download CSV template</a>
+                <strong>Optional columns:</strong> middle_name, blood_type, contact_number, email, address
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="downloadTemplate()"><i class="bi bi-download me-1"></i>Download CSV Template</button>
             </div>
         </div>
         <div class="modal-footer">
