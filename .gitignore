@@ -1,5 +1,8 @@
 node_modules/
 #not track the node modules folder
 
+.json
+#not track the json files
+
 #.env 
 # use if theres .env folder for hosting
