@@ -14,6 +14,126 @@ if (!$student) {
     redirect(BASE_URL . '/nurse/students.php', 'error', 'Student not found.');
 }
 
+// ── Access Control Gate — Re-authentication (HIPAA §164.312(a)(1)) ──
+// Single-use verification: required every time a student profile is opened
+$accessKey = 'access_granted_' . $studentId;
+$isVerified = isset($_SESSION[$accessKey]) && $_SESSION[$accessKey] === true;
+if ($isVerified) {
+    // Consume the one-time token so next visit requires re-authentication
+    unset($_SESSION[$accessKey]);
+}
+$verifyError = '';
+
+// Handle password verification POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verify_access') {
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $verifyError = 'Invalid security token. Please try again.';
+    }
+    else {
+        $password = $_POST['verify_password'] ?? '';
+        $userData = $db->fetch("SELECT password FROM users WHERE id = ?", [$_SESSION['user_id']]);
+        if ($userData && password_verify($password, $userData['password'])) {
+            $_SESSION[$accessKey] = true;
+            logAccess($_SESSION['user_id'], 'access_verified', 'Re-authenticated to access student ' . $student['student_id']);
+            header('Location: student_profile.php?id=' . $studentId);
+            exit;
+        }
+        else {
+            $verifyError = 'Incorrect password. Please try again.';
+            logAccess($_SESSION['user_id'], 'access_denied', 'Failed re-authentication for student ' . $student['student_id']);
+        }
+    }
+}
+
+// If not verified, show gate modal (no health data is loaded or rendered)
+if (!$isVerified) {
+    require_once __DIR__ . '/../includes/sidebar.php';
+?>
+
+<div class="page-header"><h1><i class="bi bi-person-badge me-2"></i>Student Profile</h1>
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item"><a href="students.php">Students</a></li><li class="breadcrumb-item active"><?php echo e($student['student_id']); ?></li></ol></nav></div>
+
+<!-- PHI Access Gate Modal (non-dismissable) -->
+<div class="modal fade" id="phiGateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="phiGateModalLabel">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+    <div class="modal-body p-4 text-center">
+        <div class="access-control-icon">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+        <h5 class="fw-bold mb-1" id="phiGateModalLabel">Access Verification</h5>
+        <p class="text-muted small mb-3">Enter your password to view protected health information for:</p>
+        <div class="access-control-student mb-3">
+            <div class="fw-semibold access-control-student-name">
+                <small class="text-muted"><?php echo e($student['student_id']); ?></small>
+                <?php echo e(' - ' . $student['first_name'] . ' ' . $student['last_name']); ?>
+            </div>
+        </div>
+
+        <?php if ($verifyError): ?>
+        <div class="alert alert-danger d-flex align-items-center py-2 px-3 mb-3 access-control-alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div><?php echo e($verifyError); ?></div>
+        </div>
+        <?php
+    endif; ?>
+
+        <form method="POST" action="student_profile.php?id=<?php echo $studentId; ?>">
+            <?php csrfField(); ?>
+            <input type="hidden" name="action" value="verify_access">
+            <div class="mb-3 text-start">
+                <label for="verify_password" class="form-label">Password</label>
+                <div class="position-relative">
+                    <i class="bi bi-lock access-control-field-icon text-muted"></i>
+                    <input type="password" class="form-control access-control-input" id="verify_password" name="verify_password"
+                           placeholder="Enter your password" required>
+                    <button class="btn btn-link text-muted p-0 access-control-toggle" type="button" id="toggleGatePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-2">
+                <i class="bi bi-unlock me-2"></i>Verify & Access Records
+            </button>
+            <a href="students.php" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-arrow-left me-1"></i>Back to Students
+            </a>
+        </form>
+        <p class="text-muted mt-3 mb-0 access-control-hint">
+            <i class="bi bi-info-circle me-1"></i>Verification is required each time you access a student's records.
+        </p>
+    </div>
+</div>
+</div>
+</div>
+
+    <?php
+    require_once __DIR__ . '/../includes/footer.php';
+?>
+
+<script>
+// Auto-open the gate modal and focus the password field
+const phiGateModal = new bootstrap.Modal(document.getElementById('phiGateModal'));
+phiGateModal.show();
+document.getElementById('phiGateModal').addEventListener('shown.bs.modal', function() {
+    document.getElementById('verify_password').focus();
+});
+
+// Toggle password visibility
+document.getElementById('toggleGatePassword')?.addEventListener('click', function() {
+    const pwd = document.getElementById('verify_password');
+    const icon = this.querySelector('i');
+    if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+    else { pwd.type = 'password'; icon.className = 'bi bi-eye'; }
+});
+</script>
+
+    <?php
+    exit; // Stop here — no PHI loaded or rendered
+}
+
+// ── PHI Access Granted ──
+
 // HIPAA §164.312(b): Log PHI access — record who viewed this student's health profile
 logAccess($_SESSION['user_id'], 'view_student_profile', 'Viewed health profile for student ' . $student['student_id']);
 

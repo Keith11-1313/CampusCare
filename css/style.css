@@ -1259,11 +1259,27 @@ a:hover {
 
 /* Shake animation for validation feedback on step sections. */
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-6px);
+    }
+
+    40% {
+        transform: translateX(6px);
+    }
+
+    60% {
+        transform: translateX(-4px);
+    }
+
+    80% {
+        transform: translateX(4px);
+    }
 }
 
 /* Navigation buttons row below the stepper (Back / Next / Submit):
@@ -1539,4 +1555,71 @@ a:hover {
    that a valid student has not been selected. */
 .student-ac-input.is-invalid {
     border-color: var(--cc-danger);
+}
+
+/* ---- PHI Access Gate Modal ---- */
+/* Circular icon container centered at the top of the gate modal. */
+.access-control-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+/* Shield-lock icon inside the gate icon circle. */
+.access-control-icon i {
+    font-size: 28px;
+    color: #fff;
+}
+
+/* Rounded chip showing the student's name/ID being accessed. */
+.access-control-student {
+    display: inline-block;
+    padding: 0.5rem 0.85rem;
+    background: var(--cc-primary-bg);
+    border-radius: var(--cc-radius-sm);
+    border: 1px solid #b8d4f0;
+}
+
+/* Student name inside the chip: green and bold. */
+.access-control-student-name {
+    color: var(--cc-primary-dark);
+}
+
+/* Compact alert for showing gate errors (wrong password). */
+.access-control-alert {
+    font-size: 0.85rem;
+    border-radius: var(--cc-radius-sm);
+}
+
+/* Password input inside the gate: left icon padding. */
+.access-control-input {
+    padding-left: 38px;
+    padding-right: 45px;
+}
+
+/* Positioned icon/button inside the gate password field. */
+.access-control-field-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Password toggle button inside the gate password field. */
+.access-control-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-decoration: none;
+}
+
+/* Small hint text at the bottom of the gate modal. */
+.access-control-hint {
+    font-size: 0.75rem;
 }
