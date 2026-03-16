@@ -38,8 +38,8 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
             <div class="collapse navbar-collapse" id="publicNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                     <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                     <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
                     <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
                     <li class="nav-item ms-lg-2">
@@ -125,6 +125,40 @@ endif; ?>
         </div>
     </section>
 
+    <!-- First Aid Guidelines -->
+    <section class="public-section" id="firstaid">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title"><i class="bi bi-bandaid-fill text-primary-cc me-2"></i>First Aid Guidelines</h2>
+                <p class="section-subtitle">Basic first-aid steps for common emergencies</p>
+            </div>
+            <?php if (empty($firstAidGuidelines)): ?>
+            <div class="empty-state"><i class="bi bi-bandaid"></i><p>No guidelines available.</p></div>
+            <?php
+else: ?>
+            <div class="row g-4">
+                <?php foreach ($firstAidGuidelines as $guide): ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="public-card card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width:40px;height:40px;border-radius:10px;background:var(--cc-primary-bg);display:flex;align-items:center;justify-content:center;" class="me-3">
+                                    <i class="bi bi-bandaid text-primary-cc"></i>
+                                </div>
+                                <h5 class="card-title fw-bold mb-0" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
+                        </div>
+                    </div>
+                </div>
+                <?php
+    endforeach; ?>
+            </div>
+            <?php
+endif; ?>
+        </div>
+    </section>
+
     <!-- FAQs -->
     <section class="public-section" id="faqs">
         <div class="container">
@@ -157,40 +191,6 @@ else: ?>
     endforeach; ?>
                     </div>
                 </div>
-            </div>
-            <?php
-endif; ?>
-        </div>
-    </section>
-
-    <!-- First Aid Guidelines -->
-    <section class="public-section" id="firstaid">
-        <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="section-title"><i class="bi bi-bandaid-fill text-primary-cc me-2"></i>First Aid Guidelines</h2>
-                <p class="section-subtitle">Basic first-aid steps for common emergencies</p>
-            </div>
-            <?php if (empty($firstAidGuidelines)): ?>
-            <div class="empty-state"><i class="bi bi-bandaid"></i><p>No guidelines available.</p></div>
-            <?php
-else: ?>
-            <div class="row g-4">
-                <?php foreach ($firstAidGuidelines as $guide): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="public-card card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div style="width:40px;height:40px;border-radius:10px;background:var(--cc-primary-bg);display:flex;align-items:center;justify-content:center;" class="me-3">
-                                    <i class="bi bi-bandaid text-primary-cc"></i>
-                                </div>
-                                <h5 class="card-title fw-bold mb-0" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
-                            </div>
-                            <div class="text-muted" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
-                        </div>
-                    </div>
-                </div>
-                <?php
-    endforeach; ?>
             </div>
             <?php
 endif; ?>
