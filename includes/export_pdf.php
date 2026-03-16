@@ -208,7 +208,6 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
     <div class="footer">CampusCare — School Clinic Patient Information & Medicine Record System</div>
 
     <script>
-    <script>
     // Monthly visits bar chart
     <?php if (in_array('visits_month', $sections)): ?>
     const monthData = <?php echo json_encode($visitsByMonth); ?>;
