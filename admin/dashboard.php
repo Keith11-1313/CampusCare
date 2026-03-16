@@ -46,7 +46,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="stat-card stat-card-primary animate-fade-in">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="stat-label">Active Students</div>
+                    <div class="stat-label">Registered Students</div>
                     <div class="stat-value"><?php echo number_format($totalStudents); ?></div>
                 </div>
                 <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
