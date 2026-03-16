@@ -26,9 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     $sid = intval($_POST['student_id'] ?? 0);
-    $complaint = trim($_POST['complaint'] ?? '');
+    $complaintCategory = trim($_POST['complaint_category'] ?? '');
+    $complaintDesc = trim($_POST['complaint_description'] ?? '');
+    $complaint = $complaintCategory;
+    if (!empty($complaintDesc)) {
+        $complaint .= ': ' . $complaintDesc;
+    }
 
-    if (!$sid || empty($complaint)) {
+    if (!$sid || empty($complaintCategory)) {
         setFlashMessage('error', 'Student and complaint are required.');
         header('Location: new_visit.php');
         exit;
@@ -129,7 +134,68 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <!-- Step 3: Clinical Notes -->
 <div class="step-section" data-step="3">
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-clipboard2-pulse me-2"></i>Clinical Notes</h6>
-    <div class="mb-3"><label class="form-label">Complaint <span class="required-asterisk">*</span></label><textarea class="form-control" name="complaint" rows="3" required placeholder="Describe the patient's complaint..."></textarea><div class="invalid-feedback">Complaint is required.</div></div>
+    <div class="mb-3">
+        <label class="form-label">Complaint Category <span class="required-asterisk">*</span></label>
+        <select class="form-select" name="complaint_category" id="complaintCategory" required>
+            <option value="">Select complaint category...</option>
+            <optgroup label="Head & Neurological">
+                <option value="Headache - Severe">Headache - Severe</option>
+                <option value="Headache - Minor">Headache - Minor</option>
+                <option value="Headache - Migraine">Headache - Migraine</option>
+                <option value="Dizziness">Dizziness</option>
+                <option value="Fainting">Fainting</option>
+            </optgroup>
+            <optgroup label="Respiratory">
+                <option value="Cough">Cough</option>
+                <option value="Cold / Flu">Cold / Flu</option>
+                <option value="Sore Throat">Sore Throat</option>
+                <option value="Difficulty Breathing">Difficulty Breathing</option>
+                <option value="Asthma Attack">Asthma Attack</option>
+            </optgroup>
+            <optgroup label="Gastrointestinal">
+                <option value="Stomach Pain">Stomach Pain</option>
+                <option value="Nausea / Vomiting">Nausea / Vomiting</option>
+                <option value="Diarrhea">Diarrhea</option>
+                <option value="Loss of Appetite">Loss of Appetite</option>
+            </optgroup>
+            <optgroup label="Pain & Musculoskeletal">
+                <option value="Body Pain">Body Pain</option>
+                <option value="Back Pain">Back Pain</option>
+                <option value="Chest Pain">Chest Pain</option>
+                <option value="Joint Pain">Joint Pain</option>
+                <option value="Muscle Cramp">Muscle Cramp</option>
+            </optgroup>
+            <optgroup label="Skin & Allergies">
+                <option value="Skin Rash">Skin Rash</option>
+                <option value="Allergic Reaction">Allergic Reaction</option>
+                <option value="Insect Bite">Insect Bite</option>
+                <option value="Wound / Cut">Wound / Cut</option>
+            </optgroup>
+            <optgroup label="General">
+                <option value="Fever">Fever</option>
+                <option value="Fatigue / Weakness">Fatigue / Weakness</option>
+                <option value="Eye Problem">Eye Problem</option>
+                <option value="Ear Pain">Ear Pain</option>
+                <option value="Toothache">Toothache</option>
+                <option value="Menstrual Cramps">Menstrual Cramps</option>
+                <option value="Anxiety / Panic Attack">Anxiety / Panic Attack</option>
+            </optgroup>
+            <optgroup label="Injury">
+                <option value="Sprain / Strain">Sprain / Strain</option>
+                <option value="Fracture (Suspected)">Fracture (Suspected)</option>
+                <option value="Bruise / Contusion">Bruise / Contusion</option>
+                <option value="Burns">Burns</option>
+            </optgroup>
+            <optgroup label="Other">
+                <option value="Other">Other (Specify in description)</option>
+            </optgroup>
+        </select>
+        <div class="invalid-feedback">Please select a complaint category.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Complaint Description</label>
+        <textarea class="form-control" name="complaint_description" rows="3" placeholder="Provide additional details about the complaint..."></textarea>
+    </div>
     <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
     <div class="mb-3"><label class="form-label">Treatment Provided</label><textarea class="form-control" name="treatment" rows="3" placeholder="Treatment given or recommended..."></textarea></div>
 </div>
