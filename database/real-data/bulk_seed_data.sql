@@ -3,7 +3,7 @@
 -- Run AFTER campuscare.sql + seed_data.sql
 -- ============================================================
 
-
+USE `campuscare`;
 -- Class Representatives (password: rep123)
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `assigned_program_id`, `assigned_year_level_id`, `assigned_section`, `status`) VALUES
 ('rep_mercado_BSA_1A', '$2y$10$XWPlsJYECdHMmgMnTBF9S.h8.peWBr.ZX/5v4P0ibli/gfhowZB9G', 'Efren', 'Mercado', 'efren.mercado.rep@student.edu.com', 'rep', 1, 1, 'A', 'active'),
