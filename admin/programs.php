@@ -22,10 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Code and name are required.']);
         }
 
-        // Check uniqueness
-        $existing = $db->fetch("SELECT id FROM programs WHERE code = ? AND id != ?", [$code, $id]);
-        if ($existing) {
+        // Check uniqueness for code
+        $existingCode = $db->fetch("SELECT id FROM programs WHERE code = ? AND id != ?", [$code, $id]);
+        if ($existingCode) {
             jsonResponse(['success' => false, 'message' => 'Program code already exists.']);
+        }
+
+        // Check uniqueness for name
+        $existingName = $db->fetch("SELECT id FROM programs WHERE name = ? AND id != ?", [$name, $id]);
+        if ($existingName) {
+            jsonResponse(['success' => false, 'message' => 'Program name already exists.']);
         }
 
         if ($id > 0) {
