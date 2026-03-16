@@ -19,7 +19,7 @@ $visits = $db->fetchAll(
 );
 
 $totalVisits = count($visits);
-$topComplaints = $db->fetchAll("SELECT complaint, COUNT(*) as cnt FROM visits GROUP BY complaint ORDER BY cnt DESC LIMIT 10");
+$topComplaints = $db->fetchAll("SELECT complaint_category, COUNT(*) as cnt FROM visits GROUP BY complaint_category ORDER BY cnt DESC LIMIT 10");
 
 // Chart data: visits by month (last 12 months)
 $visitsByMonth = $db->fetchAll(
@@ -104,9 +104,11 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
 
         <?php if ($usePageBreaks): ?>
         .page-break { page-break-before: always; }
-        <?php else: ?>
+        <?php
+else: ?>
         .page-break { margin-top: 30px; }
-        <?php endif; ?>
+        <?php
+endif; ?>
 
         @media print {
             .no-print { display: none; }
@@ -132,40 +134,44 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
     </div>
 
     <?php
-    $hasPreviousSection = false;
-    ?>
+$hasPreviousSection = false;
+?>
 
     <!-- Summary Stats -->
     <?php if (in_array('summary', $sections)): ?>
-    <div class="stats <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
+    <div class="stats <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="stat-box"><div class="value"><?php echo number_format($totalVisits); ?></div><div class="label">Total Visits</div></div>
         <div class="stat-box"><div class="value"><?php echo number_format($totalStudentsWithVisits); ?></div><div class="label">Unique Patients</div></div>
         <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?></div><div class="label">Avg Visits/Day</div></div>
     </div>
-    <?php $hasPreviousSection = true; endif; ?>
+    <?php $hasPreviousSection = true;
+endif; ?>
 
     <!-- Charts Row -->
     <?php if (in_array('visits_month', $sections) || in_array('visits_program', $sections)): ?>
-    <div class="charts-row <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
+    <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <?php if (in_array('visits_month', $sections)): ?>
         <div class="chart-box wide">
             <h3>Visits by Month (Last 12 Months)</h3>
             <canvas id="monthlyChart"></canvas>
         </div>
-        <?php endif; ?>
+        <?php
+    endif; ?>
         
         <?php if (in_array('visits_program', $sections)): ?>
         <div class="chart-box">
             <h3>Visits by Program</h3>
             <canvas id="programChart"></canvas>
         </div>
-        <?php endif; ?>
+        <?php
+    endif; ?>
     </div>
-    <?php $hasPreviousSection = true; endif; ?>
+    <?php $hasPreviousSection = true;
+endif; ?>
 
     <!-- Top Complaints -->
     <?php if (in_array('top_complaints', $sections)): ?>
-    <div class="section <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
+    <div class="section <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="chart-box" style="border:1px solid #eee; border-radius:6px; padding:15px; margin-bottom:20px;">
             <h3>Top Health Complaints</h3>
             <canvas id="complaintsChart" style="height:250px !important;"></canvas>
@@ -175,16 +181,18 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
             <thead><tr><th>#</th><th>Complaint</th><th>Occurrences</th></tr></thead>
             <tbody>
             <?php foreach ($topComplaints as $i => $c): ?>
-            <tr><td><?php echo $i + 1; ?></td><td><?php echo e($c['complaint']); ?></td><td><?php echo $c['cnt']; ?></td></tr>
-            <?php endforeach; ?>
+            <tr><td><?php echo $i + 1; ?></td><td><?php echo e($c['complaint_category']); ?></td><td><?php echo $c['cnt']; ?></td></tr>
+            <?php
+    endforeach; ?>
             </tbody>
         </table>
     </div>
-    <?php $hasPreviousSection = true; endif; ?>
+    <?php $hasPreviousSection = true;
+endif; ?>
 
     <!-- Visit Records Table -->
     <?php if (in_array('visit_records', $sections)): ?>
-    <div class="section <?php echo ($hasPreviousSection) ? 'page-break' : ''; ?>">
+    <div class="section <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <h2>Visit Records</h2>
         <table>
             <thead><tr><th>Date</th><th>Student ID</th><th>Name</th><th>Program</th><th>Complaint</th><th>Status</th><th>Nurse</th></tr></thead>
@@ -199,13 +207,15 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
                 <td><?php echo e($v['status']); ?></td>
                 <td><?php echo e($v['attended_by']); ?></td>
             </tr>
-            <?php endforeach; ?>
+            <?php
+    endforeach; ?>
             </tbody>
         </table>
     </div>
-    <?php endif; ?>
+    <?php
+endif; ?>
 
-    <div class="footer">CampusCare — School Clinic Patient Information & Medicine Record System</div>
+    <div class="footer">CampusCare — School Clinic Patient Information Record System</div>
 
     <script>
     // Monthly visits bar chart
@@ -217,7 +227,8 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
             datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
-    <?php endif; ?>
+    <?php
+endif; ?>
 
     // Program visits doughnut chart
     <?php if (in_array('visits_program', $sections)): ?>
@@ -229,18 +240,20 @@ $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
             datasets:[{data:progData.map(d=>d.count),backgroundColor:colors.slice(0,progData.length)}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}
     });
-    <?php endif; ?>
+    <?php
+endif; ?>
 
     // Top complaints horizontal bar chart
     <?php if (in_array('top_complaints', $sections)): ?>
     const compData = <?php echo json_encode($topComplaints); ?>;
     new Chart(document.getElementById('complaintsChart'), {
         type:'bar', data:{
-            labels: compData.map(d=>d.complaint.substring(0,30)),
+            labels: compData.map(d=>d.complaint_category.substring(0,30)),
             datasets:[{label:'Occurrences',data:compData.map(d=>d.cnt),backgroundColor:'rgba(26,115,167,0.7)',borderColor:'#1a73a7',borderWidth:1,borderRadius:6}]
         }, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
-    <?php endif; ?>
+    <?php
+endif; ?>
 
     function goBack() {
         if (window.history.length > 1) {

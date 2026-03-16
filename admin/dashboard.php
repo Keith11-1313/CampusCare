@@ -24,9 +24,9 @@ $recentVisits = $db->fetchAll(
 
 // Top complaints this month
 $topComplaints = $db->fetchAll(
-    "SELECT complaint, COUNT(*) as count FROM visits 
+    "SELECT complaint_category, COUNT(*) as count FROM visits 
      WHERE MONTH(visit_date) = MONTH(CURDATE()) AND YEAR(visit_date) = YEAR(CURDATE())
-     GROUP BY complaint ORDER BY count DESC LIMIT 5"
+     GROUP BY complaint_category ORDER BY count DESC LIMIT 5"
 );
 
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -146,7 +146,7 @@ endif; ?>
 else: ?>
                 <?php foreach ($topComplaints as $c): ?>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="small fw-500"><?php echo truncate($c['complaint'], 30); ?></div>
+                    <div class="small fw-500"><?php echo truncate($c['complaint_category'], 30); ?></div>
                     <span class="badge bg-primary rounded-pill"><?php echo $c['count']; ?></span>
                 </div>
                 <?php

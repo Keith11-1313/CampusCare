@@ -135,22 +135,42 @@ VACCINES = [
     "Hepatitis B","COVID-19 (Pfizer)","COVID-19 (Moderna)","Influenza",
     "Tetanus Toxoid","HPV","MMR",
 ]
+# (category, description, assessment, treatment)
 VISIT_COMPLAINTS = [
-    ("Headache and dizziness",           "Mild tension headache",                 "Paracetamol 500mg given. Advised rest."),
-    ("Sore throat and runny nose",       "Upper respiratory tract infection",     "Vitamin C and lozenges provided."),
-    ("Stomach ache and nausea",          "Acute gastritis",                       "Antacid given. Advised regular meals."),
-    ("Fever, body aches, and fatigue",   "Possible viral infection",              "Paracetamol 500mg given. Advised rest at home."),
-    ("Menstrual cramps",                 "Dysmenorrhea",                          "Mefenamic acid 250mg given. Hot compress."),
-    ("Cough and cold",                   "Common cold",                           "Decongestant and Vitamin C provided."),
-    ("Feeling faint and weak",           "Possible dehydration",                  "ORS given. Monitored for 30 mins."),
-    ("Eye irritation and redness",       "Allergic conjunctivitis",               "Artificial tears administered."),
-    ("Minor cut on hand",               "Superficial laceration",                "Wound cleaned. Bandage applied."),
-    ("Sprained ankle from PE class",    "Grade 1 ankle sprain",                  "RICE method applied. Elastic bandage wrap."),
-    ("Back pain during prolonged sitting","Mild lower back strain",               "Hot compress applied. Stretching exercises."),
-    ("Toothache",                        "Dental issue, referred to dentist",     "Mefenamic acid for pain. Dental referral issued."),
-    ("Anxiety and chest tightness",      "Anxiety-related symptoms",              "Breathing exercises guided. Counseling suggested."),
-    ("Skin rash on forearm",             "Allergic dermatitis",                   "Antihistamine given. Area cleaned."),
-    ("Knee pain after basketball",       "Mild patellar strain",                  "Ice pack applied. Knee support bandage."),
+    ("Headache - Minor",    "Dizziness and mild tension",              "Mild tension headache",                 "Paracetamol 500mg given. Advised rest."),
+    ("Headache - Severe",   "Throbbing pain, sensitivity to light",    "Possible migraine episode",             "Paracetamol 500mg, dark room rest."),
+    ("Headache - Migraine", "Recurring migraine with aura",            "Migraine with visual aura",             "Sumatriptan and rest in dark room."),
+    ("Dizziness",           "Lightheaded after standing up quickly",   "Orthostatic hypotension",               "ORS given. Monitored for 30 mins."),
+    ("Fainting",            "Fainted during morning flag ceremony",    "Vasovagal syncope",                     "Laid supine, legs elevated. Monitoring."),
+    ("Sore Throat",         "Sore throat and runny nose",              "Upper respiratory tract infection",     "Vitamin C and lozenges provided."),
+    ("Cough",               "Persistent dry cough for 2 days",         "Acute bronchitis",                      "Decongestant and Vitamin C provided."),
+    ("Cold / Flu",          "Runny nose, sneezing, body aches",        "Common cold",                           "Decongestant and Vitamin C provided."),
+    ("Difficulty Breathing","Shortness of breath during PE",           "Exercise-induced bronchoconstriction",  "Inhaler administered. Rested."),
+    ("Asthma Attack",       "Wheezing and chest tightness",            "Acute asthma exacerbation",             "Salbutamol inhaler. Monitored."),
+    ("Stomach Pain",        "Stomach ache and nausea after lunch",     "Acute gastritis",                       "Antacid given. Advised regular meals."),
+    ("Nausea / Vomiting",   "Nausea and vomiting since morning",       "Possible food poisoning",               "ORS given. Advised bland diet."),
+    ("Diarrhea",            "Loose stools since last night",           "Acute gastroenteritis",                 "ORS and Loperamide given."),
+    ("Loss of Appetite",    "No appetite for 3 days",                  "Possible stress-related anorexia",      "Counseling suggested. Vitamin B complex."),
+    ("Fever",               "Fever, body aches, and fatigue",          "Possible viral infection",              "Paracetamol 500mg given. Advised rest at home."),
+    ("Fatigue / Weakness",  "Feeling faint and weak all day",          "Possible dehydration",                  "ORS given. Monitored for 30 mins."),
+    ("Menstrual Cramps",    "Severe menstrual cramps",                 "Dysmenorrhea",                          "Mefenamic acid 250mg given. Hot compress."),
+    ("Eye Problem",         "Eye irritation and redness",              "Allergic conjunctivitis",               "Artificial tears administered."),
+    ("Ear Pain",            "Sharp pain in left ear",                  "Possible otitis media",                 "Paracetamol given. ENT referral issued."),
+    ("Toothache",           "Severe toothache on lower right",         "Dental issue, referred to dentist",     "Mefenamic acid for pain. Dental referral issued."),
+    ("Anxiety / Panic Attack","Anxiety and chest tightness",           "Anxiety-related symptoms",              "Breathing exercises guided. Counseling suggested."),
+    ("Wound / Cut",         "Minor cut on hand from paper",            "Superficial laceration",                "Wound cleaned. Bandage applied."),
+    ("Skin Rash",           "Rash on forearm, itchy",                  "Allergic dermatitis",                   "Antihistamine given. Area cleaned."),
+    ("Allergic Reaction",   "Hives after eating seafood",              "Urticaria, allergic reaction",          "Cetirizine 10mg given. Monitoring."),
+    ("Insect Bite",         "Swollen insect bite on arm",              "Insect bite with localized swelling",   "Antihistamine and cold compress."),
+    ("Body Pain",           "General body aches after PE",             "Muscle soreness",                       "Topical analgesic applied."),
+    ("Back Pain",           "Back pain during prolonged sitting",      "Mild lower back strain",                "Hot compress applied. Stretching exercises."),
+    ("Chest Pain",          "Mild chest discomfort",                   "Non-cardiac chest pain",                "ECG normal. Advised follow-up."),
+    ("Joint Pain",          "Knee pain after basketball",              "Mild patellar strain",                  "Ice pack applied. Knee support bandage."),
+    ("Muscle Cramp",        "Leg cramp during PE class",               "Exercise-induced muscle cramp",         "Stretching and hydration."),
+    ("Sprain / Strain",     "Sprained ankle from PE class",            "Grade 1 ankle sprain",                  "RICE method applied. Elastic bandage wrap."),
+    ("Fracture (Suspected)","Fell and hurt wrist, swelling noted",     "Suspected distal radius fracture",      "Splint applied. X-ray referral."),
+    ("Bruise / Contusion",  "Bruise on shin from bumping desk",        "Minor contusion",                       "Cold compress applied."),
+    ("Burns",               "Minor burn on finger from lab",           "First-degree burn",                     "Cool water applied. Burn ointment."),
 ]
 VISIT_STATUSES = ["Completed","Completed","Completed","Completed","Follow-up","Referred"]
 
@@ -181,7 +201,7 @@ out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bulk_seed_d
 
 next_user_id    = EXISTING_USER_COUNT + 1      # 5
 next_student_id = EXISTING_STUDENT_COUNT + 1   # 1
-seq = {}
+seq = {}  # pyre-ignore
 for y in YEARS:
     seq[y["prefix"]] = 1
 
@@ -221,7 +241,7 @@ for prog_idx, prog_code in enumerate(PROGRAM_CODES):
             )
             rep_rows.append(val)
             rep_user_id = next_user_id
-            next_user_id += 1
+            next_user_id += 1  # pyre-ignore
 
             # -- Students --
             n = random.randint(STU_PER_SEC[0], STU_PER_SEC[1])
@@ -244,7 +264,7 @@ for prog_idx, prog_code in enumerate(PROGRAM_CODES):
 
                 prefix = year["prefix"]
                 sid_str = "%s-%06d" % (prefix, seq[prefix])
-                seq[prefix] += 1
+                seq[prefix] += 1  # pyre-ignore
 
                 s_phone = phone()
                 s_email = "%s.%s%d@%s" % (slug(sfn), slug(sln), random.randint(1,999), EMAIL_DOMAIN)
@@ -264,7 +284,7 @@ for prog_idx, prog_code in enumerate(PROGRAM_CODES):
                 student_rows.append(val)
 
                 db_id = next_student_id
-                next_student_id += 1
+                next_student_id += 1  # pyre-ignore
                 students_list.append({
                     "id": db_id,
                     "fn": sfn,
@@ -357,10 +377,10 @@ for s in students_list:
             hour = random.randint(7, 16)
             minute = random.choice(["00","15","30","45"])
             visit_rows.append(
-                "(%d, %d, '2026-%02d-%02d %02d:%s:00', '%d/%d', %.1f, %d, %d, %.1f, %.1f, '%s', '%s', '%s', %s, %s, '%s')" % (
+                "(%d, %d, '2026-%02d-%02d %02d:%s:00', '%d/%d', %.1f, %d, %d, %.1f, %.1f, '%s', '%s', '%s', '%s', %s, %s, '%s')" % (
                     sid, nurse, vm, vd, hour, minute,
                     sys_bp, dia_bp, temp, hr, rr, wt, ht,
-                    esc(comp[0]), esc(comp[1]), esc(comp[2]),
+                    esc(comp[0]), esc(comp[1]), esc(comp[2]), esc(comp[3]),
                     fu_notes, fu_date, status
                 )
             )
@@ -423,8 +443,9 @@ with open(out_path, "w", encoding="utf-8") as f:
     f.write("\n-- Clinic Visits\n")
     write_inserts(f, "visits",
         ["student_id","attended_by","visit_date","blood_pressure","temperature",
-         "pulse_rate","respiratory_rate","weight","height","complaint","assessment",
-         "treatment","follow_up_notes","follow_up_date","status"], visit_rows)
+         "pulse_rate","respiratory_rate","weight","height","complaint_category",
+         "complaint","assessment","treatment","follow_up_notes","follow_up_date",
+         "status"], visit_rows)
 
     f.write("\n-- Bulk seed data complete.\n")
 

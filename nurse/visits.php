@@ -15,9 +15,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE 1=1";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR v.complaint LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR v.complaint_category LIKE ? OR v.complaint LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk]);
 }
 if (!empty($statusFilter)) {
     $where .= " AND v.status = ?";
@@ -88,7 +88,7 @@ else:
 <tr>
 <td><small><?php echo formatDateTime($v['visit_date'], 'M d, h:i A'); ?></small></td>
 <td><a href="student_profile.php?id=<?php echo $v['student_id']; ?>" class="fw-semibold text-decoration-none"><?php echo e($v['first_name'] . ' ' . $v['last_name']); ?></a><br><small class="text-muted"><?php echo e($v['sid']); ?></small></td>
-<td><?php echo truncate($v['complaint'], 30); ?></td>
+<td><?php echo e($v['complaint_category']); ?></td>
 <td><small><?php echo truncate($v['assessment'] ?? '—', 30); ?></small></td>
 <td><small><?php echo truncate($v['treatment'] ?? '—', 30); ?></small></td>
 <td><small><?php echo e($v['nurse_name'] ?? '—'); ?></small></td>

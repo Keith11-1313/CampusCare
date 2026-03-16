@@ -28,10 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sid = intval($_POST['student_id'] ?? 0);
     $complaintCategory = trim($_POST['complaint_category'] ?? '');
     $complaintDesc = trim($_POST['complaint_description'] ?? '');
-    $complaint = $complaintCategory;
-    if (!empty($complaintDesc)) {
-        $complaint .= ': ' . $complaintDesc;
-    }
 
     if (!$sid || empty($complaintCategory)) {
         setFlashMessage('error', 'Student and complaint are required.');
@@ -40,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $db->query(
-        "INSERT INTO visits (student_id, attended_by, visit_date, blood_pressure, temperature, pulse_rate, respiratory_rate, weight, height, complaint, assessment, treatment, follow_up_notes, follow_up_date, status) VALUES (?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO visits (student_id, attended_by, visit_date, blood_pressure, temperature, pulse_rate, respiratory_rate, weight, height, complaint_category, complaint, assessment, treatment, follow_up_notes, follow_up_date, status) VALUES (?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [$sid, $_SESSION['user_id'],
         trim($_POST['blood_pressure'] ?? '') ?: null,
         trim($_POST['temperature'] ?? '') ?: null,
@@ -48,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         trim($_POST['respiratory_rate'] ?? '') ?: null,
         trim($_POST['weight'] ?? '') ?: null,
         trim($_POST['height'] ?? '') ?: null,
-        $complaint,
+        $complaintCategory,
+        $complaintDesc ?: null,
         trim($_POST['assessment'] ?? '') ?: null,
         trim($_POST['treatment'] ?? '') ?: null,
         trim($_POST['follow_up_notes'] ?? '') ?: null,

@@ -19,8 +19,8 @@ $visitsByMonth = $db->fetchAll(
 
 // Chart data: top 10 complaints
 $topComplaints = $db->fetchAll(
-    "SELECT complaint, COUNT(*) as count FROM visits 
-     GROUP BY complaint ORDER BY count DESC LIMIT 10"
+    "SELECT complaint_category, COUNT(*) as count FROM visits 
+     GROUP BY complaint_category ORDER BY count DESC LIMIT 10"
 );
 
 // Chart data: visits by program
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function(){
     new Chart(document.getElementById('complaintsChart'), {
         type: 'bar', // Vertical bar for podium
         data: {
-            labels: podiumData.map(d => formatLabel(d.complaint)),
+            labels: podiumData.map(d => formatLabel(d.complaint_category)),
             datasets: [{
                 label: 'Occurrences',
                 data: podiumData.map(d => d.count),
