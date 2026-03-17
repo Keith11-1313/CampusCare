@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db->query(
         "INSERT INTO visits (student_id, attended_by, visit_date, blood_pressure, temperature, pulse_rate, respiratory_rate, weight, height, complaint_category, complaint, assessment, treatment, follow_up_notes, follow_up_date, status) VALUES (?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [$sid, $_SESSION['user_id'],
-        trim($_POST['blood_pressure'] ?? '') ?: null,
+        (!empty($_POST['bp_systolic']) && !empty($_POST['bp_diastolic'])) ? trim($_POST['bp_systolic']) . '/' . trim($_POST['bp_diastolic']) : null,
         trim($_POST['temperature'] ?? '') ?: null,
         trim($_POST['pulse_rate'] ?? '') ?: null,
         trim($_POST['respiratory_rate'] ?? '') ?: null,
@@ -119,7 +119,18 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="step-section" data-step="2">
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-heart-pulse me-2"></i>Vital Signs</h6>
     <div class="row g-3">
-        <div class="col-md-4"><label class="form-label">Blood Pressure</label><input type="text" class="form-control" name="blood_pressure" placeholder="e.g. 120/80"></div>
+        <div class="col-md-4">
+            <div class="row g-2">
+                <div class="col-6">
+                    <label class="form-label">Systolic</label>
+                    <input type="number" class="form-control" name="bp_systolic" placeholder="e.g. 120">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Diastolic</label>
+                    <input type="number" class="form-control" name="bp_diastolic" placeholder="e.g. 80">
+                </div>
+            </div>
+        </div>
         <div class="col-md-4"><label class="form-label">Temperature (°C)</label><input type="number" step="0.1" class="form-control" name="temperature" placeholder="e.g. 36.5"></div>
         <div class="col-md-4"><label class="form-label">Pulse Rate (bpm)</label><input type="number" class="form-control" name="pulse_rate" placeholder="e.g. 72"></div>
         <div class="col-md-4"><label class="form-label">Respiratory Rate</label><input type="number" class="form-control" name="respiratory_rate" placeholder="e.g. 18"></div>
