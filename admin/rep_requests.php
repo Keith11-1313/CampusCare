@@ -16,10 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $action = $_POST['action'];
 
         if ($action === 'approve') {
-            try {
-                $db->beginTransaction();
-                
-                // Get request details
+                // Get request details (no DB changes yet — approval happens after account creation in users.php)
                 $request = $db->fetch(
                     "SELECT rr.*, u.username as old_rep_username, s.student_id as nominee_student_id, s.first_name, s.last_name, s.program_id, s.year_level_id, s.section 
                      FROM rep_requests rr 
@@ -30,45 +27,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 );
 
                 if ($request && $request['status'] === 'pending') {
-                    // 1. Deactivate old rep
-                    $db->query(
-                        "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
-                        ['Stepped down; replaced by ' . $request['first_name'] . ' ' . $request['last_name'], $request['rep_user_id']]
-                    );
-
-                    // 2. Mark request as approved
-                    $db->query("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$requestId]);
-
-                    $db->commit();
-                    logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $requestId. Deactivated rep: " . $request['old_rep_username']);
-                    
-                    // Redirect to users.php with prefill data
+                    // Redirect to users.php with prefill data — approval & deactivation will happen there after account creation
                     $params = http_build_query([
                         'prefill_request' => $requestId,
                         'first_name' => $request['first_name'],
                         'last_name' => $request['last_name'],
-                        'username' => $request['nominee_student_id'], // Default username to student ID
+                        'username' => $request['nominee_student_id'],
                         'role' => 'rep',
                         'prog' => $request['program_id'],
                         'yl' => $request['year_level_id'],
                         'sec' => $request['section']
                     ]);
                     
-                    redirect(BASE_URL . "/admin/users.php?$params&msg=Rep+request+approved.+Please+complete+the+new+account+setup.");
+                    redirect(BASE_URL . "/admin/users.php?$params&msg=Please+complete+the+new+rep+account+setup.+The+old+rep+will+be+deactivated+once+saved.");
                 } else {
                     $error = 'Invalid request or already processed.';
                 }
-            } catch (Exception $e) {
-                $db->rollback();
-                $error = 'Error processing approval: ' . $e->getMessage();
-            }
         } elseif ($action === 'reject') {
             $notes = trim($_POST['admin_notes'] ?? '');
+            // Get request details for logging
+            $reqInfo = $db->fetch(
+                "SELECT u.username FROM rep_requests rr JOIN users u ON rr.rep_user_id = u.id WHERE rr.id = ?",
+                [$requestId]
+            );
             $db->query(
                 "UPDATE rep_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
                 [$notes, $requestId]
             );
-            logAccess($_SESSION['user_id'], 'reject_rep_request', "Rejected replacement request ID $requestId");
+            logAccess($_SESSION['user_id'], 'reject_rep_request', "Rejected replacement request ID $requestId. Rep: " . ($reqInfo['username'] ?? 'unknown'));
             $message = 'Request has been rejected.';
         }
     }

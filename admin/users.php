@@ -57,6 +57,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null]
             );
             logAccess($_SESSION['user_id'], 'create_user', 'Created user: ' . $username);
+
+            // Handle rep replacement request finalization
+            $prefillRequest = intval($_POST['prefill_request'] ?? 0);
+            if ($prefillRequest > 0) {
+                $repRequest = $db->fetch(
+                    "SELECT rr.*, u.username as old_rep_username, s.first_name as nominee_fname, s.last_name as nominee_lname
+                     FROM rep_requests rr
+                     JOIN users u ON rr.rep_user_id = u.id
+                     JOIN students s ON rr.nominee_student_id = s.id
+                     WHERE rr.id = ? AND rr.status = 'pending'",
+                    [$prefillRequest]
+                );
+                if ($repRequest) {
+                    // Deactivate old rep
+                    $db->query(
+                        "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
+                        ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
+                    );
+                    // Mark request as approved
+                    $db->query("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$prefillRequest]);
+                    logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $prefillRequest. Deactivated rep: " . $repRequest['old_rep_username']);
+                }
+            }
+
             jsonResponse(['success' => true, 'message' => 'User created successfully.']);
         }
         else {
@@ -303,6 +327,7 @@ endif; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <input type="hidden" name="action" id="formAction" value="create">
                     <input type="hidden" name="id" id="userId" value="0">
+                    <input type="hidden" name="prefill_request" id="prefillRequest" value="0">
 
                     <!-- Stepper Timeline -->
                     <div class="stepper" id="userStepper">
@@ -694,6 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('prefill_request')) {
         openUserModal();
+        document.getElementById('prefillRequest').value = urlParams.get('prefill_request') || '0';
         document.getElementById('firstName').value = urlParams.get('first_name') || '';
         document.getElementById('lastName').value = urlParams.get('last_name') || '';
         document.getElementById('username').value = urlParams.get('username') || '';
