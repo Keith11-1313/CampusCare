@@ -78,9 +78,23 @@ endif; ?>
         </div>
 </form></div>
 
-<div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Date</th><th>Student</th><th>Complaint</th><th>Assessment</th><th>Treatment</th><th>Nurse</th><th>Status</th></tr></thead>
-<tbody>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Student</th>
+                            <th>Category</th>
+                            <th>Complaint</th>
+                            <th>Assessment</th>
+                            <th>Treatment</th>
+                            <th>Nurse</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 <?php if (empty($visits)): ?><tr><td colspan="7" class="text-center text-muted py-4">No visits found.</td></tr>
 <?php
 else:
@@ -89,8 +103,9 @@ else:
 <td><small><?php echo formatDateTime($v['visit_date'], 'M d, h:i A'); ?></small></td>
 <td><a href="student_profile.php?id=<?php echo $v['student_id']; ?>" class="fw-semibold text-decoration-none"><?php echo e($v['first_name'] . ' ' . $v['last_name']); ?></a><br><small class="text-muted"><?php echo e($v['sid']); ?></small></td>
 <td><?php echo e($v['complaint_category']); ?></td>
-<td><small><?php echo truncate($v['assessment'] ?? '—', 30); ?></small></td>
-<td><small><?php echo truncate($v['treatment'] ?? '—', 30); ?></small></td>
+<td><small><?php echo truncate($v['complaint'] ?? '—'); ?></small></td>
+<td><small><?php echo truncate($v['assessment'] ?? '—'); ?></small></td>
+<td><small><?php echo truncate($v['treatment'] ?? '—'); ?></small></td>
 <td><small><?php echo e($v['nurse_name'] ?? '—'); ?></small></td>
 <td><?php echo statusBadge($v['status']); ?></td>
 </tr>
