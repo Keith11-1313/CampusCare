@@ -164,6 +164,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </button>
 </div>
 
+<?php if (isset($_GET['msg'])): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <!-- Filter Bar -->
 <div class="filter-bar">
     <form method="GET" class="row g-2 align-items-end">
@@ -680,5 +687,24 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
             }
         })
         .catch(err => showToast('error', 'An error occurred. Please try again.'));
+});
+
+// Handle pre-fill from Rep Requests
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('prefill_request')) {
+        openUserModal();
+        document.getElementById('firstName').value = urlParams.get('first_name') || '';
+        document.getElementById('lastName').value = urlParams.get('last_name') || '';
+        document.getElementById('username').value = urlParams.get('username') || '';
+        document.getElementById('role').value = urlParams.get('role') || 'rep';
+        document.getElementById('assignedProgram').value = urlParams.get('prog') || '';
+        document.getElementById('assignedYearLevel').value = urlParams.get('yl') || '';
+        document.getElementById('assignedSection').value = urlParams.get('sec') || '';
+        toggleRepFields();
+        
+        // Skip to step 3 if pre-filled for better UX
+        goToUserStep(3);
+    }
 });
 </script>

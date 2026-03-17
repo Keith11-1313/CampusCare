@@ -59,7 +59,9 @@ endif; ?>
         <div class="card"><div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
         <div class="card-body">
             <a href="students.php?action=add" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start"><i class="bi bi-person-plus me-2"></i>Add Student</a>
-            <a href="students.php" class="btn btn-outline-primary btn-sm w-100 text-start"><i class="bi bi-people me-2"></i>View My Students</a>
+            <a href="students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start"><i class="bi bi-people me-2"></i>View My Students</a>
+            <hr class="my-2">
+            <a href="request_change.php" class="btn btn-outline-danger btn-sm w-100 text-start"><i class="bi bi-person-x me-2"></i>Request Change of Role</a>
         </div></div>
     </div>
 </div>
