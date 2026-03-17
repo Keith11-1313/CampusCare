@@ -188,7 +188,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </button>
 </div>
 
-<?php if (isset($_GET['msg'])): ?>
+<?php if (isset($_GET['prefill_request'])): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" id="prefillAlert" style="display:none;">
+        <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new rep account setup. The old rep will be deactivated once saved.'); ?>
+        <button type="button" class="btn btn-sm btn-outline-success" style="position:absolute;top:50%;right:1rem;transform:translateY(-50%);" onclick="openPrefillModal()">Continue</button>
+    </div>
+<?php endif; ?>
+<?php if (isset($_GET['msg']) && !isset($_GET['prefill_request'])): ?>
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -372,7 +378,12 @@ endif; ?>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Password <span class="required-asterisk" id="pwdRequired">*</span></label>
-                                <input type="password" class="form-control" name="password" id="password" minlength="6">
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" name="password" id="password" minlength="6" style="padding-right: 45px;">
+                                    <button class="btn btn-link position-absolute text-muted p-0" type="button" id="togglePasswordBtn" tabindex="-1" style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
                             </div>
                             <div class="col-12">
@@ -487,6 +498,18 @@ endforeach; ?>
 const userModal = new bootstrap.Modal(document.getElementById('userModal'));
 let currentUserStep = 1;
 const totalUserSteps = 3;
+
+document.getElementById('togglePasswordBtn').addEventListener('click', function() {
+    const pwd = document.getElementById('password');
+    const icon = this.querySelector('i');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        pwd.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+});
 
 function goToUserStep(step) {
     currentUserStep = step;
@@ -715,22 +738,40 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
 });
 
 // Handle pre-fill from Rep Requests
+let isPrefillSession = false;
+
+function openPrefillModal() {
+    const urlParams = new URLSearchParams(window.location.search);
+    isPrefillSession = true;
+    openUserModal();
+    document.getElementById('prefillRequest').value = urlParams.get('prefill_request') || '0';
+    document.getElementById('firstName').value = urlParams.get('first_name') || '';
+    document.getElementById('lastName').value = urlParams.get('last_name') || '';
+    document.getElementById('username').value = urlParams.get('username') || '';
+    document.getElementById('role').value = urlParams.get('role') || 'rep';
+    document.getElementById('assignedProgram').value = urlParams.get('prog') || '';
+    document.getElementById('assignedYearLevel').value = urlParams.get('yl') || '';
+    document.getElementById('assignedSection').value = urlParams.get('sec') || '';
+    toggleRepFields();
+    goToUserStep(1);
+    // Hide the alert while modal is open
+    const alert = document.getElementById('prefillAlert');
+    if (alert) alert.style.display = 'none';
+}
+
+// Auto-open prefill modal on page load
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('prefill_request')) {
-        openUserModal();
-        document.getElementById('prefillRequest').value = urlParams.get('prefill_request') || '0';
-        document.getElementById('firstName').value = urlParams.get('first_name') || '';
-        document.getElementById('lastName').value = urlParams.get('last_name') || '';
-        document.getElementById('username').value = urlParams.get('username') || '';
-        document.getElementById('role').value = urlParams.get('role') || 'rep';
-        document.getElementById('assignedProgram').value = urlParams.get('prog') || '';
-        document.getElementById('assignedYearLevel').value = urlParams.get('yl') || '';
-        document.getElementById('assignedSection').value = urlParams.get('sec') || '';
-        toggleRepFields();
-        
-        // Start on step 1 so admin can review all prefilled data
-        goToUserStep(1);
+        openPrefillModal();
+    }
+});
+
+// Show the alert when prefill modal is canceled/closed without saving
+document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
+    if (isPrefillSession) {
+        const alert = document.getElementById('prefillAlert');
+        if (alert) alert.style.display = '';
     }
 });
 </script>
