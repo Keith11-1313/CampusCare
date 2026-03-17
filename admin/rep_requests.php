@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Rep Replacement Requests';
+$pageTitle = 'Class Representative Replacement Requests';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');
 $db = Database::getInstance();
@@ -11,50 +11,53 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $error = 'Invalid security token.';
-    } else {
+    }
+    else {
         $requestId = intval($_POST['request_id'] ?? 0);
         $action = $_POST['action'];
 
         if ($action === 'approve') {
-                // Get request details (no DB changes yet — approval happens after account creation in users.php)
-                $request = $db->fetch(
-                    "SELECT rr.*, u.username as old_rep_username, s.student_id as nominee_student_id, s.first_name, s.last_name, s.program_id, s.year_level_id, s.section 
+            // Get request details (no DB changes yet — approval happens after account creation in users.php)
+            $request = $db->fetch(
+                "SELECT rr.*, u.username as old_rep_username, s.student_id as nominee_student_id, s.first_name, s.last_name, s.program_id, s.year_level_id, s.section 
                      FROM rep_requests rr 
                      JOIN users u ON rr.rep_user_id = u.id 
                      JOIN students s ON rr.nominee_student_id = s.id 
-                     WHERE rr.id = ?", 
-                    [$requestId]
-                );
+                     WHERE rr.id = ?",
+            [$requestId]
+            );
 
-                if ($request && $request['status'] === 'pending') {
-                    // Redirect to users.php with prefill data — approval & deactivation will happen there after account creation
-                    $params = http_build_query([
-                        'prefill_request' => $requestId,
-                        'first_name' => $request['first_name'],
-                        'last_name' => $request['last_name'],
-                        'username' => $request['nominee_student_id'],
-                        'role' => 'rep',
-                        'prog' => $request['program_id'],
-                        'yl' => $request['year_level_id'],
-                        'sec' => $request['section']
-                    ]);
-                    
-                    redirect(BASE_URL . "/admin/users.php?$params&msg=Please+complete+the+new+rep+account+setup.+The+old+rep+will+be+deactivated+once+saved.");
-                } else {
-                    $error = 'Invalid request or already processed.';
-                }
-        } elseif ($action === 'reject') {
+            if ($request && $request['status'] === 'pending') {
+                // Redirect to users.php with prefill data — approval & deactivation will happen there after account creation
+                $params = http_build_query([
+                    'prefill_request' => $requestId,
+                    'first_name' => $request['first_name'],
+                    'last_name' => $request['last_name'],
+                    'username' => $request['nominee_student_id'],
+                    'role' => 'rep',
+                    'prog' => $request['program_id'],
+                    'yl' => $request['year_level_id'],
+                    'sec' => $request['section']
+                ]);
+
+                redirect(BASE_URL . "/admin/users.php?$params&msg=Please+complete+the+new+class+representative+account+setup.+The+old+class+representative+will+be+deactivated+once+saved.");
+            }
+            else {
+                $error = 'Invalid request or already processed.';
+            }
+        }
+        elseif ($action === 'reject') {
             $notes = trim($_POST['admin_notes'] ?? '');
             // Get request details for logging
             $reqInfo = $db->fetch(
                 "SELECT u.username FROM rep_requests rr JOIN users u ON rr.rep_user_id = u.id WHERE rr.id = ?",
-                [$requestId]
+            [$requestId]
             );
             $db->query(
                 "UPDATE rep_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
-                [$notes, $requestId]
+            [$notes, $requestId]
             );
-            logAccess($_SESSION['user_id'], 'reject_rep_request', "Rejected replacement request ID $requestId. Rep: " . ($reqInfo['username'] ?? 'unknown'));
+            logAccess($_SESSION['user_id'], 'reject_rep_request', "Rejected replacement request ID $requestId. Class Representative: " . ($reqInfo['username'] ?? 'unknown'));
             $message = 'Request has been rejected.';
         }
     }
@@ -78,11 +81,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <div class="page-header">
-    <h1><i class="bi bi-person-x me-2"></i>Rep Replacement Requests</h1>
+    <h1><i class="bi bi-person-x me-2"></i>Class Representative Replacement Requests</h1>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item active">Rep Requests</li>
+            <li class="breadcrumb-item active">Representative Requests</li>
         </ol>
     </nav>
 </div>
@@ -92,14 +95,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <i class="bi bi-check-circle-fill me-2"></i><?php echo e($message); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <?php if ($error): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo e($error); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -108,7 +113,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <thead class="bg-light">
                     <tr>
                         <th>Date</th>
-                        <th>Current Rep</th>
+                        <th>Current Representative</th>
                         <th>Section</th>
                         <th>Nominee</th>
                         <th>Reason</th>
@@ -119,7 +124,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <tbody>
                     <?php if (empty($requests)): ?>
                         <tr><td colspan="7" class="text-center text-muted py-5">No requests found.</td></tr>
-                    <?php else: ?>
+                    <?php
+else: ?>
                         <?php foreach ($requests as $r): ?>
                             <tr>
                                 <td class="align-middle small"><?php echo formatDateTime($r['created_at']); ?></td>
@@ -140,16 +146,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     </div>
                                 </td>
                                 <td class="align-middle">
-                                    <?php 
-                                    $badgeClass = 'bg-secondary';
-                                    if ($r['status'] === 'pending') $badgeClass = 'bg-warning text-dark';
-                                    elseif ($r['status'] === 'approved') $badgeClass = 'bg-success';
-                                    elseif ($r['status'] === 'rejected') $badgeClass = 'bg-danger';
-                                    ?>
+                                    <?php
+        $badgeClass = 'bg-secondary';
+        if ($r['status'] === 'pending')
+            $badgeClass = 'bg-warning text-dark';
+        elseif ($r['status'] === 'approved')
+            $badgeClass = 'bg-success';
+        elseif ($r['status'] === 'rejected')
+            $badgeClass = 'bg-danger';
+?>
                                     <span class="badge <?php echo $badgeClass; ?>"><?php echo ucfirst($r['status']); ?></span>
                                     <?php if ($r['admin_notes']): ?>
                                         <div class="mt-1 small text-muted">Note: <?php echo e($r['admin_notes']); ?></div>
-                                    <?php endif; ?>
+                                    <?php
+        endif; ?>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?php if ($r['status'] === 'pending'): ?>
@@ -166,13 +176,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                                 <i class="bi bi-x-lg me-1"></i>Reject
                                             </button>
                                         </div>
-                                    <?php else: ?>
+                                    <?php
+        else: ?>
                                         <span class="text-muted mt-2">Processed</span>
-                                    <?php endif; ?>
+                                    <?php
+        endif; ?>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                        <?php
+    endforeach; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>
@@ -210,7 +224,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 function confirmApprove(id) {
     showConfirm(
         'Approve this request?',
-        'The current rep will be <strong>deactivated</strong> and you will be redirected to create a new account for the nominee.',
+        'The current class representative will be <strong>deactivated</strong> and you will be redirected to create a new account for the nominee.',
         'Yes, approve',
         'question'
     ).then(result => {

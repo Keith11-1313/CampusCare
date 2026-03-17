@@ -70,14 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     [$prefillRequest]
                 );
                 if ($repRequest) {
-                    // Deactivate old rep
+                    // Deactivate old class representative
                     $db->query(
                         "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
                         ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
                     );
                     // Mark request as approved
                     $db->query("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$prefillRequest]);
-                    logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $prefillRequest. Deactivated rep: " . $repRequest['old_rep_username']);
+                    logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $prefillRequest. Deactivated class representative: " . $repRequest['old_rep_username']);
                 }
             }
 
@@ -190,7 +190,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <?php if (isset($_GET['prefill_request'])): ?>
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" id="prefillAlert" style="display:none;">
-        <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new rep account setup. The old rep will be deactivated once saved.'); ?>
+        <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new class representative account setup. The old class representative will be deactivated once saved.'); ?>
         <button type="button" class="btn btn-sm btn-outline-success" style="position:absolute;top:50%;right:1rem;transform:translateY(-50%);" onclick="openPrefillModal()">Continue</button>
     </div>
 <?php endif; ?>
@@ -215,7 +215,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <option value="">All Roles</option>
                 <option value="admin" <?php echo $roleFilter === 'admin' ? 'selected' : ''; ?>>Admin</option>
                 <option value="nurse" <?php echo $roleFilter === 'nurse' ? 'selected' : ''; ?>>Nurse/Staff</option>
-                <option value="rep" <?php echo $roleFilter === 'rep' ? 'selected' : ''; ?>>Class Rep</option>
+                <option value="rep" <?php echo $roleFilter === 'rep' ? 'selected' : ''; ?>>Class Representative</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -737,7 +737,7 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
         .catch(err => showToast('error', 'An error occurred. Please try again.'));
 });
 
-// Handle pre-fill from Rep Requests
+// Handle pre-fill from Class Representative Requests
 let isPrefillSession = false;
 
 function openPrefillModal() {

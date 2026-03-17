@@ -1,11 +1,11 @@
 <?php
-$pageTitle = 'Rep Dashboard';
+$pageTitle = 'Class Representative Dashboard';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('rep');
 $db = Database::getInstance();
 $user = getCurrentUser();
 
-// Rep sees only students from their assigned program/year/section
+// Class Representative sees only students from their assigned program/year/section
 $programId = $user['assigned_program_id'] ?? null;
 $yearLevelId = $user['assigned_year_level_id'] ?? null;
 $section = $user['assigned_section'] ?? null;

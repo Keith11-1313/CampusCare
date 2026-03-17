@@ -64,7 +64,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="page-header">
     <div>
         <h1><i class="bi bi-archive me-2"></i>Archived Records</h1>
-        <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archive</li></ol></nav>
+        <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archived Records</li></ol></nav>
     </div>
 </div>
 
