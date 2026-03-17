@@ -132,8 +132,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <ul class="nav nav-tabs mb-0" role="tablist">
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'announcements' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#announcementsTab">Announcements</a></li>
-    <li class="nav-item"><a class="nav-link <?php echo $tab === 'faqs' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#faqsTab">FAQs</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'first_aid' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#firstAidTab">First Aid</a></li>
+    <li class="nav-item"><a class="nav-link <?php echo $tab === 'faqs' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#faqsTab">FAQs</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'emergency' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#emergencyTab">Emergency</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'hours' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#hoursTab">Clinic Hours</a></li>
 </ul>
