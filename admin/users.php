@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $errors[] = 'Last name is required.';
         if (!in_array($role, ['admin', 'nurse', 'rep']))
             $errors[] = 'Invalid role.';
+        if ($role === 'rep' && !empty($assignedSection) && !in_array($assignedSection, ['A', 'B', 'C']))
+            $errors[] = 'Section must be A, B, or C.';
 
         // Check username uniqueness
         $existingUser = $db->fetch("SELECT id FROM users WHERE username = ? AND id != ?", [$username, $id]);
@@ -424,7 +426,12 @@ endforeach; ?>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Section</label>
-                                    <input type="text" class="form-control" name="assigned_section" id="assignedSection" placeholder="e.g. A">
+                                    <select class="form-select" name="assigned_section" id="assignedSection">
+                                        <option value="">Select Section</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
