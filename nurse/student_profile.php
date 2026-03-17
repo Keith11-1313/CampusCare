@@ -45,6 +45,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verif
     }
 }
 
+// Handle AJAX operations (add/delete/update) — these come from the already-loaded page
+// and have their own CSRF protection, so they must run before the access gate check
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['add', 'delete', 'update'])) {
+    if (!validateCSRFToken($_POST['csrf_token'] ?? ''))
+        jsonResponse(['success' => false, 'message' => 'Invalid token.'], 403);
+    $action = $_POST['action'];
+    $table = $_POST['table'] ?? '';
+    $allowed = ['allergies', 'chronic_conditions', 'medications', 'immunizations', 'emergency_contacts'];
+    if (!in_array($table, $allowed))
+        jsonResponse(['success' => false, 'message' => 'Invalid table.']);
+
+    if ($action === 'add') {
+        $fields = [];
+        $vals = [];
+        $params = [];
+        $fields[] = 'student_id';
+        $vals[] = '?';
+        $params[] = $studentId;
+        foreach ($_POST['data'] as $k => $v) {
+            $fields[] = $k;
+            $vals[] = '?';
+            $params[] = trim($v) ?: null;
+        }
+        $db->query("INSERT INTO $table (" . implode(',', $fields) . ") VALUES (" . implode(',', $vals) . ")", $params);
+        logAccess($_SESSION['user_id'], 'add_health_record', "Added $table record for student " . $student['student_id']);
+        $_SESSION[$accessKey] = true;
+        jsonResponse(['success' => true, 'message' => 'Record added successfully.']);
+    }
+    if ($action === 'delete') {
+        $recordId = intval($_POST['record_id'] ?? 0);
+        $db->query("DELETE FROM $table WHERE id=? AND student_id=?", [$recordId, $studentId]);
+        logAccess($_SESSION['user_id'], 'delete_health_record', "Deleted $table record #$recordId for student " . $student['student_id']);
+        $_SESSION[$accessKey] = true;
+        jsonResponse(['success' => true, 'message' => 'Record deleted.']);
+    }
+    if ($action === 'update') {
+        $recordId = intval($_POST['record_id'] ?? 0);
+        $sets = [];
+        $params = [];
+        foreach ($_POST['data'] as $k => $v) {
+            $sets[] = "$k=?";
+            $params[] = trim($v) ?: null;
+        }
+        $params[] = $recordId;
+        $params[] = $studentId;
+        $db->query("UPDATE $table SET " . implode(',', $sets) . " WHERE id=? AND student_id=?", $params);
+        logAccess($_SESSION['user_id'], 'update_health_record', "Updated $table record #$recordId for student " . $student['student_id']);
+        $_SESSION[$accessKey] = true;
+        jsonResponse(['success' => true, 'message' => 'Record updated successfully.']);
+    }
+}
+
 // If not verified, show gate modal (no health data is loaded or rendered)
 if (!$isVerified) {
     require_once __DIR__ . '/../includes/sidebar.php';
@@ -137,47 +189,12 @@ document.getElementById('toggleGatePassword')?.addEventListener('click', functio
 // HIPAA §164.312(b): Log PHI access — record who viewed this student's health profile
 logAccess($_SESSION['user_id'], 'view_student_profile', 'Viewed health profile for student ' . $student['student_id']);
 
-// Handle AJAX operations for health records
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if (!validateCSRFToken($_POST['csrf_token'] ?? ''))
-        jsonResponse(['success' => false, 'message' => 'Invalid token.'], 403);
-    $action = $_POST['action'];
-    $table = $_POST['table'] ?? '';
-    $allowed = ['allergies', 'chronic_conditions', 'medications', 'immunizations', 'emergency_contacts'];
-    if (!in_array($table, $allowed))
-        jsonResponse(['success' => false, 'message' => 'Invalid table.']);
-
-    if ($action === 'add') {
-        $fields = [];
-        $vals = [];
-        $params = [];
-        $fields[] = 'student_id';
-        $vals[] = '?';
-        $params[] = $studentId;
-        foreach ($_POST['data'] as $k => $v) {
-            $fields[] = $k;
-            $vals[] = '?';
-            $params[] = trim($v) ?: null;
-        }
-        $db->query("INSERT INTO $table (" . implode(',', $fields) . ") VALUES (" . implode(',', $vals) . ")", $params);
-        logAccess($_SESSION['user_id'], 'add_health_record', "Added $table record for student " . $student['student_id']);
-        jsonResponse(['success' => true, 'message' => 'Record added successfully.']);
-    }
-    if ($action === 'delete') {
-        $recordId = intval($_POST['record_id'] ?? 0);
-        $db->query("DELETE FROM $table WHERE id=? AND student_id=?", [$recordId, $studentId]);
-        // HIPAA §164.312(b): Log health record deletion for audit trail
-        logAccess($_SESSION['user_id'], 'delete_health_record', "Deleted $table record #$recordId for student " . $student['student_id']);
-        jsonResponse(['success' => true, 'message' => 'Record deleted.']);
-    }
-}
-
 // Fetch all health data
 $allergies = $db->fetchAll("SELECT * FROM allergies WHERE student_id=? ORDER BY created_at DESC", [$studentId]);
 $conditions = $db->fetchAll("SELECT * FROM chronic_conditions WHERE student_id=? ORDER BY created_at DESC", [$studentId]);
 $medications = $db->fetchAll("SELECT * FROM medications WHERE student_id=? ORDER BY created_at DESC", [$studentId]);
 $immunizations = $db->fetchAll("SELECT * FROM immunizations WHERE student_id=? ORDER BY date_administered DESC", [$studentId]);
-$emergencyContacts = $db->fetchAll("SELECT * FROM emergency_contacts WHERE student_id=? ORDER BY is_primary DESC", [$studentId]);
+$emergencyContacts = $db->fetchAll("SELECT * FROM emergency_contacts WHERE student_id=? ORDER BY id ASC", [$studentId]);
 $visits = $db->fetchAll("SELECT v.*, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v LEFT JOIN users u ON v.attended_by=u.id WHERE v.student_id=? ORDER BY v.visit_date DESC LIMIT 20", [$studentId]);
 
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -282,10 +299,12 @@ endif; ?>
 
 <!-- Immunizations -->
 <div class="tab-pane fade" id="immunizations">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>Immunizations</span>
-<button class="btn btn-sm btn-primary" onclick="showAddForm('immunizations')"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between">
+            <span>Immunizations</span>
+            <button class="btn btn-sm btn-primary" onclick="showAddForm('immunizations')"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
 <thead><tr><th>Vaccine</th><th>Date</th><th>Dose</th><th>Administered By</th><th></th></tr></thead>
 <tbody>
 <?php if (empty($immunizations)): ?><tr><td colspan="5" class="text-center text-muted py-3">No immunizations recorded.</td></tr>
@@ -311,9 +330,9 @@ endif; ?>
 <?php if (empty($emergencyContacts)): ?><tr><td colspan="5" class="text-center text-muted py-3">No emergency contacts.</td></tr>
 <?php
 else:
-    foreach ($emergencyContacts as $ec): ?>
-<tr><td class="fw-semibold"><?php echo e($ec['contact_name']); ?></td><td><?php echo e($ec['relationship']); ?></td><td><?php echo e($ec['phone_number']); ?></td><td><?php echo $ec['is_primary'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
-<td><button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteRecord('emergency_contacts',<?php echo $ec['id']; ?>)"><i class="bi bi-trash"></i></button></td></tr>
+    foreach ($emergencyContacts as $idx => $ec): ?>
+<tr><td class="fw-semibold"><?php echo e($ec['contact_name']); ?></td><td><?php echo e($ec['relationship']); ?></td><td><?php echo e($ec['phone_number']); ?></td><td><?php echo $idx === 0 ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
+<td><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editContact(this)" data-id="<?php echo $ec['id']; ?>" data-name="<?php echo e($ec['contact_name']); ?>" data-relationship="<?php echo e($ec['relationship']); ?>" data-phone="<?php echo e($ec['phone_number']); ?>"><i class="bi bi-pencil"></i></button></td></tr>
 <?php
     endforeach;
 endif; ?>
@@ -325,14 +344,15 @@ endif; ?>
 <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
 <div class="card-header">Visit History</div>
 <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Date</th><th>Complaint</th><th>Assessment</th><th>Treatment</th><th>Status</th><th>Nurse</th></tr></thead>
+<thead><tr><th>Date</th><th>Category</th><th>Complaint</th><th>Assessment</th><th>Treatment</th><th>Status</th><th>Nurse</th></tr></thead>
 <tbody>
-<?php if (empty($visits)): ?><tr><td colspan="6" class="text-center text-muted py-3">No visits recorded.</td></tr>
+<?php if (empty($visits)): ?><tr><td colspan="7" class="text-center text-muted py-3">No visits recorded.</td></tr>
 <?php
 else:
     foreach ($visits as $v): ?>
 <tr><td><small><?php echo formatDateTime($v['visit_date'], 'M d, Y h:i A'); ?></small></td>
-<td><?php echo truncate($v['complaint'], 30); ?></td>
+<td><?php echo e($v['complaint_category']); ?></td>
+<td><small><?php echo truncate($v['complaint'] ?? '—', 30); ?></small></td>
 <td><small><?php echo truncate($v['assessment'] ?? '—', 30); ?></small></td>
 <td><small><?php echo truncate($v['treatment'] ?? '—', 30); ?></small></td>
 <td><?php echo statusBadge($v['status']); ?></td>
@@ -416,15 +436,22 @@ endif; ?>
 
 <!-- Add Emergency Contact Modal -->
 <div class="modal fade" id="emContactModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title">Add Emergency Contact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-header"><h5 class="modal-title" id="emContactModalTitle">Add Emergency Contact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <form id="emContactForm">
         <div class="modal-body">
-            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="action" id="emContactAction" value="add">
             <input type="hidden" name="table" value="emergency_contacts">
+            <input type="hidden" name="record_id" id="emContactRecordId" value="">
             <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-            <div class="mb-3"><label class="form-label">Contact Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[contact_name]" required placeholder="Full name"></div>
-            <div class="mb-3"><label class="form-label">Relationship <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[relationship]" required placeholder="e.g. Parent, Guardian"></div>
-            <div class="mb-3"><label class="form-label">Phone Number <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="data[phone_number]" required placeholder="e.g. 09xxxxxxxxx"></div>
+            <div class="mb-3"><label class="form-label">Contact Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" id="emContactName" name="data[contact_name]" required placeholder="Full name"></div>
+            <div class="mb-3"><label class="form-label">Relationship <span class="required-asterisk">*</span></label><input type="text" class="form-control" id="emContactRelationship" name="data[relationship]" required placeholder="e.g. Parent, Guardian"></div>
+            <div class="mb-3">
+                <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text">+63</span>
+                    <input type="text" class="form-control" id="emContactPhone" name="data[phone_number]" required placeholder="9xxxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </div>
+            </div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
     </form>
@@ -470,8 +497,24 @@ function showAddForm(table) {
     const formId = formIds[table];
     if (formId) {
         document.getElementById(formId).reset();
+        if (table === 'emergency_contacts') {
+            document.getElementById('emContactAction').value = 'add';
+            document.getElementById('emContactRecordId').value = '';
+            document.getElementById('emContactModalTitle').textContent = 'Add Emergency Contact';
+        }
         modals[table].show();
     }
+}
+
+function editContact(btn) {
+    document.getElementById('emContactForm').reset();
+    document.getElementById('emContactAction').value = 'update';
+    document.getElementById('emContactRecordId').value = btn.dataset.id;
+    document.getElementById('emContactName').value = btn.dataset.name;
+    document.getElementById('emContactRelationship').value = btn.dataset.relationship;
+    document.getElementById('emContactPhone').value = btn.dataset.phone;
+    document.getElementById('emContactModalTitle').textContent = 'Edit Emergency Contact';
+    modals.emergency_contacts.show();
 }
 
 // Attach submit handlers to all modal forms

@@ -302,7 +302,13 @@ endforeach; ?>
             <input type="hidden" name="id" id="emId" value="0">
             <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
             <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
-            <div class="mb-3"><label class="form-label">Phone Number <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="Enter phone number"></div>
+            <div class="mb-3">
+                <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text">+63</span>
+                    <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="09xxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </div>
+            </div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
     </form>
