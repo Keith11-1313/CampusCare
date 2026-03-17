@@ -11,6 +11,11 @@ $monthVisits = $db->fetchColumn("SELECT COUNT(*) FROM visits WHERE MONTH(visit_d
 $totalStudents = $db->fetchColumn("SELECT COUNT(*) FROM students WHERE status='active'");
 $followUps = $db->fetchColumn("SELECT COUNT(*) FROM visits WHERE status='Follow-up' AND follow_up_date >= CURDATE()");
 
+// Nurse Availability Ratio (ratio of nurses available today out of total active nurses)
+$totalNurses = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role='nurse' AND status='active'");
+$availableToday = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role='nurse' AND status='active' AND DATE(last_login) = CURDATE()");
+$availabilityRatio = ($totalNurses > 0) ? round(($availableToday / $totalNurses) * 100) : 0;
+
 $recentVisits = $db->fetchAll(
     "SELECT v.*, s.student_id as sid, s.first_name, s.last_name 
      FROM visits v JOIN students s ON v.student_id=s.id 
@@ -63,11 +68,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="stat-card stat-card-accent animate-fade-in animate-delay-2">
             <div class="d-flex justify-content-between">
                 <div>
-                    <div class="stat-label">Registered Students</div>
-                    <div class="stat-value"><?php echo number_format($totalStudents); ?></div>
+                    <div class="stat-label">Nurse Staffing</div>
+                    <div class="stat-value"><?php echo $availabilityRatio; ?>%</div>
+                    <div class="small mt-1 opacity-75">
+                        <span class="fw-bold"><?php echo $availableToday; ?></span> / <?php echo $totalNurses; ?> Available
+                    </div>
                 </div>
                 <div class="stat-icon">
-                    <i class="bi bi-people-fill"></i>
+                    <i class="bi bi-person-check-fill"></i>
                 </div>
             </div>
         </div>
