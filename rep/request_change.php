@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
             if ($pending > 0) {
                 $error = 'You already have a pending request. Please wait for the admin to process it.';
             } else {
-                $db->execute(
+                $db->query(
                     "INSERT INTO rep_requests (rep_user_id, nominee_student_id, reason, status) VALUES (?, ?, ?, 'pending')",
                     [$user['id'], $nomineeId, $reason]
                 );

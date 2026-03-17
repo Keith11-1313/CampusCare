@@ -31,13 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
                 if ($request && $request['status'] === 'pending') {
                     // 1. Deactivate old rep
-                    $db->execute(
+                    $db->query(
                         "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
                         ['Stepped down; replaced by ' . $request['first_name'] . ' ' . $request['last_name'], $request['rep_user_id']]
                     );
 
                     // 2. Mark request as approved
-                    $db->execute("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$requestId]);
+                    $db->query("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$requestId]);
 
                     $db->commit();
                     logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $requestId. Deactivated rep: " . $request['old_rep_username']);
@@ -59,12 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $error = 'Invalid request or already processed.';
                 }
             } catch (Exception $e) {
-                $db->rollBack();
+                $db->rollback();
                 $error = 'Error processing approval: ' . $e->getMessage();
             }
         } elseif ($action === 'reject') {
             $notes = trim($_POST['admin_notes'] ?? '');
-            $db->execute(
+            $db->query(
                 "UPDATE rep_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
                 [$notes, $requestId]
             );
@@ -168,11 +168,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <td class="align-middle text-center">
                                     <?php if ($r['status'] === 'pending'): ?>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <form method="POST" onsubmit="return confirm('Approve this request? The current rep will be deactivated and you will be redirected to create a new account for the nominee.');">
+                                            <form method="POST" id="approveForm<?php echo $r['id']; ?>">
                                                 <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                                                 <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
                                                 <input type="hidden" name="action" value="approve">
-                                                <button type="submit" class="btn btn-sm btn-success">
+                                                <button type="button" class="btn btn-sm btn-success" onclick="confirmApprove(<?php echo $r['id']; ?>)">
                                                     <i class="bi bi-check-lg me-1"></i>Approve
                                                 </button>
                                             </form>
@@ -221,6 +221,19 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div>
 
 <script>
+function confirmApprove(id) {
+    showConfirm(
+        'Approve this request?',
+        'The current rep will be <strong>deactivated</strong> and you will be redirected to create a new account for the nominee.',
+        'Yes, approve',
+        'question'
+    ).then(result => {
+        if (result.isConfirmed) {
+            document.getElementById('approveForm' + id).submit();
+        }
+    });
+}
+
 function openRejectModal(id) {
     document.getElementById('rejectRequestId').value = id;
     new bootstrap.Modal(document.getElementById('rejectModal')).show();

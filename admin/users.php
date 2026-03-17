@@ -703,8 +703,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('assignedSection').value = urlParams.get('sec') || '';
         toggleRepFields();
         
-        // Skip to step 3 if pre-filled for better UX
-        goToUserStep(3);
+        // Start on step 1 so admin can review all prefilled data
+        goToUserStep(1);
     }
 });
 </script>
