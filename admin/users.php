@@ -46,6 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => implode(' ', $errors)]);
         }
 
+        // Security question fields
+        $securityQuestion = trim($_POST['security_question'] ?? '');
+        $securityAnswer = trim($_POST['security_answer'] ?? '');
+        $hashedSecurityAnswer = !empty($securityAnswer) ? password_hash(strtolower($securityAnswer), PASSWORD_DEFAULT) : null;
+
         if ($action === 'create') {
             $password = $_POST['password'] ?? '';
             if (empty($password) || strlen($password) < 6) {
@@ -54,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $db->query(
-                "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null]
+                "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question, security_answer) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null, $securityQuestion ?: null, $hashedSecurityAnswer]
             );
             logAccess($_SESSION['user_id'], 'create_user', 'Created user: ' . $username);
 
@@ -96,6 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
                 $updateFields = "password = ?, " . $updateFields;
                 array_unshift($params, password_hash($_POST['password'], PASSWORD_DEFAULT));
+            }
+
+            // Update security question/answer if provided
+            if (!empty($securityQuestion)) {
+                $updateFields .= ", security_question = ?";
+                $params[] = $securityQuestion;
+                if (!empty($securityAnswer)) {
+                    $updateFields .= ", security_answer = ?";
+                    $params[] = $hashedSecurityAnswer;
+                }
             }
 
             $params[] = $id;
@@ -139,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($action === 'get') {
         $id = intval($_POST['id'] ?? 0);
-        $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section FROM users WHERE id = ?", [$id]);
+        $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question FROM users WHERE id = ?", [$id]);
         jsonResponse(['success' => true, 'user' => $userData]);
     }
 }
@@ -397,6 +412,23 @@ endif; ?>
                                     <option value="rep">Class Representative</option>
                                 </select>
                             </div>
+                            <div class="col-12">
+                                <label class="form-label">Security Question</label>
+                                <select class="form-select" name="security_question" id="securityQuestion">
+                                    <option value="">No security question</option>
+                                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                                    <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+                                    <option value="What is your favorite food?">What is your favorite food?</option>
+                                    <option value="What city were you born in?">What city were you born in?</option>
+                                    <option value="What is the name of your best friend?">What is the name of your best friend?</option>
+                                    <option value="What is your favorite color?">What is your favorite color?</option>
+                                </select>
+                            </div>
+                            <div class="col-12" id="securityAnswerGroup" style="display:none;">
+                                <label class="form-label">Security Answer <span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" name="security_answer" id="securityAnswerInput" placeholder="Enter the answer to the security question">
+                                <div class="form-text">Case-insensitive. Required when a security question is selected.</div>
+                            </div>
                         </div>
                     </div>
 
@@ -592,6 +624,12 @@ function toggleRepFields() {
     document.getElementById('noRepMessage').style.display = isRep ? 'none' : 'block';
 }
 
+// Security question toggle
+document.getElementById('securityQuestion').addEventListener('change', function() {
+    document.getElementById('securityAnswerGroup').style.display = this.value ? 'block' : 'none';
+    if (!this.value) document.getElementById('securityAnswerInput').value = '';
+});
+
 function openUserModal() {
     document.getElementById('userModalTitle').textContent = 'Add User';
     document.getElementById('formAction').value = 'create';
@@ -602,6 +640,8 @@ function openUserModal() {
     document.getElementById('pwdHint').textContent = 'Minimum 6 characters.';
     document.getElementById('repFields').style.display = 'none';
     document.getElementById('noRepMessage').style.display = 'block';
+    document.getElementById('securityQuestion').value = '';
+    document.getElementById('securityAnswerGroup').style.display = 'none';
     document.getElementById('userForm').classList.remove('was-validated');
     goToUserStep(1);
     userModal.show();
@@ -633,6 +673,9 @@ function editUser(id) {
                 document.getElementById('assignedProgram').value = u.assigned_program_id || '';
                 document.getElementById('assignedYearLevel').value = u.assigned_year_level_id || '';
                 document.getElementById('assignedSection').value = u.assigned_section || '';
+                document.getElementById('securityQuestion').value = u.security_question || '';
+                document.getElementById('securityAnswerGroup').style.display = u.security_question ? 'block' : 'none';
+                document.getElementById('securityAnswerInput').value = '';
                 toggleRepFields();
                 document.getElementById('userForm').classList.remove('was-validated');
                 goToUserStep(1);
