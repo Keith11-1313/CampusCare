@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
         else {
             // Check for existing pending password reset request
             $pending = $db->fetchColumn(
-                "SELECT COUNT(*) FROM rep_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'",
+                "SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'",
             [$user['id']]
             );
 
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
             }
             else {
                 $db->query(
-                    "INSERT INTO rep_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
+                    "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
                 [$user['id'], $forgotReason]
                 );
                 $forgotSuccess = 'Your password reset request has been submitted. Please contact the administrator for your new password.';
@@ -571,14 +571,14 @@ endif; ?>
 
         function hideAllSecurityErrors() {
             ['securityUsernameError', 'securityAnswerError', 'securityResetError'].forEach(id => {
-                document.getElementById(id).classList.add('d-none');
+                document.getElementById(id).style.display = 'none';
             });
         }
 
         function showSecurityError(elementId, message) {
             const el = document.getElementById(elementId);
             el.querySelector('span').textContent = message;
-            el.classList.remove('d-none');
+            el.style.display = 'block';
         }
 
         function securityGoBack(toStep) {

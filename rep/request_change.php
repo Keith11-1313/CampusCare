@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
     else {
         try {
             // Check if there's already a pending replacement request
-            $pending = $db->fetchColumn("SELECT COUNT(*) FROM rep_requests WHERE rep_user_id = ? AND request_type = 'replacement' AND status = 'pending'", [$user['id']]);
+            $pending = $db->fetchColumn("SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'replacement' AND status = 'pending'", [$user['id']]);
 
             if ($pending > 0) {
                 $error = 'You already have a pending replacement request. Please wait for the admin to process it.';
             }
             else {
                 $db->query(
-                    "INSERT INTO rep_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'replacement', ?, ?, 'pending')",
+                    "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'replacement', ?, ?, 'pending')",
                 [$user['id'], $nomineeId, $reason]
                 );
                 // Log the replacement request submission
@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_password_reset
     }
     else {
         try {
-            $pending = $db->fetchColumn("SELECT COUNT(*) FROM rep_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'", [$user['id']]);
+            $pending = $db->fetchColumn("SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'", [$user['id']]);
 
             if ($pending > 0) {
                 $error = 'You already have a pending password reset request. Please wait for the admin to process it.';
             }
             else {
                 $db->query(
-                    "INSERT INTO rep_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
+                    "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
                     [$user['id'], $resetReason]
                 );
                 logAccess($_SESSION['user_id'], 'request_password_reset', 'Requested password reset. Reason: ' . $resetReason);
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_password_reset
 // Check if there's already a pending or approved replacement request
 $existingRequest = $db->fetch(
     "SELECT rr.*, s.student_id as nominee_sid, s.first_name as nominee_fname, s.last_name as nominee_lname 
-     FROM rep_requests rr 
+     FROM current_requests rr 
      LEFT JOIN students s ON rr.nominee_student_id = s.id 
      WHERE rr.rep_user_id = ? AND rr.request_type = 'replacement' AND rr.status IN ('pending', 'approved') 
      ORDER BY rr.created_at DESC LIMIT 1",
@@ -91,7 +91,7 @@ $hasActiveRequest = !empty($existingRequest);
 
 // Check for pending password reset request
 $existingPwdRequest = $db->fetch(
-    "SELECT * FROM rep_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending' ORDER BY created_at DESC LIMIT 1",
+    "SELECT * FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending' ORDER BY created_at DESC LIMIT 1",
     [$user['id']]
 );
 $hasPendingPwdReset = !empty($existingPwdRequest);

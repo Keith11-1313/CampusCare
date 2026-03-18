@@ -70,20 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if ($prefillRequest > 0) {
                 $repRequest = $db->fetch(
                     "SELECT rr.*, u.username as old_rep_username, s.first_name as nominee_fname, s.last_name as nominee_lname
-                     FROM rep_requests rr
+                     FROM current_requests rr
                      JOIN users u ON rr.rep_user_id = u.id
                      JOIN students s ON rr.nominee_student_id = s.id
                      WHERE rr.id = ? AND rr.status = 'pending'",
-                    [$prefillRequest]
+                [$prefillRequest]
                 );
                 if ($repRequest) {
                     // Deactivate old class representative
                     $db->query(
                         "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
-                        ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
+                    ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
                     );
                     // Mark request as approved
-                    $db->query("UPDATE rep_requests SET status = 'approved' WHERE id = ?", [$prefillRequest]);
+                    $db->query("UPDATE current_requests SET status = 'approved' WHERE id = ?", [$prefillRequest]);
                     logAccess($_SESSION['user_id'], 'approve_rep_request', "Approved replacement request ID $prefillRequest. Deactivated class representative: " . $repRequest['old_rep_username']);
                 }
             }
@@ -210,13 +210,15 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new class representative account setup. The old class representative will be deactivated once saved.'); ?>
         <button type="button" class="btn btn-sm btn-outline-success" style="position:absolute;top:50%;right:1rem;transform:translateY(-50%);" onclick="openPrefillModal()">Continue</button>
     </div>
-<?php endif; ?>
+<?php
+endif; ?>
 <?php if (isset($_GET['msg']) && !isset($_GET['prefill_request'])): ?>
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <!-- Filter Bar -->
 <div class="filter-bar">
@@ -427,7 +429,6 @@ endif; ?>
                             <div class="col-12" id="securityAnswerGroup" style="display:none;">
                                 <label class="form-label">Security Answer <span class="required-asterisk">*</span></label>
                                 <input type="text" class="form-control" name="security_answer" id="securityAnswerInput" placeholder="Enter the answer to the security question">
-                                <div class="form-text">Case-insensitive. Required when a security question is selected.</div>
                             </div>
                         </div>
                     </div>

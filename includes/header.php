@@ -67,6 +67,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
                     <li><h6 class="dropdown-header"><?php echo e($currentUser['username']); ?></h6></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/change_password.php"><i class="bi bi-key me-2"></i>Change Password</a></li>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/change_security_question.php"><i class="bi bi-shield-lock me-2"></i>Security Question</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/logout.php" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                 </ul>

@@ -126,6 +126,126 @@ a:hover {
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+/* ---- User Dropdown Menu ---- */
+/* Custom styled dropdown for the navbar user menu with smooth
+   animations, refined items, and a premium card-like appearance. */
+.cc-navbar .dropdown-menu {
+    border: none;
+    border-radius: var(--cc-radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0;
+    min-width: 220px;
+    margin-top: 0.5rem;
+    animation: dropdownFadeIn 0.2s ease;
+    overflow: hidden;
+}
+
+/* Smooth fade-in + slide-down animation when dropdown opens. */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdown header showing the username with a subtle bottom border,
+   muted text color, and comfortable padding. */
+.cc-navbar .dropdown-menu .dropdown-header {
+    color: var(--cc-primary-dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.6rem 1rem 0.5rem;
+    letter-spacing: 0.2px;
+}
+
+/* Subtle dividers between dropdown sections. */
+.cc-navbar .dropdown-menu .dropdown-divider {
+    margin: 0.3rem 0;
+    border-color: #eef2f1;
+    opacity: 1;
+}
+
+/* Individual dropdown item: comfortable padding, smooth transition,
+   flexbox for icon alignment, with left border indicator. */
+.cc-navbar .dropdown-menu .dropdown-item {
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #3d4f5f;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+
+/* Hover state: light blue-tinted background with primary text
+   and a left border indicator matching the brand. */
+.cc-navbar .dropdown-menu .dropdown-item:hover {
+    background: var(--cc-primary-bg);
+    color: var(--cc-primary);
+    border-left-color: var(--cc-primary);
+}
+
+/* Active/focus state for dropdown items. */
+.cc-navbar .dropdown-menu .dropdown-item:active,
+.cc-navbar .dropdown-menu .dropdown-item:focus {
+    background: var(--cc-primary-bg);
+    color: var(--cc-primary);
+}
+
+/* Icons inside dropdown items: fixed width for alignment,
+   consistent size, and a muted color by default. */
+.cc-navbar .dropdown-menu .dropdown-item i {
+    font-size: 1rem;
+    width: 22px;
+    color: var(--cc-secondary-light);
+    transition: color 0.2s ease;
+}
+
+/* Icon color follows the text color on hover. */
+.cc-navbar .dropdown-menu .dropdown-item:hover i {
+    color: var(--cc-primary);
+}
+
+/* Danger-colored logout item with red text and matching icon. */
+.cc-navbar .dropdown-menu .dropdown-item.text-danger {
+    color: var(--cc-danger);
+}
+
+.cc-navbar .dropdown-menu .dropdown-item.text-danger i {
+    color: var(--cc-danger);
+}
+
+/* Logout hover state: light red background with darker red text. */
+.cc-navbar .dropdown-menu .dropdown-item.text-danger:hover {
+    background: var(--cc-danger-bg);
+    color: #922b21;
+    border-left-color: var(--cc-danger);
+}
+
+.cc-navbar .dropdown-menu .dropdown-item.text-danger:hover i {
+    color: #922b21;
+}
+
+/* Small decorative arrow/triangle pointing toward the dropdown
+   toggle button, placed at the top-right of the menu. */
+.cc-navbar .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    transform: rotate(45deg);
+    border-top: 1px solid #eef2f1;
+    border-left: 1px solid #eef2f1;
+}
+
 /* ---- Sidebar ---- */
 /* Fixed left-side navigation panel that stretches from below the navbar
    to the bottom of the viewport with a dark gradient background. */

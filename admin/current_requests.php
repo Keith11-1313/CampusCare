@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Requests';
+$pageTitle = 'Current Requests';
 require_once __DIR__ . '/../includes/header.php';
 requireRole('admin');
 $db = Database::getInstance();
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $request = $db->fetch(
                 "SELECT rr.*, u.username as old_rep_username, u.first_name as user_fname, u.last_name as user_lname,
                         s.student_id as nominee_student_id, s.first_name, s.last_name, s.program_id, s.year_level_id, s.section 
-                     FROM rep_requests rr 
+                     FROM current_requests rr 
                      JOIN users u ON rr.rep_user_id = u.id 
                      LEFT JOIN students s ON rr.nominee_student_id = s.id 
                      WHERE rr.id = ?",
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     else {
                         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                         $db->query("UPDATE users SET password = ? WHERE id = ?", [$hashedPassword, $request['rep_user_id']]);
-                        $db->query("UPDATE rep_requests SET status = 'approved', admin_notes = 'Password has been reset.' WHERE id = ?", [$requestId]);
+                        $db->query("UPDATE current_requests SET status = 'approved', admin_notes = 'Password has been reset.' WHERE id = ?", [$requestId]);
                         logAccess($_SESSION['user_id'], 'approve_password_reset', "Approved password reset request ID $requestId for user: " . $request['old_rep_username'] . " (" . $request['user_fname'] . " " . $request['user_lname'] . ")");
                         $message = 'Password has been reset successfully for ' . $request['user_fname'] . ' ' . $request['user_lname'] . '.';
                     }
@@ -66,11 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $notes = trim($_POST['admin_notes'] ?? '');
             // Get request details for logging
             $reqInfo = $db->fetch(
-                "SELECT rr.request_type, u.username FROM rep_requests rr JOIN users u ON rr.rep_user_id = u.id WHERE rr.id = ?",
+                "SELECT rr.request_type, u.username FROM current_requests rr JOIN users u ON rr.rep_user_id = u.id WHERE rr.id = ?",
             [$requestId]
             );
             $db->query(
-                "UPDATE rep_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
+                "UPDATE current_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
             [$notes, $requestId]
             );
             $typeLabel = ($reqInfo['request_type'] ?? 'replacement') === 'password_reset' ? 'password reset' : 'replacement';
@@ -86,7 +86,7 @@ $requests = $db->fetchAll(
             u.first_name as user_fname, u.last_name as user_lname, u.username as user_username, u.role as user_role,
             s.student_id as nominee_sid, s.first_name as nominee_fname, s.last_name as nominee_lname,
             p.code as prog_code, yl.name as yl_name, s.section
-     FROM rep_requests rr
+     FROM current_requests rr
      JOIN users u ON rr.rep_user_id = u.id
      LEFT JOIN students s ON rr.nominee_student_id = s.id
      LEFT JOIN programs p ON s.program_id = p.id
@@ -98,11 +98,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <div class="page-header">
-    <h1><i class="bi bi-inbox me-2"></i>Requests</h1>
+    <h1><i class="bi bi-inbox me-2"></i>Current Requests</h1>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item active">Requests</li>
+            <li class="breadcrumb-item active">Current Requests</li>
         </ol>
     </nav>
 </div>

@@ -308,9 +308,9 @@ CREATE TABLE IF NOT EXISTS `access_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
--- Table: rep_requests (Replacement/Deactivation requests)
+-- Table: current_requests (Replacement/Deactivation requests)
 -- ============================================================
-CREATE TABLE IF NOT EXISTS `rep_requests` (
+CREATE TABLE IF NOT EXISTS `current_requests` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `rep_user_id` INT(11) NOT NULL,
   `request_type` ENUM('replacement','password_reset') NOT NULL DEFAULT 'replacement',
