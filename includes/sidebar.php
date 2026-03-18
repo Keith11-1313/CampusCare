@@ -30,7 +30,7 @@ $userRole = $_SESSION['user_role'] ?? '';
             <i class="bi bi-speedometer2"></i><span>Dashboard</span>
         </a>
 
-        <div class="sidebar-section-title">Management</div>
+        <div class="sidebar-section-title">Administration</div>
         <a href="<?php echo BASE_URL; ?>/admin/users.php" class="sidebar-link <?php echo isActivePage('users.php'); ?>">
             <i class="bi bi-people"></i><span>User Management</span>
         </a>
@@ -40,6 +40,8 @@ $userRole = $_SESSION['user_role'] ?? '';
         <a href="<?php echo BASE_URL; ?>/admin/year_levels.php" class="sidebar-link <?php echo isActivePage('year_levels.php'); ?>">
             <i class="bi bi-layers"></i><span>Year Levels</span>
         </a>
+
+        <div class="sidebar-section-title">Clinic Records</div>
         <a href="<?php echo BASE_URL; ?>/admin/students.php" class="sidebar-link <?php echo isActivePage('students.php'); ?>">
             <i class="bi bi-person-badge"></i><span>Student Records</span>
         </a>
