@@ -59,9 +59,6 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
         <div class="hero-blob hero-blob-2"></div>
         <div class="hero-blob hero-blob-3"></div>
 
-        <!-- Decorative circles -->
-        <div class="hero-circle hero-circle-1"></div>
-        <div class="hero-circle hero-circle-2"></div>
 
         <div class="container position-relative" style="z-index: 2;">
             <div class="row align-items-center hero-row">

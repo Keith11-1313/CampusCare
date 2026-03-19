@@ -146,6 +146,7 @@ a:hover {
         opacity: 0;
         transform: translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1507,7 +1508,7 @@ a:hover {
     position: absolute;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
     top: -200px;
     right: -200px;
     border-radius: 50%;
@@ -1519,7 +1520,7 @@ a:hover {
     position: absolute;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
     bottom: -100px;
     left: -100px;
     border-radius: 50%;
@@ -1537,7 +1538,7 @@ a:hover {
 .hero-blob-1 {
     width: 380px;
     height: 380px;
-    background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.9), rgba(160,210,255,0.5));
+    background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.9), rgba(160, 210, 255, 0.5));
     top: -100px;
     left: -80px;
     animation: blobFloat1 14s ease-in-out infinite;
@@ -1546,7 +1547,7 @@ a:hover {
 .hero-blob-2 {
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle at 60% 40%, rgba(255,255,255,0.8), rgba(130,190,255,0.4));
+    background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.8), rgba(130, 190, 255, 0.4));
     bottom: -80px;
     right: -60px;
     animation: blobFloat2 18s ease-in-out infinite;
@@ -1556,35 +1557,14 @@ a:hover {
 .hero-blob-3 {
     width: 220px;
     height: 220px;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7), rgba(100,170,255,0.3));
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(100, 170, 255, 0.3));
     top: 50%;
     right: 8%;
     animation: blobFloat3 22s ease-in-out infinite;
     opacity: 0.08;
 }
 
-/* Decorative subtle circles */
-.hero-circle {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.06);
-    pointer-events: none;
-    z-index: 0;
-}
 
-.hero-circle-1 {
-    width: 500px;
-    height: 500px;
-    top: -150px;
-    right: -100px;
-}
-
-.hero-circle-2 {
-    width: 300px;
-    height: 300px;
-    bottom: -50px;
-    left: -50px;
-}
 
 /* Hero row alignment */
 .hero-row {
@@ -1609,9 +1589,8 @@ a:hover {
 }
 
 .hero-title-care {
-    font-style: italic;
     font-weight: 700;
-    color: rgba(255,255,255,0.9);
+    color: var(--cc-primary-light);
 }
 
 .hero-subtitle {
@@ -1624,7 +1603,7 @@ a:hover {
 
 .hero-description {
     font-size: 0.95rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: 2rem;
     line-height: 1.7;
     max-width: 480px;
@@ -1647,18 +1626,18 @@ a:hover {
     font-weight: 600;
     letter-spacing: 0.3px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(14,165,233,0.3);
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
 }
 
 .hero-btn-primary:hover {
     background: #0891d6;
     transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(14,165,233,0.45);
+    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.45);
     color: #fff;
 }
 
 .hero-btn-outline {
-    border: 2px solid rgba(255,255,255,0.6);
+    border: 2px solid rgba(255, 255, 255, 0.6);
     color: #fff;
     padding: 0.7rem 2rem;
     border-radius: 30px;
@@ -1670,7 +1649,7 @@ a:hover {
 }
 
 .hero-btn-outline:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     border-color: #fff;
     color: #fff;
     transform: translateY(-2px);
@@ -1686,7 +1665,7 @@ a:hover {
 .hero-image-wrapper {
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
     width: 100%;
     position: relative;
 }
@@ -1705,7 +1684,7 @@ a:hover {
     width: 10px !important;
     height: 10px !important;
     border-radius: 50% !important;
-    background-color: rgba(255,255,255,0.5) !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
     border: none !important;
     margin: 0 4px !important;
     padding: 0 !important;
