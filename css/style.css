@@ -1484,10 +1484,67 @@ a:hover {
 }
 
 /* ---- Public / Guest Page ---- */
-/* Navbar for the public-facing guest pages with a primary gradient. */
+
+/* Floating navbar wrapper – positions the bar inside the hero */
+.public-navbar-wrapper {
+    padding: 16px 28px;
+    z-index: 1030;
+}
+
+/* The pill-shaped navbar itself */
 .public-navbar {
-    background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary));
-    padding: 1rem 0;
+    background: #fff;
+    border-radius: 50px;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Brand text */
+.public-navbar .navbar-brand {
+    font-size: 1.05rem;
+    letter-spacing: 0.3px;
+    color: var(--cc-primary) !important;
+}
+
+/* Nav links */
+.public-navbar .nav-link {
+    color: #3a4a5c !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.5rem 0.85rem !important;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.public-navbar .nav-link:hover {
+    color: var(--cc-primary) !important;
+}
+
+/* Staff Login button */
+.public-navbar-login-btn {
+    border: 1.5px solid #1a2332;
+    color: #1a2332 !important;
+    border-radius: 30px;
+    padding: 0.35rem 1.1rem !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.public-navbar-login-btn:hover {
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrolled state – slightly deeper shadow */
+.public-navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
 }
 
 /* ---- Hero Section (Public Page) ---- */

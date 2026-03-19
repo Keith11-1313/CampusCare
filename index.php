@@ -27,30 +27,32 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark public-navbar fixed-top" style="box-shadow: 0 2px 15px rgba(0,0,0,0.15);">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-                <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="publicNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-outline-light btn-sm px-3" href="<?php echo BASE_URL; ?>/login.php">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Staff Login
-                        </a>
-                    </li>
-                </ul>
+    <div class="public-navbar-wrapper fixed-top">
+        <nav class="navbar navbar-expand-lg public-navbar">
+            <div class="container-fluid px-3">
+                <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="publicNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn public-navbar-login-btn" href="<?php echo BASE_URL; ?>/login.php">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Staff Login
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -321,15 +323,13 @@ endforeach; ?>
             });
         });
 
-        // Navbar background on scroll
+        // Navbar scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.public-navbar');
             if (window.scrollY > 50) {
-                navbar.style.background = '';
-                navbar.style.backdropFilter = 'blur(10px)';
+                navbar.classList.add('scrolled');
             } else {
-                navbar.style.background = '';
-                navbar.style.backdropFilter = '';
+                navbar.classList.remove('scrolled');
             }
         });
     </script>
