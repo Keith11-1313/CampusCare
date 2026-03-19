@@ -1630,7 +1630,8 @@ a:hover {
 
 /* ---- Hero Text ---- */
 .hero-text-col {
-    padding-right: 2rem;
+    padding-right: 0;
+    text-align: center;
 }
 
 .hero-title {
@@ -1647,7 +1648,7 @@ a:hover {
 
 .hero-title-care {
     font-weight: 700;
-    color: var(--cc-primary-light);
+    color: #a0d8f8;
 }
 
 .hero-subtitle {
@@ -1663,7 +1664,7 @@ a:hover {
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 2rem;
     line-height: 1.7;
-    max-width: 480px;
+    max-width: 520px;
 }
 
 /* ---- Hero Buttons ---- */
@@ -1846,6 +1847,57 @@ a:hover {
     /* Removes the left margin so content fills the full width. */
     .cc-main-content {
         margin-left: 0;
+    }
+
+    /* ---- Mobile Navbar ---- */
+    .public-navbar-wrapper {
+        padding: 10px 12px;
+    }
+
+    /* Dark hamburger icon on white background */
+    .public-navbar .navbar-toggler {
+        border-color: rgba(0, 0, 0, 0.15);
+        padding: 0.3rem 0.55rem;
+    }
+
+    .public-navbar .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2830, 40, 55, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* Soften corners when dropdown is expanded */
+    .public-navbar:has(.navbar-collapse.show),
+    .public-navbar:has(.navbar-collapse.collapsing) {
+        border-radius: 16px;
+    }
+
+    /* Dropdown menu area */
+    .public-navbar .navbar-collapse {
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* Stack nav items with proper spacing */
+    .public-navbar .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .public-navbar .nav-link {
+        padding: 0.55rem 0.5rem !important;
+        font-size: 0.9rem;
+    }
+
+    /* Full-width login button on mobile */
+    .public-navbar .nav-item.ms-lg-2 {
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+
+    .public-navbar-login-btn {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 0.5rem 1rem !important;
     }
 }
 

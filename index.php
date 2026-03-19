@@ -31,7 +31,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
         <nav class="navbar navbar-expand-lg public-navbar">
             <div class="container-fluid px-3">
                 <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-                    <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-main-b.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
                     <span class="navbar-toggler-icon"></span>
@@ -65,7 +65,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
         <div class="container position-relative" style="z-index: 2;">
             <div class="row align-items-center hero-row">
                 <!-- Left: Text Content -->
-                <div class="col-lg-6 text-white hero-text-col">
+                <div class="col-lg-6 text-white hero-text-col text-center d-flex flex-column align-items-center">
                     <h1 class="hero-title">
                         <span class="hero-title-campus">Campus</span><span class="hero-title-care">Care</span>
                     </h1>
@@ -73,7 +73,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
                     <p class="hero-description">
                         Your campus health partner. Access clinic information, announcements, first-aid guidelines, and emergency contacts all in one place.
                     </p>
-                    <div class="hero-buttons">
+                    <div class="d-flex flex-row flex-wrap gap-3 justify-content-center">
                         <a href="#announcements" class="btn hero-btn-primary">
                             Latest Updates
                         </a>
