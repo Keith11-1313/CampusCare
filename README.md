@@ -114,6 +114,7 @@ CampusCare/
 ├── admin/                  # Admin module
 │   ├── access_logs.php
 │   ├── archive.php
+│   ├── current_requests.php
 │   ├── dashboard.php
 │   ├── programs.php
 │   ├── reports.php
@@ -130,6 +131,7 @@ CampusCare/
 │   └── visits.php
 ├── rep/                    # Class Representative module
 │   ├── dashboard.php
+│   ├── request_change.php
 │   └── students.php
 ├── assets/                 # Static assets
 │   ├── clinic1.jpg
@@ -144,7 +146,6 @@ CampusCare/
 ├── includes/
 │   ├── .htaccess           # Deny direct access
 │   ├── auth.php            # Auth helpers & RBAC
-│   ├── export_csv.php      # CSV report export (admin)
 │   ├── export_pdf.php      # PDF report export (admin)
 │   ├── export_students_csv.php  # CSV student records export (rep)
 │   ├── footer.php          # Page footer template
@@ -168,6 +169,8 @@ CampusCare/
 ├── login.php               # Login page
 ├── logout.php              # Logout handler
 ├── change_password.php     # Change password
+├── change_security_question.php  # Change security question
+├── demo_students.csv       # Demo student data CSV
 ├── package.json            # npm dependencies
 └── .gitignore              # gitignore file
 ```
