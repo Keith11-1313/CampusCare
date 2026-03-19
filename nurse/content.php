@@ -362,7 +362,7 @@ endforeach; ?>
 
 <!-- First Aid Modal -->
 <div class="modal fade" id="firstAidModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="firstAidModalTitle">Add Guideline</h5>
@@ -411,7 +411,11 @@ endforeach; ?>
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="faContent" rows="4" required placeholder="Enter content (HTML allowed)"></textarea></div>
+                    <div class="mb-3">
+                        <label class="form-label">Content <span class="required-asterisk">*</span></label>
+                        <input type="hidden" name="content" id="faContentHidden">
+                        <div id="faContentEditor" style="height:200px;background:#fff;border-radius:0 0 6px 6px;"></div>
+                    </div>
                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
                 </div>  
                 <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
@@ -451,6 +455,16 @@ endforeach; ?>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<!-- Quill Rich Text Editor -->
+<link href="<?php echo BASE_URL; ?>/node_modules/quill/dist/quill.snow.css" rel="stylesheet">
+<script src="<?php echo BASE_URL; ?>/node_modules/quill/dist/quill.min.js"></script>
+<style>
+    #firstAidModal .ql-toolbar { border-radius: 6px 6px 0 0; border-color: #dee2e6; background: #f8f9fa; }
+    #firstAidModal .ql-container { border-color: #dee2e6; font-family: 'Inter', sans-serif; font-size: 14px; }
+    #firstAidModal .ql-editor { min-height: 150px; }
+    #firstAidModal .ql-editor.ql-blank::before { font-style: normal; color: #adb5bd; }
+</style>
 
 <script>
 const csrf = '<?php echo getCSRFToken(); ?>';
@@ -526,12 +540,22 @@ function showFirstAidForm(item){
     document.getElementById('firstAidModalTitle').textContent = item ? 'Edit Guideline' : 'Add Guideline';
     document.getElementById('faId').value = item ? item.id : 0;
     document.getElementById('faTitle').value = item ? (item.title||'') : '';
-    document.getElementById('faContent').value = item ? (item.content||'') : '';
     document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
     const icon = item ? (item.icon || 'general-first-aid') : 'general-first-aid';
     selectIcon(icon);
     document.getElementById('faIconDropdown').classList.remove('show');
     firstAidModal.show();
+    // Set Quill content after modal is shown
+    setTimeout(function() {
+        if (window.quillEditor) {
+            const content = item ? (item.content||'') : '';
+            if (content) {
+                window.quillEditor.root.innerHTML = content;
+            } else {
+                window.quillEditor.setText('');
+            }
+        }
+    }, 200);
 }
 
 function selectIcon(iconKey) {
@@ -580,6 +604,15 @@ function showEmergencyForm(item){
 function submitModalForm(formId, modalInstance) {
     document.getElementById(formId).addEventListener('submit', function(e){
         e.preventDefault();
+        // Sync Quill content to hidden input before submit
+        if (formId === 'firstAidForm' && window.quillEditor) {
+            const html = window.quillEditor.root.innerHTML;
+            document.getElementById('faContentHidden').value = (html === '<p><br></p>') ? '' : html;
+            if (!document.getElementById('faContentHidden').value.trim()) {
+                showAlert('error', 'Error', 'Content is required.');
+                return;
+            }
+        }
         postAction(new FormData(this)).then(d=>{
             if(d.success){ modalInstance.hide(); scheduleToast('success', d.message); }
             else showAlert('error','Error',d.message);
@@ -590,6 +623,20 @@ submitModalForm('announcementForm', announcementModal);
 submitModalForm('faqForm', faqModal);
 submitModalForm('firstAidForm', firstAidModal);
 submitModalForm('emergencyForm', emergencyModal);
+
+// Initialize Quill rich text editor for First Aid content
+window.quillEditor = new Quill('#faContentEditor', {
+    theme: 'snow',
+    placeholder: 'Type your first aid instructions here...',
+    modules: {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link'],
+            ['clean']
+        ]
+    }
+});
 
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();

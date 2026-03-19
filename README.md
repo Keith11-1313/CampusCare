@@ -49,6 +49,7 @@ npm install bootstrap
 npm install bootstrap-icons
 npm install sweetalert2
 npm install chart.js
+npm install quill
 ```
 
 ### 3. Create the Database
