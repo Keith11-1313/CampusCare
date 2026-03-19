@@ -84,10 +84,31 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
                     </div>
                 </div>
 
-                <!-- Right: Clinic Image -->
+                <!-- Right: Clinic Image Carousel -->
                 <div class="col-lg-6 hero-image-col">
                     <div class="hero-image-wrapper">
-                        <img src="<?php echo BASE_URL; ?>/assets/clinic1.jpg" alt="Campus Clinic" class="hero-image">
+                        <div id="heroClinicCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
+                            <div class="carousel-indicators hero-carousel-dots">
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                            </div>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic1.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic2.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic3.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic4.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1679,7 +1679,7 @@ a:hover {
 /* ---- Hero Image ---- */
 .hero-image-col {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
 }
 
@@ -1687,15 +1687,39 @@ a:hover {
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    max-width: 500px;
     width: 100%;
-    aspect-ratio: 4/3;
     position: relative;
+}
+
+/* Smooth carousel slide transition */
+.hero-image-wrapper .carousel-item {
+    transition: transform 1s ease-in-out;
+}
+
+/* Hero carousel indicator dots */
+.hero-carousel-dots {
+    margin-bottom: 12px;
+}
+
+.hero-carousel-dots button {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255,255,255,0.5) !important;
+    border: none !important;
+    margin: 0 4px !important;
+    padding: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.hero-carousel-dots button.active {
+    background-color: #fff !important;
+    transform: scale(1.2);
 }
 
 .hero-image {
     width: 100%;
-    height: 100%;
+    height: 360px;
     object-fit: cover;
     display: block;
 }
@@ -1836,10 +1860,11 @@ a:hover {
 
     .hero-image-col {
         margin-top: 2rem;
+        justify-content: center;
     }
 
-    .hero-image-wrapper {
-        max-width: 350px;
+    .hero-image {
+        height: 260px;
     }
 
     .hero-row {
