@@ -161,15 +161,18 @@ else: ?>
             <div class="row g-4">
                 <?php foreach ($firstAidGuidelines as $guide): ?>
                 <div class="col-md-6 col-lg-4">
-                    <div class="public-card card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div style="width:40px;height:40px;border-radius:10px;background:var(--cc-primary-bg);display:flex;align-items:center;justify-content:center;" class="me-3">
+                    <div class="public-card card h-100 fa-expand-card">
+                        <div class="card-body p-0">
+                            <div class="fa-expand-header d-flex align-items-center p-3" role="button" data-bs-toggle="collapse" data-bs-target="#faGuide<?php echo $guide['id']; ?>" aria-expanded="false">
+                                <div class="fa-icon-box me-3">
                                     <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($guide['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:24px;height:24px;object-fit:contain;">
                                 </div>
-                                <h5 class="card-title fw-bold mb-0" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
+                                <h5 class="card-title fw-bold mb-0 flex-grow-1" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
+                                <i class="bi bi-chevron-down fa-expand-chevron"></i>
                             </div>
-                            <div class="text-muted" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
+                            <div class="collapse" id="faGuide<?php echo $guide['id']; ?>">
+                                <div class="fa-expand-content text-muted px-3 pb-3" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>

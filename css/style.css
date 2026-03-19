@@ -1803,6 +1803,52 @@ a:hover {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
+/* ---- Expandable First Aid Cards ---- */
+.fa-expand-card {
+    cursor: pointer;
+}
+
+.fa-expand-card:hover {
+    transform: translateY(-2px);
+}
+
+.fa-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--cc-primary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fa-expand-header {
+    border-radius: var(--cc-radius);
+    transition: background 0.2s ease;
+}
+
+.fa-expand-header:hover {
+    background: #f8fafc;
+}
+
+.fa-expand-chevron {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.fa-expand-header[aria-expanded="true"] .fa-expand-chevron {
+    transform: rotate(180deg);
+}
+
+.fa-expand-content {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 0.75rem !important;
+}
+
 /* ---- Empty State ---- */
 /* Centered placeholder shown when a list or table has no data,
    with muted text and generous padding. */
