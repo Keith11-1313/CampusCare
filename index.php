@@ -165,7 +165,7 @@ else: ?>
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <div style="width:40px;height:40px;border-radius:10px;background:var(--cc-primary-bg);display:flex;align-items:center;justify-content:center;" class="me-3">
-                                    <i class="bi bi-bandaid text-primary-cc"></i>
+                                    <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($guide['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:24px;height:24px;object-fit:contain;">
                                 </div>
                                 <h5 class="card-title fw-bold mb-0" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
                             </div>

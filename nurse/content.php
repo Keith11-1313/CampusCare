@@ -65,12 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($action === 'save') {
             $title = trim($_POST['title'] ?? '');
             $content = trim($_POST['content'] ?? '');
+            $icon = trim($_POST['icon'] ?? 'general-first-aid');
             if (empty($title) || empty($content))
                 jsonResponse(['success' => false, 'message' => 'Title and content required.']);
             if ($id > 0)
-                $db->query("UPDATE first_aid_guidelines SET title=?, content=?, sort_order=? WHERE id=?", [$title, $content, intval($_POST['sort_order'] ?? 0), $id]);
+                $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=?, sort_order=? WHERE id=?", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0), $id]);
             else
-                $db->query("INSERT INTO first_aid_guidelines (title,content,sort_order) VALUES (?,?,?)", [$title, $content, intval($_POST['sort_order'] ?? 0)]);
+                $db->query("INSERT INTO first_aid_guidelines (title,icon,content,sort_order) VALUES (?,?,?,?)", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0)]);
             jsonResponse(['success' => true, 'message' => 'Guideline saved.']);
         }
         if ($action === 'delete') {
@@ -174,6 +175,7 @@ endforeach; ?>
                     <thead>
                         <tr>
                             <th>Order</th>
+                            <th>Icon</th>
                             <th>Title</th>
                             <th>Content Preview</th>
                             <th class="text-center">Actions</th>
@@ -183,6 +185,7 @@ endforeach; ?>
                         <?php foreach ($firstAid as $f): ?>
                         <tr>
                             <td><?php echo $f['sort_order']; ?></td>
+                            <td><img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($f['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:28px;height:28px;object-fit:contain;"></td>
                             <td class="fw-semibold"><?php echo e($f['title']); ?></td>
                             <td><small><?php echo truncate(strip_tags($f['content']), 50); ?></small></td>
                             <td class="text-center table-action-btns">
@@ -372,6 +375,42 @@ endforeach; ?>
                     <input type="hidden" name="section" value="first_aid">
                     <input type="hidden" name="id" id="faId" value="0">
                     <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="faTitle" required placeholder="Enter title"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Icon</label>
+                        <input type="hidden" name="icon" id="faIcon" value="general-first-aid">
+                        <div class="icon-picker-preview d-flex align-items-center gap-2 mb-2 p-2 border rounded" id="faIconPreview" style="cursor:pointer;" onclick="document.getElementById('faIconDropdown').classList.toggle('show')">
+                            <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/general-first-aid.png" id="faIconPreviewImg" style="width:28px;height:28px;object-fit:contain;">
+                            <span id="faIconPreviewLabel" class="text-muted" style="font-size:0.875rem;">General First Aid</span>
+                            <i class="bi bi-chevron-down ms-auto text-muted"></i>
+                        </div>
+                        <div class="icon-picker-dropdown border rounded shadow-sm" id="faIconDropdown" style="display:none;max-height:220px;overflow-y:auto;background:#fff;position:relative;z-index:10;">
+                            <?php
+                            $iconOptions = [
+                                'allergic-reaction' => 'Allergic Reaction',
+                                'asthma-attack' => 'Asthma Attack',
+                                'burns' => 'Burns',
+                                'chocking' => 'Choking',
+                                'cpr-basic-life-support' => 'CPR / Life Support',
+                                'cuts-and-wounds' => 'Cuts & Wounds',
+                                'eye-injury' => 'Eye Injury',
+                                'fainting-dizziness' => 'Fainting / Dizziness',
+                                'fever' => 'Fever',
+                                'fracture-and-sprains' => 'Fractures & Sprains',
+                                'general-first-aid' => 'General First Aid',
+                                'head-injury' => 'Head Injury',
+                                'heat-stroke-dehydration' => 'Heat Stroke / Dehydration',
+                                'insect-bite-and-sting' => 'Insect Bites & Stings',
+                                'nosebleed' => 'Nosebleed',
+                                'stomach-pain' => 'Stomach Pain',
+                            ];
+                            foreach ($iconOptions as $key => $label): ?>
+                                <div class="icon-picker-option d-flex align-items-center gap-2 px-3 py-2" style="cursor:pointer;transition:background .15s;" data-icon="<?php echo $key; ?>" data-label="<?php echo $label; ?>" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'">
+                                    <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo $key; ?>.png" style="width:24px;height:24px;object-fit:contain;">
+                                    <span style="font-size:0.85rem;"><?php echo $label; ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                     <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="faContent" rows="4" required placeholder="Enter content (HTML allowed)"></textarea></div>
                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
                 </div>  
@@ -489,8 +528,44 @@ function showFirstAidForm(item){
     document.getElementById('faTitle').value = item ? (item.title||'') : '';
     document.getElementById('faContent').value = item ? (item.content||'') : '';
     document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
+    const icon = item ? (item.icon || 'general-first-aid') : 'general-first-aid';
+    selectIcon(icon);
+    document.getElementById('faIconDropdown').classList.remove('show');
     firstAidModal.show();
 }
+
+function selectIcon(iconKey) {
+    const baseUrl = '<?php echo BASE_URL; ?>';
+    document.getElementById('faIcon').value = iconKey;
+    document.getElementById('faIconPreviewImg').src = baseUrl + '/assets/first-aid-icons/' + iconKey + '.png';
+    const option = document.querySelector('.icon-picker-option[data-icon="' + iconKey + '"]');
+    document.getElementById('faIconPreviewLabel').textContent = option ? option.dataset.label : iconKey;
+    document.getElementById('faIconDropdown').style.display = 'none';
+    document.getElementById('faIconDropdown').classList.remove('show');
+}
+
+// Icon picker click handlers
+document.querySelectorAll('.icon-picker-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        selectIcon(this.dataset.icon);
+    });
+});
+
+// Toggle dropdown visibility
+const faIconDropdown = document.getElementById('faIconDropdown');
+const faIconPreview = document.getElementById('faIconPreview');
+if (faIconPreview) {
+    faIconPreview.addEventListener('click', function(e) {
+        e.stopPropagation();
+        faIconDropdown.style.display = faIconDropdown.style.display === 'none' ? 'block' : 'none';
+    });
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (faIconDropdown && !faIconDropdown.contains(e.target) && e.target !== faIconPreview) {
+        faIconDropdown.style.display = 'none';
+    }
+});
 
 function addEmergency(){showEmergencyForm(null);}
 function showEmergencyForm(item){

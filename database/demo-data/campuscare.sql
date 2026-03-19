@@ -251,6 +251,7 @@ CREATE TABLE IF NOT EXISTS `faqs` (
 CREATE TABLE IF NOT EXISTS `first_aid_guidelines` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(200) NOT NULL,
+  `icon` VARCHAR(50) NOT NULL DEFAULT 'general-first-aid',
   `content` TEXT NOT NULL,
   `sort_order` INT(11) NOT NULL DEFAULT 0,
   `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
