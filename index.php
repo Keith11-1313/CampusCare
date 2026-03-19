@@ -270,33 +270,56 @@ endif; ?>
                 <p class="section-subtitle">Our operating schedule</p>
             </div>
             <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="card border-0" style="border-radius: 12px;">
-                        <div class="card-body p-0">
-                            <table class="table table-borderless mb-0">
-                                <tbody>
-                                    <?php foreach ($clinicHours as $hour): ?>
-                                    <tr>
-                                        <td class="fw-semibold py-3 ps-4" style="font-size: 0.9rem;"><?php echo e($hour['day_of_week']); ?></td>
-                                        <td class="text-end py-3 pe-4" style="font-size: 0.9rem;">
+                <div class="col-lg-6 col-md-8">
+                    <div class="clinic-hours-schedule">
+                        <?php 
+                        $daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                        $todayName = $daysOfWeek[date('w')];
+                        $dayIcons = [
+                            'Monday' => 'bi-calendar-event',
+                            'Tuesday' => 'bi-calendar-event',
+                            'Wednesday' => 'bi-calendar-event',
+                            'Thursday' => 'bi-calendar-event',
+                            'Friday' => 'bi-calendar-event',
+                            'Saturday' => 'bi-calendar-heart',
+                            'Sunday' => 'bi-calendar-heart',
+                        ];
+                        foreach ($clinicHours as $hour): 
+                            $isToday = ($hour['day_of_week'] === $todayName);
+                        ?>
+                        <div class="clinic-hours-row <?php echo $isToday ? 'clinic-hours-today' : ''; ?>">
+                            <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                <div class="clinic-hours-day-icon <?php echo $isToday ? 'active' : ''; ?>">
+                                    <i class="bi <?php echo $dayIcons[$hour['day_of_week']] ?? 'bi-calendar-event'; ?>"></i>
+                                </div>
+                                <div>
+                                    <div class="clinic-hours-day-name <?php echo $isToday ? 'fw-bold' : ''; ?>">
+                                        <?php echo e($hour['day_of_week']); ?>
+                                        <?php if ($isToday): ?>
                                             <?php if ($hour['is_closed']): ?>
-                                                <span class="badge bg-secondary">Closed</span>
-                                            <?php
-    else: ?>
-                                                <?php echo formatTime($hour['opening_time']); ?> - <?php echo formatTime($hour['closing_time']); ?>
-                                                <?php if ($hour['notes']): ?>
-                                                <br><small class="text-muted"><?php echo e($hour['notes']); ?></small>
-                                                <?php
-        endif; ?>
-                                            <?php
-    endif; ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-endforeach; ?>
-                                </tbody>
-                            </table>
+                                                <span class="clinic-hours-status-badge closed">Closed</span>
+                                            <?php else:
+                                                $now = date('H:i:s');
+                                                $isOpen = ($now >= $hour['opening_time'] && $now <= $hour['closing_time']);
+                                            ?>
+                                                <span class="clinic-hours-status-badge <?php echo $isOpen ? 'open' : 'closed'; ?>"><?php echo $isOpen ? 'Open' : 'Closed'; ?></span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($hour['notes'] && !$hour['is_closed']): ?>
+                                        <small class="text-muted" style="font-size: 0.75rem;"><?php echo e($hour['notes']); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="clinic-hours-time">
+                                <?php if ($hour['is_closed']): ?>
+                                    <span class="clinic-hours-closed-badge">Closed</span>
+                                <?php else: ?>
+                                    <span class="clinic-hours-open-time"><?php echo formatTime($hour['opening_time']); ?> – <?php echo formatTime($hour['closing_time']); ?></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>

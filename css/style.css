@@ -1849,6 +1849,119 @@ a:hover {
     padding-top: 0.75rem !important;
 }
 
+/* ---- Clinic Hours Section ---- */
+/* Right schedule list */
+.clinic-hours-schedule {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+/* Individual day row */
+.clinic-hours-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #f0f4f3;
+    transition: background 0.2s ease;
+}
+
+.clinic-hours-row:last-child {
+    border-bottom: none;
+}
+
+.clinic-hours-row:hover {
+    background: #f8fafc;
+}
+
+/* Day icon circle */
+.clinic-hours-day-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f0f4f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7c93;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.clinic-hours-day-icon.active {
+    background: var(--cc-primary);
+    color: #fff;
+}
+
+/* Day name */
+.clinic-hours-day-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* "Today" highlight row */
+.clinic-hours-today {
+    background: var(--cc-primary-bg);
+    border-left: 3px solid var(--cc-primary);
+}
+
+.clinic-hours-today:hover {
+    background: #e3edf7;
+}
+
+/* "Open / Closed" status badge */
+.clinic-hours-status-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.clinic-hours-status-badge.open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.clinic-hours-status-badge.closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Time display */
+.clinic-hours-time {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.clinic-hours-open-time {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cc-primary);
+    white-space: nowrap;
+}
+
+/* Closed badge */
+.clinic-hours-closed-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7c93;
+    background: #eef2f1;
+    padding: 3px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
 /* ---- Empty State ---- */
 /* Centered placeholder shown when a list or table has no data,
    with muted text and generous padding. */
