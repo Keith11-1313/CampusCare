@@ -1491,10 +1491,10 @@ a:hover {
     z-index: 1030;
 }
 
-/* The pill-shaped navbar itself */
+/* The rounded navbar itself */
 .public-navbar {
     background: #fff;
-    border-radius: 50px;
+    border-radius: 16px;
     padding: 0.5rem 1.25rem;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.3s ease;
@@ -1525,7 +1525,7 @@ a:hover {
 .public-navbar-login-btn {
     border: 1.5px solid #1a2332;
     color: #1a2332 !important;
-    border-radius: 30px;
+    border-radius: 10px;
     padding: 0.35rem 1.1rem !important;
     font-size: 0.85rem;
     font-weight: 600;
@@ -1678,7 +1678,7 @@ a:hover {
     border: none;
     color: #fff;
     padding: 0.7rem 2rem;
-    border-radius: 30px;
+    border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 0.3px;
@@ -1697,7 +1697,7 @@ a:hover {
     border: 2px solid rgba(255, 255, 255, 0.6);
     color: #fff;
     padding: 0.7rem 2rem;
-    border-radius: 30px;
+    border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 0.3px;
