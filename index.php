@@ -53,39 +53,41 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     </nav>
 
     <!-- Hero Section -->
-    <section class="public-hero p-0 position-relative overflow-hidden" style="min-height: 100vh;">
-        <div id="heroBgCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" data-bs-ride="carousel" data-bs-interval="3000" style="z-index: 1;">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic1.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic2.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic3.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic4.jpg');"></div>
-                </div>
-            </div>
-        </div>
+    <section class="hero-section">
+        <!-- Floating background blobs (same as login page) -->
+        <div class="hero-blob hero-blob-1"></div>
+        <div class="hero-blob hero-blob-2"></div>
+        <div class="hero-blob hero-blob-3"></div>
 
-        <div class="container position-relative d-flex align-items-center" style="z-index: 2; min-height: 100vh;">
-            <div class="row">
-                <div class="col-lg-7 text-white">
-                    <h1 class="display-5 fw-bold mb-3 animate-fade-in"><?php echo APP_NAME; ?></h1>
-                    <p class="lead mb-4 opacity-100 animate-fade-in animate-delay-1"><?php echo APP_TAGLINE; ?></p>
-                    <p class="mb-4 opacity-75 animate-fade-in animate-delay-2">
+        <!-- Decorative circles -->
+        <div class="hero-circle hero-circle-1"></div>
+        <div class="hero-circle hero-circle-2"></div>
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center hero-row">
+                <!-- Left: Text Content -->
+                <div class="col-lg-6 text-white hero-text-col">
+                    <h1 class="hero-title">
+                        <span class="hero-title-campus">Campus</span><span class="hero-title-care">Care</span>
+                    </h1>
+                    <h2 class="hero-subtitle"><?php echo APP_TAGLINE; ?></h2>
+                    <p class="hero-description">
                         Your campus health partner. Access clinic information, announcements, first-aid guidelines, and emergency contacts all in one place.
                     </p>
-                    <div class="animate-fade-in animate-delay-3 d-flex flex-column flex-md-row gap-2">
-                        <a href="#announcements" class="btn btn-primary btn-md px-4 py-3 fw-semibold border-white d-flex align-items-center justify-content-center">
-                            <i class="bi bi-megaphone me-2"></i>Latest Updates
+                    <div class="hero-buttons">
+                        <a href="#announcements" class="btn hero-btn-primary">
+                            Latest Updates
                         </a>
-                        <a href="#emergency" class="btn btn-outline-light btn-md px-4 py-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-telephone me-2"></i>Emergency
+                        <a href="#emergency" class="btn hero-btn-outline">
+                            Emergencies
                         </a>
+                    </div>
+                </div>
+
+                <!-- Right: Clinic Image -->
+                <div class="col-lg-6 hero-image-col">
+                    <div class="hero-image-wrapper">
+                        <img src="<?php echo BASE_URL; ?>/assets/clinic1.jpg" alt="Campus Clinic" class="hero-image">
                     </div>
                 </div>
             </div>

@@ -1489,10 +1489,215 @@ a:hover {
     padding: 1rem 0;
 }
 
-/* Hero section on the public page with a dark background
-   (serves as a base for the carousel overlay). */
-.public-hero {
-    background: #000;
+/* ---- Hero Section (Public Page) ---- */
+/* Full-viewport hero with the login-page-style blue gradient and blobs */
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #003d6b 0%, #005a9c 30%, #2d89cf 60%, #0077b6 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 7rem 0 4rem;
+}
+
+/* Decorative radial-gradient circle (top-right) */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    border-radius: 50%;
+}
+
+/* Decorative radial-gradient circle (bottom-left) */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    bottom: -100px;
+    left: -100px;
+    border-radius: 50%;
+}
+
+/* ---- Hero Floating Blobs ---- */
+.hero-blob {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+    filter: blur(2px);
+}
+
+.hero-blob-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.9), rgba(160,210,255,0.5));
+    top: -100px;
+    left: -80px;
+    animation: blobFloat1 14s ease-in-out infinite;
+}
+
+.hero-blob-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle at 60% 40%, rgba(255,255,255,0.8), rgba(130,190,255,0.4));
+    bottom: -80px;
+    right: -60px;
+    animation: blobFloat2 18s ease-in-out infinite;
+    opacity: 0.10;
+}
+
+.hero-blob-3 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7), rgba(100,170,255,0.3));
+    top: 50%;
+    right: 8%;
+    animation: blobFloat3 22s ease-in-out infinite;
+    opacity: 0.08;
+}
+
+/* Decorative subtle circles */
+.hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-circle-1 {
+    width: 500px;
+    height: 500px;
+    top: -150px;
+    right: -100px;
+}
+
+.hero-circle-2 {
+    width: 300px;
+    height: 300px;
+    bottom: -50px;
+    left: -50px;
+}
+
+/* Hero row alignment */
+.hero-row {
+    min-height: 70vh;
+}
+
+/* ---- Hero Text ---- */
+.hero-text-col {
+    padding-right: 2rem;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.hero-title-campus {
+    font-weight: 700;
+}
+
+.hero-title-care {
+    font-style: italic;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.hero-description {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+    max-width: 480px;
+}
+
+/* ---- Hero Buttons ---- */
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    background: var(--cc-accent);
+    border: none;
+    color: #fff;
+    padding: 0.7rem 2rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14,165,233,0.3);
+}
+
+.hero-btn-primary:hover {
+    background: #0891d6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(14,165,233,0.45);
+    color: #fff;
+}
+
+.hero-btn-outline {
+    border: 2px solid rgba(255,255,255,0.6);
+    color: #fff;
+    padding: 0.7rem 2rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.hero-btn-outline:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: #fff;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ---- Hero Image ---- */
+.hero-image-col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image-wrapper {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    max-width: 500px;
+    width: 100%;
+    aspect-ratio: 4/3;
+    position: relative;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 /* Generic section wrapper for the public page with vertical padding. */
@@ -1535,29 +1740,6 @@ a:hover {
 .public-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* ---- Hero Section ---- */
-/* Full-size background image overlay for carousel slides,
-   using cover sizing and centered positioning. */
-.carousel-img-overlay {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-/* Dark gradient overlay on top of carousel images so that
-   white text remains readable. */
-.carousel-img-overlay::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, rgba(0, 90, 156, 0.85), rgba(0, 0, 0, 0.3));
 }
 
 /* ---- Empty State ---- */
@@ -1639,9 +1821,29 @@ a:hover {
         padding: 1.75rem;
     }
 
-    /* Less vertical padding on the public hero section. */
-    .public-hero {
-        padding: 3rem 0 2.5rem;
+    /* Hero section responsive */
+    .hero-section {
+        padding: 6rem 0 3rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .hero-image-col {
+        margin-top: 2rem;
+    }
+
+    .hero-image-wrapper {
+        max-width: 350px;
+    }
+
+    .hero-row {
+        min-height: auto;
     }
 }
 

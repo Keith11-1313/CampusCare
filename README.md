@@ -1,6 +1,6 @@
 # CampusCare
 
-### School Clinic Patient Information & Medicine Record System
+## School Clinic Patient Information Record System
 
 A PHP/MySQL web application for managing school clinic operations, student health records, clinic visits, and public health information.
 
@@ -9,7 +9,7 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 ## Features
 
 | Role | Capabilities |
-|------|-------------|
+| ------ | ------------- |
 | **Admin** | Dashboard, user management (CRUD), programs & year levels, access logs, archives, reports (Chart.js + PDF export) |
 | **Nurse/Staff** | Dashboard, student search & profile (allergies, conditions, medications, immunizations, emergency contacts), visit logging, visit history, public content management (announcements, FAQs, first-aid, emergency contacts, clinic hours) |
 | **Class Rep** | Dashboard, student CRUD (scoped to assigned program/year/section), CSV export of student records |
@@ -55,15 +55,20 @@ npm install chart.js
 
 1. Open **phpMyAdmin** or MySQL CLI
 2. Create a database named `campuscare` (for local development):
+
    ```sql
    CREATE DATABASE campuscare;
    ```
+
 3. Import/Paste the schema:
+
    ```sql
    USE campuscare;
    SOURCE database/campuscare.sql;
    ```
+
 4. Import/Paste the seed data (for ready to-go data):
+
    ```sql
    SOURCE database/seed_data.sql;
    ```
@@ -89,7 +94,7 @@ define('BASE_URL', 'http://localhost/CampusCare');
 
 Start Apache & MySQL in XAMPP, then visit:
 
-```
+```text
 http://localhost/CampusCare
 ```
 
@@ -98,7 +103,7 @@ http://localhost/CampusCare
 ## Default Login Credentials
 
 | Role | Username | Password |
-|------|----------|----------|
+| ------ | ---------- | ---------- |
 | Admin | `admin` | `admin123` |
 | Nurse | `nurse_garcia` | `nurse123` |
 | Nurse | `nurse_santos` | `nurse123` |
@@ -109,7 +114,7 @@ http://localhost/CampusCare
 
 ## Project Structure
 
-```
+```text
 CampusCare/
 ├── admin/                  # Admin module
 │   ├── access_logs.php
