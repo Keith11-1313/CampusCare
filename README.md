@@ -29,10 +29,11 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 
 ## Requirements
 
-- **PHP 7.4+** (with PDO MySQL extension)
+- **PHP 7.4+** (with PDO MySQL and GD extensions enabled)
 - **MySQL 5.7+** or MariaDB 10.3+
 - **Apache** (with `mod_rewrite`) or any PHP-compatible web server
 - **Node.js/npm** (for frontend dependencies)
+- **Composer** (for PHP backend dependencies) — [Download here](https://getcomposer.org/download/)
 - **XAMPP/WAMP/MAMP** recommended for local development
 
 ## Installation
@@ -45,14 +46,34 @@ Place the `CampusCare` folder in your web server's document root (e.g., `htdocs`
 
 ```powershell
 cd CampusCare
-npm install bootstrap
-npm install bootstrap-icons
-npm install sweetalert2
-npm install chart.js
-npm install quill
+npm install
 ```
 
-### 3. Create the Database
+This installs all packages listed in `package.json` (Bootstrap, SweetAlert2, Chart.js, etc.) into the `node_modules/` folder.
+
+### 3. Install Backend Dependencies (Composer)
+
+**Option A — If Composer is installed globally:**
+
+```powershell
+composer install
+```
+
+**Option B — If Composer is NOT installed globally:**
+
+Download and run Composer directly:
+
+```powershell
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php
+php composer.phar install
+```
+
+This installs the PHP packages listed in `composer.json` (e.g., Dompdf for PDF export) into the `vendor/` folder.
+
+> **Tip:** To install Composer globally on Windows, download the [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe) installer.
+
+### 4. Create the Database
 
 1. Open **phpMyAdmin** or MySQL CLI
 2. Create a database named `campuscare` (for local development):
@@ -74,7 +95,7 @@ npm install quill
    SOURCE database/seed_data.sql;
    ```
 
-### 4. Configure the credentials (for deployment)
+### 5. Configure the credentials (for deployment)
 
 Edit `config/config.php` to match your database credentials:
 
@@ -91,7 +112,17 @@ Also update `BASE_URL` if not using the default:
 define('BASE_URL', 'http://localhost/CampusCare');
 ```
 
-### 5. Start the Server
+### 6. Enable PHP GD Extension
+
+The GD extension is required for PDF export with images. In your `php.ini`, make sure this line is **uncommented**:
+
+```ini
+extension=gd
+```
+
+For XAMPP, the `php.ini` file is at `C:\xampp\php\php.ini`. After editing, **restart Apache**.
+
+### 7. Start the Server
 
 Start Apache & MySQL in XAMPP, then visit:
 
@@ -172,11 +203,13 @@ CampusCare/
 ├── css/style.css           # Custom styles
 ├── js/app.js               # Main JavaScript
 ├── index.php               # Public landing page
+├── export_firstaid_pdf.php # First aid guideline PDF export
 ├── login.php               # Login page
 ├── logout.php              # Logout handler
 ├── change_password.php     # Change password
 ├── change_security_question.php  # Change security question
-├── demo_students.csv       # Demo student data CSV
+├── vendor/                 # PHP dependencies (Composer)
+├── composer.json           # Composer dependencies
 ├── package.json            # npm dependencies
 └── .gitignore              # gitignore file
 ```
@@ -185,6 +218,7 @@ CampusCare/
 
 - **Backend:** PHP 7.4+ (vanilla, no framework)
 - **Database:** MySQL via PDO
+- **PDF Export:** Dompdf (via Composer)
 - **Frontend:** Bootstrap 5.3, Bootstrap Icons, SweetAlert2, Chart.js
 - **Typography:** Google Fonts (Inter)
 
