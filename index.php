@@ -158,10 +158,10 @@ endif; ?>
             <div class="empty-state"><i class="bi bi-bandaid"></i><p>No guidelines available.</p></div>
             <?php
 else: ?>
-            <div class="row g-4">
+            <div class="row g-4 align-items-start">
                 <?php foreach ($firstAidGuidelines as $guide): ?>
                 <div class="col-md-6 col-lg-4">
-                    <div class="public-card card h-100 fa-expand-card">
+                    <div class="public-card card fa-expand-card">
                         <div class="card-body p-0">
                             <div class="fa-expand-header d-flex align-items-center p-3" role="button" data-bs-toggle="collapse" data-bs-target="#faGuide<?php echo $guide['id']; ?>" aria-expanded="false">
                                 <div class="fa-icon-box me-3">
@@ -171,7 +171,18 @@ else: ?>
                                 <i class="bi bi-chevron-down fa-expand-chevron"></i>
                             </div>
                             <div class="collapse" id="faGuide<?php echo $guide['id']; ?>">
-                                <div class="fa-expand-content text-muted px-3 pb-3" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
+                                <div class="fa-expand-content text-muted px-3 pb-3" style="font-size: 0.85rem;">
+                                    <?php echo $guide['content']; ?>
+                                    <div class="fa-export-actions mt-2 pt-2">
+                                        <a href="<?php echo BASE_URL; ?>/export_firstaid_pdf.php?id=<?php echo $guide['id']; ?>" 
+                                           class="btn btn-sm fa-export-btn" 
+                                           onclick="event.stopPropagation();" 
+                                           title="Download as PDF"
+                                           target="_blank">
+                                            <i class="bi bi-file-earmark-pdf me-1"></i>Save as PDF
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

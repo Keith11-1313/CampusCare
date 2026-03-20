@@ -1,8 +1,9 @@
+# Dependencies - don't track installed packages
 node_modules/
-#not track the node modules folder
+vendor/
 
-*.json
-#not track the json files
+# Composer executable - can be re-downloaded
+*.phar
 
-#.env 
-# use if theres .env folder for hosting
+# Environment variables (uncomment if using .env)
+#.env

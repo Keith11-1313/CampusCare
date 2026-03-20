@@ -1849,6 +1849,41 @@ a:hover {
     padding-top: 0.75rem !important;
 }
 
+/* ---- First Aid Export Actions ---- */
+.fa-export-actions {
+    border-top: 1px solid #eef2f1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.fa-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--cc-primary);
+    background: var(--cc-primary-bg);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.fa-export-btn:hover {
+    background: var(--cc-primary);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 90, 156, 0.25);
+}
+
+.fa-export-btn i {
+    font-size: 0.85rem;
+}
+
 /* ---- Clinic Hours Section ---- */
 /* Right schedule list */
 .clinic-hours-schedule {
