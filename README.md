@@ -95,7 +95,7 @@ This installs the PHP packages listed in `composer.json` (e.g., Dompdf for PDF e
    SOURCE database/seed_data.sql;
    ```
 
-### 5. Configure the credentials (for deployment)
+### 5. Configure the credentials (ignore for localhost)
 
 Edit `config/config.php` to match your database credentials:
 
@@ -112,7 +112,7 @@ Also update `BASE_URL` if not using the default:
 define('BASE_URL', 'http://localhost/CampusCare');
 ```
 
-### 6. Enable PHP GD Extension
+### 6. Enable PHP GD Extension (ignore as it is enabled by default)
 
 The GD extension is required for PDF export with images. In your `php.ini`, make sure this line is **uncommented**:
 
