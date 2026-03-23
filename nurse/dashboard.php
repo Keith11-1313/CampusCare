@@ -78,10 +78,10 @@ $topAllergens = $db->fetchAll(
      GROUP BY allergen ORDER BY count DESC LIMIT 5"
 );
 
-// Chronic condition status breakdown (Active / Managed / Resolved)
-$conditionStatuses = $db->fetchAll(
-    "SELECT status, COUNT(*) as count FROM chronic_conditions
-     GROUP BY status ORDER BY count DESC"
+// Top chronic conditions across all students
+$topConditions = $db->fetchAll(
+    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
 );
 
 // Top 5 vaccines administered
@@ -120,7 +120,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1">
             <div class="d-flex justify-content-between">
                 <div>
-                    <div class="stat-label">This Month</div>
+                    <div class="stat-label">Monthly Visits</div>
                     <div class="stat-value"><?php echo $monthVisits; ?></div>
                 </div>
                 <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
@@ -181,7 +181,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <!-- Health Records Overview Row -->
 <div class="row g-4 mb-4">
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-exclamation-triangle me-2"></i>Top Allergens</div>
             <div class="card-body">
@@ -193,19 +193,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Condition Status</div>
-            <div class="card-body">
-                <?php if (empty($conditionStatuses)): ?>
-                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No condition data.</p></div>
-                <?php else: ?>
-                <div class="chart-container"><canvas id="conditionsChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
             <div class="card-body">
@@ -219,7 +207,52 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status This Month</div>
+            <div class="card-body">
+                <?php if (empty($visitStatuses)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data.</p></div>
+                <?php else: ?>
+                <div class="chart-container-sm"><canvas id="statusChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Conditions</div>
+            <div class="card-body">
+                <?php if (empty($topConditions)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No condition data.</p></div>
+                <?php else: ?>
+                <div class="list-group list-group-flush">
+                    <?php foreach ($topConditions as $tc): 
+                        $statusColor = match($tc['status']) {
+                            'Active' => 'danger',
+                            'Managed' => 'warning',
+                            'Resolved' => 'success',
+                            default => 'secondary'
+                        };
+                    ?>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <div>
+                            <div class="fw-semibold small"><?php echo e($tc['condition_name']); ?></div>
+                            <span class="badge bg-<?php echo $statusColor; ?> mt-1"><?php echo e($tc['status']); ?></span>
+                        </div>
+                        <span class="badge bg-primary rounded-pill"><?php echo $tc['count']; ?> student<?php echo $tc['count'] > 1 ? 's' : ''; ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
     <!-- Today's Visits Table -->
     <div class="col-lg-8">
         <div class="card">
@@ -263,20 +296,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
     <!-- Right Column -->
     <div class="col-lg-4">
-        <!-- Visit Status This Month -->
-        <div class="card">
-            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status This Month</div>
-            <div class="card-body">
-                <?php if (empty($visitStatuses)): ?>
-                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data.</p></div>
-                <?php else: ?>
-                <div class="chart-container-sm"><canvas id="statusChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-
         <!-- Upcoming Follow-ups -->
-        <div class="card mt-3">
+        <div class="card">
             <div class="card-header"><i class="bi bi-calendar-event me-2"></i>Upcoming Follow-ups</div>
             <div class="card-body">
                 <?php if (empty($upcomingFollowUps)): ?>
@@ -435,27 +456,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     <?php endif; ?>
 
-    // --- Condition Status Doughnut ---
-    <?php if (!empty($conditionStatuses)): ?>
-    const condData = <?php echo json_encode($conditionStatuses); ?>;
-    const condColors = { 'Active': '#e74c3c', 'Managed': '#f39c12', 'Resolved': '#27ae60' };
-    new Chart(document.getElementById('conditionsChart'), {
-        type: 'doughnut',
-        data: {
-            labels: condData.map(d => d.status),
-            datasets: [{
-                data: condData.map(d => d.count),
-                backgroundColor: condData.map(d => condColors[d.status] || '#6b7c93'),
-                borderWidth: 2, borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
-            cutout: '55%'
-        }
-    });
-    <?php endif; ?>
 
     // --- Top Vaccines Horizontal Bar ---
     <?php if (!empty($topVaccines)): ?>

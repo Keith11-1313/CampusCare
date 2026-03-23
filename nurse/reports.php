@@ -11,25 +11,40 @@ if (isset($_GET['export']) && $_GET['export'] === 'pdf') {
 }
 
 // --- Filter parameters ---
-$filterStartDate   = $_GET['start_date'] ?? '';
-$filterEndDate     = $_GET['end_date'] ?? '';
-$filterProgramId   = $_GET['program_id'] ?? '';
+$filterStartDate = $_GET['start_date'] ?? '';
+$filterEndDate = $_GET['end_date'] ?? '';
+$filterProgramId = $_GET['program_id'] ?? '';
 $filterYearLevelId = $_GET['year_level_id'] ?? '';
-$filterSection     = trim($_GET['section'] ?? '');
+$filterSection = trim($_GET['section'] ?? '');
 
 // Dropdown data
-$programs   = $db->fetchAll("SELECT id, code, name FROM programs WHERE status='active' ORDER BY code");
+$programs = $db->fetchAll("SELECT id, code, name FROM programs WHERE status='active' ORDER BY code");
 $yearLevels = $db->fetchAll("SELECT id, name FROM year_levels WHERE status='active' ORDER BY order_num");
-$sections   = $db->fetchAll("SELECT DISTINCT section FROM students WHERE section IS NOT NULL AND section != '' ORDER BY section");
+$sections = $db->fetchAll("SELECT DISTINCT section FROM students WHERE section IS NOT NULL AND section != '' ORDER BY section");
 
 // Build dynamic WHERE clause for visits (joined with students)
 $where = "1=1";
 $params = [];
-if ($filterStartDate) { $where .= " AND v.visit_date >= ?"; $params[] = $filterStartDate . ' 00:00:00'; }
-if ($filterEndDate)   { $where .= " AND v.visit_date <= ?"; $params[] = $filterEndDate . ' 23:59:59'; }
-if ($filterProgramId) { $where .= " AND s.program_id = ?";  $params[] = $filterProgramId; }
-if ($filterYearLevelId) { $where .= " AND s.year_level_id = ?"; $params[] = $filterYearLevelId; }
-if ($filterSection)   { $where .= " AND s.section = ?";     $params[] = $filterSection; }
+if ($filterStartDate) {
+    $where .= " AND v.visit_date >= ?";
+    $params[] = $filterStartDate . ' 00:00:00';
+}
+if ($filterEndDate) {
+    $where .= " AND v.visit_date <= ?";
+    $params[] = $filterEndDate . ' 23:59:59';
+}
+if ($filterProgramId) {
+    $where .= " AND s.program_id = ?";
+    $params[] = $filterProgramId;
+}
+if ($filterYearLevelId) {
+    $where .= " AND s.year_level_id = ?";
+    $params[] = $filterYearLevelId;
+}
+if ($filterSection) {
+    $where .= " AND s.section = ?";
+    $params[] = $filterSection;
+}
 
 // Chart data: visits by month (last 12 months or filtered range)
 $monthWhere = $where;
@@ -106,7 +121,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <option value="">All Programs</option>
                     <?php foreach ($programs as $p): ?>
                     <option value="<?php echo $p['id']; ?>" <?php echo $filterProgramId == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option>
-                    <?php endforeach; ?>
+                    <?php
+endforeach; ?>
                 </select>
             </div>
             <div class="col-md-2">
@@ -115,7 +131,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <option value="">All Year Levels</option>
                     <?php foreach ($yearLevels as $yl): ?>
                     <option value="<?php echo $yl['id']; ?>" <?php echo $filterYearLevelId == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option>
-                    <?php endforeach; ?>
+                    <?php
+endforeach; ?>
                 </select>
             </div>
             <div class="col-md-2">
@@ -124,7 +141,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <option value="">All Sections</option>
                     <?php foreach ($sections as $sec): ?>
                     <option value="<?php echo e($sec['section']); ?>" <?php echo $filterSection == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option>
-                    <?php endforeach; ?>
+                    <?php
+endforeach; ?>
                 </select>
             </div>
             <div class="col-md-2 d-flex gap-1">
@@ -157,12 +175,21 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <?php if ($filterStartDate || $filterEndDate || $filterProgramId || $filterYearLevelId || $filterSection): ?>
                     <div class="alert alert-info py-2 small mb-3">
                         <i class="bi bi-funnel-fill me-1"></i><strong>Active Filters:</strong>
-                        <?php if ($filterStartDate || $filterEndDate) echo ($filterStartDate ?: '…') . ' to ' . ($filterEndDate ?: '…') . ' '; ?>
-                        <?php if ($filterProgramId) { $pName = array_filter($programs, fn($p) => $p['id'] == $filterProgramId); echo '• ' . e(reset($pName)['code'] ?? '') . ' '; } ?>
-                        <?php if ($filterYearLevelId) { $ylName = array_filter($yearLevels, fn($y) => $y['id'] == $filterYearLevelId); echo '• ' . e(reset($ylName)['name'] ?? '') . ' '; } ?>
-                        <?php if ($filterSection) echo '• Section ' . e($filterSection); ?>
+                        <?php if ($filterStartDate || $filterEndDate)
+        echo($filterStartDate ?: '…') . ' to ' . ($filterEndDate ?: '…') . ' '; ?>
+                        <?php if ($filterProgramId) {
+        $pName = array_filter($programs, fn($p) => $p['id'] == $filterProgramId);
+        echo '• ' . e(reset($pName)['code'] ?? '') . ' ';
+    }?>
+                        <?php if ($filterYearLevelId) {
+        $ylName = array_filter($yearLevels, fn($y) => $y['id'] == $filterYearLevelId);
+        echo '• ' . e(reset($ylName)['name'] ?? '') . ' ';
+    }?>
+                        <?php if ($filterSection)
+        echo '• Section ' . e($filterSection); ?>
                     </div>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
 
                     <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" name="sections[]" value="summary" id="secSummary" checked>
