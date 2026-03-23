@@ -75,6 +75,30 @@ INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`,
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
 ('nurse_santos', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Jose', 'Santos', 'jose.santos@campuscare.edu', 'nurse', 'active');
 
+-- Nurse: username=nurse.reyes, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_reyes', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Ana', 'Reyes', 'ana.reyes@campuscare.edu', 'nurse', 'active');
+
+-- Nurse: username=nurse.cruz, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_cruz', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Rosa', 'Cruz', 'rosa.cruz@campuscare.edu', 'nurse', 'active');
+
+-- Nurse: username=nurse.mendoza, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_mendoza', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Elena', 'Mendoza', 'elena.mendoza@campuscare.edu', 'nurse', 'active');
+
+-- Nurse: username=nurse.villanueva, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_villanueva', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Carmen', 'Villanueva', 'carmen.villanueva@campuscare.edu', 'nurse', 'active');
+
+-- Nurse: username=nurse.torres, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_torres', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Patricia', 'Torres', 'patricia.torres@campuscare.edu', 'nurse', 'active');
+
+-- Nurse: username=nurse.bautista, password=nurse123
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
+('nurse_bautista', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Lucia', 'Bautista', 'lucia.bautista@campuscare.edu', 'nurse', 'active');
+
 -- ============================================================
 -- Seed: Announcements
 -- ============================================================
