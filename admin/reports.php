@@ -73,6 +73,16 @@ $visitsByProgram = $db->fetchAll(
     $params
 );
 
+// Visit status distribution (filtered)
+$visitStatuses = $db->fetchAll(
+    "SELECT v.status, COUNT(*) as count FROM visits v
+     JOIN students s ON v.student_id=s.id
+     WHERE $where
+     GROUP BY v.status ORDER BY count DESC",
+    $params
+);
+
+
 // Summary stats
 $totalVisits = $db->fetchColumn(
     "SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
@@ -193,6 +203,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records" id="secRecords" checked>
                         <label class="form-check-label" for="secRecords">Visit Records Table</label>
                     </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="visit_status" id="secStatus" checked>
+                        <label class="form-check-label" for="secStatus">Visit Status Distribution</label>
+                    </div>
+
 
                     <hr class="my-3">
                     <label class="form-label small fw-semibold mb-1"><i class="bi bi-sort-down me-1"></i>Sort Visit Records by</label>
@@ -245,6 +260,23 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="col-12">
         <div class="card"><div class="card-header"><i class="bi bi-list-ol me-2"></i>Top Health Complaints</div>
         <div class="card-body"><div class="chart-container" style="height:400px;"><canvas id="complaintsChart"></canvas></div></div></div>
+    </div>
+</div>
+
+<!-- Health Records Overview -->
+<div class="row g-4 mt-2">
+    <!-- Visit Status Distribution -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status Distribution</div>
+            <div class="card-body">
+                <?php if (empty($visitStatuses)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="statusChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -344,6 +376,30 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
     });
+
+    // --- Visit Status Doughnut ---
+    <?php if (!empty($visitStatuses)): ?>
+    const statusData = <?php echo json_encode($visitStatuses); ?>;
+    const statusColors = { 'Completed': '#27ae60', 'Follow-up': '#f39c12', 'Referred': '#c0392b' };
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(d => d.status),
+            datasets: [{
+                data: statusData.map(d => d.count),
+                backgroundColor: statusData.map(d => statusColors[d.status] || '#6b7c93'),
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            cutout: '55%'
+        }
+    });
+    <?php endif; ?>
+
+
 });
 </script>
 

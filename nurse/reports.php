@@ -79,6 +79,33 @@ $visitsByProgram = $db->fetchAll(
     $params
 );
 
+// Visit status distribution (filtered)
+$visitStatuses = $db->fetchAll(
+    "SELECT v.status, COUNT(*) as count FROM visits v
+     JOIN students s ON v.student_id=s.id
+     WHERE $where
+     GROUP BY v.status ORDER BY count DESC",
+    $params
+);
+
+// Top 5 allergens across all students
+$topAllergens = $db->fetchAll(
+    "SELECT allergen, COUNT(*) as count FROM allergies
+     GROUP BY allergen ORDER BY count DESC LIMIT 5"
+);
+
+// Top 5 vaccines administered
+$topVaccines = $db->fetchAll(
+    "SELECT vaccine_name, COUNT(*) as count FROM immunizations
+     GROUP BY vaccine_name ORDER BY count DESC LIMIT 5"
+);
+
+// Top chronic conditions
+$topConditions = $db->fetchAll(
+    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
+);
+
 // Summary stats
 $totalVisits = $db->fetchColumn(
     "SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
@@ -211,6 +238,22 @@ endif; ?>
                         <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records" id="secRecords" checked>
                         <label class="form-check-label" for="secRecords">Visit Records Table</label>
                     </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="visit_status" id="secStatus" checked>
+                        <label class="form-check-label" for="secStatus">Visit Status Distribution</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_allergens" id="secAllergens" checked>
+                        <label class="form-check-label" for="secAllergens">Top Allergens</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_vaccines" id="secVaccines" checked>
+                        <label class="form-check-label" for="secVaccines">Top Vaccines</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_conditions" id="secConditions" checked>
+                        <label class="form-check-label" for="secConditions">Top Chronic Conditions</label>
+                    </div>
 
                     <hr class="my-3">
                     <label class="form-label small fw-semibold mb-1"><i class="bi bi-sort-down me-1"></i>Sort Visit Records by</label>
@@ -263,6 +306,79 @@ endif; ?>
     <div class="col-12">
         <div class="card"><div class="card-header"><i class="bi bi-list-ol me-2"></i>Top Health Complaints</div>
         <div class="card-body"><div class="chart-container" style="height:400px;"><canvas id="complaintsChart"></canvas></div></div></div>
+    </div>
+</div>
+
+<!-- Health Records Overview -->
+<div class="row g-4 mt-2">
+    <!-- Visit Status Distribution -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status Distribution</div>
+            <div class="card-body">
+                <?php if (empty($visitStatuses)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="statusChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <!-- Top Allergens -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-exclamation-triangle me-2"></i>Top Allergens</div>
+            <div class="card-body">
+                <?php if (empty($topAllergens)): ?>
+                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No allergy data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="allergensChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <!-- Top Vaccines -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
+            <div class="card-body">
+                <?php if (empty($topVaccines)): ?>
+                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No immunization data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="vaccinesChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <!-- Top Conditions -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Chronic Conditions</div>
+            <div class="card-body">
+                <?php if (empty($topConditions)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No condition data.</p></div>
+                <?php else: ?>
+                <div class="list-group list-group-flush">
+                    <?php foreach ($topConditions as $tc): 
+                        $statusColor = match($tc['status']) {
+                            'Active' => 'danger',
+                            'Managed' => 'warning',
+                            'Resolved' => 'success',
+                            default => 'secondary'
+                        };
+                    ?>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <div>
+                            <div class="fw-semibold small"><?php echo e($tc['condition_name']); ?></div>
+                            <span class="badge bg-<?php echo $statusColor; ?> mt-1"><?php echo e($tc['status']); ?></span>
+                        </div>
+                        <span class="badge bg-primary rounded-pill"><?php echo $tc['count']; ?> student<?php echo $tc['count'] > 1 ? 's' : ''; ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -362,6 +478,78 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
     });
+
+    // --- Visit Status Doughnut ---
+    <?php if (!empty($visitStatuses)): ?>
+    const statusData = <?php echo json_encode($visitStatuses); ?>;
+    const statusColors = { 'Completed': '#27ae60', 'Follow-up': '#f39c12', 'Referred': '#c0392b' };
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(d => d.status),
+            datasets: [{
+                data: statusData.map(d => d.count),
+                backgroundColor: statusData.map(d => statusColors[d.status] || '#6b7c93'),
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            cutout: '55%'
+        }
+    });
+    <?php endif; ?>
+
+    // --- Top Allergens Horizontal Bar ---
+    <?php if (!empty($topAllergens)): ?>
+    const allergenData = <?php echo json_encode($topAllergens); ?>;
+    new Chart(document.getElementById('allergensChart'), {
+        type: 'bar',
+        data: {
+            labels: allergenData.map(d => d.allergen.length > 20 ? d.allergen.substring(0, 20) + '…' : d.allergen),
+            datasets: [{
+                label: 'Students',
+                data: allergenData.map(d => d.count),
+                backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                borderColor: '#c0392b',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+    <?php endif; ?>
+
+    // --- Top Vaccines Horizontal Bar ---
+    <?php if (!empty($topVaccines)): ?>
+    const vaccineData = <?php echo json_encode($topVaccines); ?>;
+    new Chart(document.getElementById('vaccinesChart'), {
+        type: 'bar',
+        data: {
+            labels: vaccineData.map(d => d.vaccine_name.length > 20 ? d.vaccine_name.substring(0, 20) + '…' : d.vaccine_name),
+            datasets: [{
+                label: 'Doses',
+                data: vaccineData.map(d => d.count),
+                backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                borderColor: '#27ae60',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+    <?php endif; ?>
 });
 </script>
 

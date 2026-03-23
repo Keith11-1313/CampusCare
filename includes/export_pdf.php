@@ -102,6 +102,33 @@ $visitsByProgram = $db->fetchAll(
     $params
 );
 
+// Visit status distribution
+$visitStatuses = $db->fetchAll(
+    "SELECT v.status, COUNT(*) as count FROM visits v
+     JOIN students s ON v.student_id=s.id
+     WHERE $where
+     GROUP BY v.status ORDER BY count DESC",
+    $params
+);
+
+// Top 5 allergens
+$topAllergens = $db->fetchAll(
+    "SELECT allergen, COUNT(*) as count FROM allergies
+     GROUP BY allergen ORDER BY count DESC LIMIT 5"
+);
+
+// Top 5 vaccines
+$topVaccines = $db->fetchAll(
+    "SELECT vaccine_name, COUNT(*) as count FROM immunizations
+     GROUP BY vaccine_name ORDER BY count DESC LIMIT 5"
+);
+
+// Top chronic conditions
+$topConditions = $db->fetchAll(
+    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
+);
+
 // Summary stats
 $totalStudentsWithVisits = $db->fetchColumn(
     "SELECT COUNT(DISTINCT v.student_id) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
@@ -118,7 +145,7 @@ while (ob_get_level()) {
 }
 ?>
 <?php
-$sections = isset($_GET['sections']) && is_array($_GET['sections']) ? $_GET['sections'] : ['summary', 'visits_month', 'visits_program', 'top_complaints', 'visit_records'];
+$sections = isset($_GET['sections']) && is_array($_GET['sections']) ? $_GET['sections'] : ['summary', 'visits_month', 'visits_program', 'top_complaints', 'visit_records', 'visit_status', 'top_allergens', 'top_vaccines', 'top_conditions'];
 $usePageBreaks = isset($_GET['page_breaks']) && $_GET['page_breaks'] == '1';
 $useLandscape = isset($_GET['landscape']) && $_GET['landscape'] == '1';
 ?>
@@ -178,7 +205,13 @@ $useLandscape = isset($_GET['landscape']) && $_GET['landscape'] == '1';
         }
         .chart-box.wide { width: 60%; margin-right: 2%; }
         .chart-box.narrow { width: 35%; }
+        .chart-box.half { width: 47%; margin-right: 2%; }
         .chart-box.full { width: 97%; }
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 600; color: #fff; }
+        .status-badge.active { background: #c0392b; }
+        .status-badge.managed { background: #f39c12; }
+        .status-badge.resolved { background: #27ae60; }
+        .status-badge.other { background: #6b7c93; }
         .chart-box h3 { font-size: 12px; color: #003d6b; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         .chart-box canvas { width: 100% !important; height: 220px !important; }
 
@@ -290,6 +323,119 @@ endif; ?>
     endforeach; ?>
             </tbody>
         </table>
+    </div>
+    <?php $hasPreviousSection = true;
+endif; ?>
+
+    <!-- Visit Status Distribution -->
+    <?php if (in_array('visit_status', $sections)): ?>
+    <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <div class="chart-box half">
+            <h3>Visit Status Distribution</h3>
+            <?php if (!empty($visitStatuses)): ?>
+            <canvas id="statusChart"></canvas>
+            <img class="chart-img" id="statusChartImg" alt="Visit status chart">
+            <?php else: ?>
+            <p style="color:#999;text-align:center;padding:30px 0;">No visit status data available.</p>
+            <?php endif; ?>
+        </div>
+        <div class="chart-box narrow">
+            <h3>Status Summary</h3>
+            <table>
+                <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                <tbody>
+                <?php foreach ($visitStatuses as $vs): ?>
+                <tr><td><?php echo e($vs['status']); ?></td><td><?php echo $vs['count']; ?></td></tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php $hasPreviousSection = true;
+endif; ?>
+
+    <!-- Top Allergens -->
+    <?php if (in_array('top_allergens', $sections)): ?>
+    <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <div class="chart-box half">
+            <h3>Top Allergens</h3>
+            <?php if (!empty($topAllergens)): ?>
+            <canvas id="allergensChart"></canvas>
+            <img class="chart-img" id="allergensChartImg" alt="Top allergens chart">
+            <?php else: ?>
+            <p style="color:#999;text-align:center;padding:30px 0;">No allergy data available.</p>
+            <?php endif; ?>
+        </div>
+        <div class="chart-box narrow">
+            <h3>Allergen Data</h3>
+            <table>
+                <thead><tr><th>#</th><th>Allergen</th><th>Students</th></tr></thead>
+                <tbody>
+                <?php foreach ($topAllergens as $i => $a): ?>
+                <tr><td><?php echo $i + 1; ?></td><td><?php echo e($a['allergen']); ?></td><td><?php echo $a['count']; ?></td></tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php $hasPreviousSection = true;
+endif; ?>
+
+    <!-- Top Vaccines -->
+    <?php if (in_array('top_vaccines', $sections)): ?>
+    <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <div class="chart-box half">
+            <h3>Top Vaccines</h3>
+            <?php if (!empty($topVaccines)): ?>
+            <canvas id="vaccinesChart"></canvas>
+            <img class="chart-img" id="vaccinesChartImg" alt="Top vaccines chart">
+            <?php else: ?>
+            <p style="color:#999;text-align:center;padding:30px 0;">No immunization data available.</p>
+            <?php endif; ?>
+        </div>
+        <div class="chart-box narrow">
+            <h3>Vaccine Data</h3>
+            <table>
+                <thead><tr><th>#</th><th>Vaccine</th><th>Doses</th></tr></thead>
+                <tbody>
+                <?php foreach ($topVaccines as $i => $vac): ?>
+                <tr><td><?php echo $i + 1; ?></td><td><?php echo e($vac['vaccine_name']); ?></td><td><?php echo $vac['count']; ?></td></tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php $hasPreviousSection = true;
+endif; ?>
+
+    <!-- Top Chronic Conditions -->
+    <?php if (in_array('top_conditions', $sections)): ?>
+    <div class="section <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <h2>Top Chronic Conditions</h2>
+        <?php if (!empty($topConditions)): ?>
+        <table>
+            <thead><tr><th>#</th><th>Condition</th><th>Status</th><th>Students</th></tr></thead>
+            <tbody>
+            <?php foreach ($topConditions as $i => $tc):
+                $badgeClass = match($tc['status']) {
+                    'Active' => 'active',
+                    'Managed' => 'managed',
+                    'Resolved' => 'resolved',
+                    default => 'other'
+                };
+            ?>
+            <tr>
+                <td><?php echo $i + 1; ?></td>
+                <td><?php echo e($tc['condition_name']); ?></td>
+                <td><span class="status-badge <?php echo $badgeClass; ?>"><?php echo e($tc['status']); ?></span></td>
+                <td><?php echo $tc['count']; ?></td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php else: ?>
+        <p style="color:#999;text-align:center;padding:20px 0;">No chronic condition data available.</p>
+        <?php endif; ?>
     </div>
     <?php $hasPreviousSection = true;
 endif; ?>
@@ -430,6 +576,40 @@ endif; ?>
     });
     <?php
 endif; ?>
+
+    // Visit Status doughnut
+    <?php if (in_array('visit_status', $sections) && !empty($visitStatuses)): ?>
+    const statusData = <?php echo json_encode($visitStatuses); ?>;
+    const statusColorsMap = { 'Completed': '#27ae60', 'Follow-up': '#f39c12', 'Referred': '#c0392b' };
+    new Chart(document.getElementById('statusChart'), {
+        type:'doughnut', data:{
+            labels: statusData.map(d=>d.status),
+            datasets:[{data:statusData.map(d=>d.count),backgroundColor:statusData.map(d=>statusColorsMap[d.status]||'#6b7c93'),borderWidth:2,borderColor:'#fff'}]
+        }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},cutout:'55%'}
+    });
+    <?php endif; ?>
+
+    // Top Allergens horizontal bar
+    <?php if (in_array('top_allergens', $sections) && !empty($topAllergens)): ?>
+    const allergenData = <?php echo json_encode($topAllergens); ?>;
+    new Chart(document.getElementById('allergensChart'), {
+        type:'bar', data:{
+            labels: allergenData.map(d=>d.allergen.length>20?d.allergen.substring(0,20)+'…':d.allergen),
+            datasets:[{label:'Students',data:allergenData.map(d=>d.count),backgroundColor:'rgba(231,76,60,0.7)',borderColor:'#c0392b',borderWidth:1,borderRadius:6}]
+        }, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+    });
+    <?php endif; ?>
+
+    // Top Vaccines horizontal bar
+    <?php if (in_array('top_vaccines', $sections) && !empty($topVaccines)): ?>
+    const vaccineData = <?php echo json_encode($topVaccines); ?>;
+    new Chart(document.getElementById('vaccinesChart'), {
+        type:'bar', data:{
+            labels: vaccineData.map(d=>d.vaccine_name.length>20?d.vaccine_name.substring(0,20)+'…':d.vaccine_name),
+            datasets:[{label:'Doses',data:vaccineData.map(d=>d.count),backgroundColor:'rgba(39,174,96,0.7)',borderColor:'#27ae60',borderWidth:1,borderRadius:6}]
+        }, options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+    });
+    <?php endif; ?>
 
     // Convert canvases to images for print
     function preparePrint() {
