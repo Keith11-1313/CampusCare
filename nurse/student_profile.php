@@ -197,6 +197,22 @@ $immunizations = $db->fetchAll("SELECT * FROM immunizations WHERE student_id=? O
 $emergencyContacts = $db->fetchAll("SELECT * FROM emergency_contacts WHERE student_id=? ORDER BY id ASC", [$studentId]);
 $visits = $db->fetchAll("SELECT v.*, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v LEFT JOIN users u ON v.attended_by=u.id WHERE v.student_id=? ORDER BY v.visit_date DESC LIMIT 20", [$studentId]);
 
+// Predefined common options + any existing DB values
+$presetAllergens = ['Amoxicillin', 'Aspirin', 'Bee Stings', 'Cats', 'Cockroach', 'Codeine', 'Dairy / Lactose', 'Dogs', 'Dust Mites', 'Eggs', 'Fish', 'Gluten / Wheat', 'Grass Pollen', 'Ibuprofen', 'Insect Bites', 'Latex', 'Mold', 'Peanuts', 'Penicillin', 'Pollen', 'Sesame', 'Shellfish', 'Soy', 'Sulfa Drugs', 'Sulfites', 'Tree Nuts'];
+$dbAllergens = array_column($db->fetchAll("SELECT DISTINCT allergen FROM allergies WHERE allergen IS NOT NULL AND allergen != '' ORDER BY allergen ASC"), 'allergen');
+$allAllergens = array_unique(array_merge($presetAllergens, $dbAllergens));
+sort($allAllergens);
+
+$presetConditions = ['Anxiety Disorder', 'Asthma', 'Attention Deficit Hyperactivity Disorder (ADHD)', 'Autism Spectrum Disorder', 'Bipolar Disorder', 'Cerebral Palsy', 'Chronic Fatigue Syndrome', 'Chronic Migraine', 'Congenital Heart Disease', 'Crohn\'s Disease', 'Cystic Fibrosis', 'Depression', 'Diabetes - Type 1', 'Diabetes - Type 2', 'Down Syndrome', 'Eating Disorder', 'Eczema / Dermatitis', 'Epilepsy / Seizure Disorder', 'Hemophilia', 'Hypertension', 'Hyperthyroidism', 'Hypothyroidism', 'Irritable Bowel Syndrome (IBS)', 'Kidney Disease', 'Lupus (SLE)', 'Muscular Dystrophy', 'Obsessive-Compulsive Disorder (OCD)', 'Polycystic Ovary Syndrome (PCOS)', 'Psoriasis', 'Rheumatoid Arthritis', 'Scoliosis', 'Sickle Cell Disease', 'Thalassemia', 'Tourette Syndrome', 'Tuberculosis (latent)', 'Ulcerative Colitis'];
+$dbConditions = array_column($db->fetchAll("SELECT DISTINCT condition_name FROM chronic_conditions WHERE condition_name IS NOT NULL AND condition_name != '' ORDER BY condition_name ASC"), 'condition_name');
+$allConditions = array_unique(array_merge($presetConditions, $dbConditions));
+sort($allConditions);
+
+$presetVaccines = ['BCG (Bacillus Calmette-Guérin)', 'Chickenpox (Varicella)', 'COVID-19 - AstraZeneca', 'COVID-19 - Janssen', 'COVID-19 - Moderna', 'COVID-19 - Pfizer-BioNTech', 'COVID-19 - Sinovac', 'DPT (Diphtheria, Pertussis, Tetanus)', 'Flu (Influenza) - Seasonal', 'Hepatitis A', 'Hepatitis B', 'HPV (Human Papillomavirus)', 'Japanese Encephalitis', 'Measles, Mumps, Rubella (MMR)', 'Meningococcal', 'Oral Polio Vaccine (OPV)', 'Inactivated Polio Vaccine (IPV)', 'Pneumococcal (PCV13)', 'Rabies', 'Rotavirus', 'Tdap (Tetanus, Diphtheria, Pertussis)', 'Tetanus Toxoid (TT)', 'Typhoid', 'Yellow Fever'];
+$dbVaccines = array_column($db->fetchAll("SELECT DISTINCT vaccine_name FROM immunizations WHERE vaccine_name IS NOT NULL AND vaccine_name != '' ORDER BY vaccine_name ASC"), 'vaccine_name');
+$allVaccines = array_unique(array_merge($presetVaccines, $dbVaccines));
+sort($allVaccines);
+
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
@@ -558,7 +574,13 @@ endif; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <div class="mb-3">
                         <label class="form-label">Allergen <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" name="data[allergen]" required placeholder="e.g. Peanuts">
+                        <select class="form-select" name="data[allergen]" id="allergenSelect" required>
+                            <option value="" disabled selected>Select an allergen</option>
+                            <?php foreach ($allAllergens as $a): ?>
+                            <option value="<?php echo e($a); ?>"><?php echo e($a); ?></option>
+                            <?php
+endforeach; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Reaction</label>
@@ -601,7 +623,13 @@ endif; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <div class="mb-3">
                         <label class="form-label">Condition Name <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" name="data[condition_name]" required placeholder="e.g. Asthma">
+                        <select class="form-select" name="data[condition_name]" id="conditionSelect" required>
+                            <option value="" disabled selected>Select a condition</option>
+                            <?php foreach ($allConditions as $c): ?>
+                            <option value="<?php echo e($c); ?>"><?php echo e($c); ?></option>
+                            <?php
+endforeach; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Diagnosis Date</label>
@@ -683,7 +711,13 @@ endif; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <div class="mb-3">
                         <label class="form-label">Vaccine Name <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" name="data[vaccine_name]" required placeholder="e.g. Hepatitis B">
+                        <select class="form-select" name="data[vaccine_name]" id="vaccineSelect" required>
+                            <option value="" disabled selected>Select a vaccine</option>
+                            <?php foreach ($allVaccines as $v): ?>
+                            <option value="<?php echo e($v); ?>"><?php echo e($v); ?></option>
+                            <?php
+endforeach; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Date Administered</label>
