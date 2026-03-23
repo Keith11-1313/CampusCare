@@ -8,9 +8,18 @@ $user = getCurrentUser();
 
 // Dashboard statistics
 $totalStudents = $db->fetchColumn("SELECT COUNT(*) FROM students WHERE status = 'active'");
-$totalVisitsToday = $db->fetchColumn("SELECT COUNT(*) FROM visits WHERE DATE(visit_date) = CURDATE()");
+$activeNurses = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'nurse' AND status = 'active'");
 $totalVisitsMonth = $db->fetchColumn("SELECT COUNT(*) FROM visits WHERE MONTH(visit_date) = MONTH(CURDATE()) AND YEAR(visit_date) = YEAR(CURDATE())");
 $activeUsers = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE status = 'active'");
+
+// Month-over-month comparison
+$lastMonthVisits = $db->fetchColumn(
+    "SELECT COUNT(*) FROM visits WHERE MONTH(visit_date) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(visit_date) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
+);
+$momChange = ($lastMonthVisits > 0) ? round((($totalVisitsMonth - $lastMonthVisits) / $lastMonthVisits) * 100) : 0;
+
+// Pending requests count
+$pendingRequests = $db->fetchColumn("SELECT COUNT(*) FROM current_requests WHERE status = 'pending'");
 
 // Recent visits
 $recentVisits = $db->fetchAll(
@@ -22,11 +31,33 @@ $recentVisits = $db->fetchAll(
      ORDER BY v.visit_date DESC LIMIT 10"
 );
 
-// Top complaints this month
+// Top complaints this month (for doughnut chart)
 $topComplaints = $db->fetchAll(
     "SELECT complaint_category, COUNT(*) as count FROM visits 
      WHERE MONTH(visit_date) = MONTH(CURDATE()) AND YEAR(visit_date) = YEAR(CURDATE())
-     GROUP BY complaint_category ORDER BY count DESC LIMIT 5"
+     GROUP BY complaint_category ORDER BY count DESC LIMIT 6"
+);
+
+// Visits per day (last 7 days) for bar chart
+$visitsPerDay = $db->fetchAll(
+    "SELECT DATE(visit_date) as day, COUNT(*) as count FROM visits 
+     WHERE visit_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
+     GROUP BY DATE(visit_date) ORDER BY day"
+);
+
+// Visit status distribution for doughnut
+$visitStatuses = $db->fetchAll(
+    "SELECT status, COUNT(*) as count FROM visits 
+     WHERE MONTH(visit_date) = MONTH(CURDATE()) AND YEAR(visit_date) = YEAR(CURDATE())
+     GROUP BY status ORDER BY count DESC"
+);
+
+// Recent activity feed (last 5 access logs)
+$activityFeed = $db->fetchAll(
+    "SELECT al.*, u.first_name, u.last_name, u.username 
+     FROM access_logs al 
+     LEFT JOIN users u ON al.user_id = u.id 
+     ORDER BY al.created_at DESC LIMIT 5"
 );
 
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -57,10 +88,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="stat-label">Visits Today</div>
-                    <div class="stat-value"><?php echo number_format($totalVisitsToday); ?></div>
+                    <div class="stat-label">Active Nurses</div>
+                    <div class="stat-value"><?php echo number_format($activeNurses); ?></div>
                 </div>
-                <div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                <div class="stat-icon"><i class="bi bi-heart-pulse-fill"></i></div>
             </div>
         </div>
     </div>
@@ -70,19 +101,60 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div>
                     <div class="stat-label">Visits This Month</div>
                     <div class="stat-value"><?php echo number_format($totalVisitsMonth); ?></div>
+                    <?php if ($lastMonthVisits > 0): ?>
+                    <div class="stat-comparison <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
+                        <i class="bi bi-arrow-<?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'right'); ?>"></i>
+                        <?php echo abs($momChange); ?>% vs last month
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <?php if ($pendingRequests > 0): ?>
+        <a href="<?php echo BASE_URL; ?>/admin/current_requests.php" class="text-decoration-none">
+        <?php endif; ?>
         <div class="stat-card stat-card-danger animate-fade-in animate-delay-3">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="stat-label">Active Users</div>
-                    <div class="stat-value"><?php echo number_format($activeUsers); ?></div>
+                    <div class="stat-label">Pending Requests</div>
+                    <div class="stat-value"><?php echo number_format($pendingRequests); ?></div>
+                    <?php if ($pendingRequests > 0): ?>
+                    <div class="small mt-1 opacity-75"><i class="bi bi-arrow-right-circle me-1"></i>Review now</div>
+                    <?php endif; ?>
                 </div>
-                <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
+                <div class="stat-icon"><i class="bi bi-inbox-fill"></i></div>
+            </div>
+        </div>
+        <?php if ($pendingRequests > 0): ?>
+        </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <!-- Visits Per Day (Last 7 Days) -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits — Last 7 Days</div>
+            <div class="card-body">
+                <div class="chart-container"><canvas id="dailyVisitsChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <!-- Complaint Categories Doughnut -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Top Complaints This Month</div>
+            <div class="card-body">
+                <?php if (empty($topComplaints)): ?>
+                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No data this month.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="complaintsChart"></canvas></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -135,24 +207,48 @@ endif; ?>
         </div>
     </div>
 
-    <!-- Top Complaints -->
+    <!-- Right Column -->
     <div class="col-lg-4">
+        <!-- Visit Status Distribution -->
         <div class="card">
-            <div class="card-header"><i class="bi bi-bar-chart-fill me-2"></i>Top Complaints This Month</div>
+            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status This Month</div>
             <div class="card-body">
-                <?php if (empty($topComplaints)): ?>
-                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No data this month.</p></div>
-                <?php
-else: ?>
-                <?php foreach ($topComplaints as $c): ?>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="small fw-500"><?php echo truncate($c['complaint_category'], 30); ?></div>
-                    <span class="badge bg-primary rounded-pill"><?php echo $c['count']; ?></span>
+                <?php if (empty($visitStatuses)): ?>
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data this month.</p></div>
+                <?php else: ?>
+                <div class="chart-container-sm"><canvas id="statusChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card mt-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-activity me-2"></i>Recent Activity</span>
+                <a href="<?php echo BASE_URL; ?>/admin/access_logs.php" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body">
+                <?php if (empty($activityFeed)): ?>
+                <div class="empty-state py-3"><i class="bi bi-activity"></i><p class="small">No recent activity.</p></div>
+                <?php else: ?>
+                <?php foreach ($activityFeed as $act): 
+                    $isLogin = stripos($act['action'], 'login') !== false;
+                    $isWarning = stripos($act['action'], 'reject') !== false || stripos($act['action'], 'deactivat') !== false;
+                    $iconClass = $isWarning ? 'warning' : ($isLogin ? 'login' : 'action');
+                    $iconName = $isWarning ? 'bi-exclamation-triangle' : ($isLogin ? 'bi-box-arrow-in-right' : 'bi-lightning');
+                ?>
+                <div class="activity-item">
+                    <div class="activity-icon <?php echo $iconClass; ?>"><i class="bi <?php echo $iconName; ?>"></i></div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong><?php echo e(($act['first_name'] ?? '') . ' ' . ($act['last_name'] ?? '')); ?></strong>
+                            — <?php echo e(truncate($act['action'], 30)); ?>
+                        </div>
+                        <div class="activity-time"><?php echo formatDateTime($act['created_at'], 'M d, h:i A'); ?></div>
+                    </div>
                 </div>
-                <?php
-    endforeach; ?>
-                <?php
-endif; ?>
+                <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -176,5 +272,88 @@ endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const chartColors = ['#005a9c','#0ea5e9','#27ae60','#f39c12','#c0392b','#8e44ad','#e67e22','#2c3e50'];
+
+    // --- Daily Visits Bar Chart ---
+    const dailyData = <?php echo json_encode($visitsPerDay); ?>;
+    // Fill in missing days
+    const last7 = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0, 10);
+        const found = dailyData.find(r => r.day === key);
+        last7.push({ day: key, count: found ? parseInt(found.count) : 0 });
+    }
+    const dayLabels = last7.map(d => {
+        const dt = new Date(d.day + 'T00:00:00');
+        return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    });
+    new Chart(document.getElementById('dailyVisitsChart'), {
+        type: 'bar',
+        data: {
+            labels: dayLabels,
+            datasets: [{
+                label: 'Visits',
+                data: last7.map(d => d.count),
+                backgroundColor: 'rgba(0, 90, 156, 0.7)',
+                borderColor: '#005a9c',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+
+    // --- Complaints Doughnut ---
+    <?php if (!empty($topComplaints)): ?>
+    const compData = <?php echo json_encode($topComplaints); ?>;
+    new Chart(document.getElementById('complaintsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: compData.map(d => d.complaint_category ? d.complaint_category.split(':')[0].substring(0, 25) : 'Other'),
+            datasets: [{
+                data: compData.map(d => d.count),
+                backgroundColor: chartColors.slice(0, compData.length),
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            cutout: '60%'
+        }
+    });
+    <?php endif; ?>
+
+    // --- Visit Status Doughnut ---
+    <?php if (!empty($visitStatuses)): ?>
+    const statusData = <?php echo json_encode($visitStatuses); ?>;
+    const statusColors = { 'Completed': '#27ae60', 'Follow-up': '#f39c12', 'Referred': '#c0392b' };
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(d => d.status),
+            datasets: [{
+                data: statusData.map(d => d.count),
+                backgroundColor: statusData.map(d => statusColors[d.status] || '#6b7c93'),
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            cutout: '55%'
+        }
+    });
+    <?php endif; ?>
+});
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
