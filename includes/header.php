@@ -24,7 +24,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,6 +67,7 @@ $currentUser = isLoggedIn() ? getCurrentUser() : null;
                     <li><h6 class="dropdown-header"><?php echo e($currentUser['username']); ?></h6></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/change_password.php"><i class="bi bi-key me-2"></i>Change Password</a></li>
+                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/change_security_question.php"><i class="bi bi-shield-lock me-2"></i>Security Question</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/logout.php" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                 </ul>

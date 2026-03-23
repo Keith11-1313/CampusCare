@@ -21,71 +21,93 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <title><?php echo APP_NAME; ?> - <?php echo APP_TAGLINE; ?></title>
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/style.css">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark public-navbar fixed-top" style="box-shadow: 0 2px 15px rgba(0,0,0,0.15);">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-                <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="publicNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-outline-light btn-sm px-3" href="<?php echo BASE_URL; ?>/login.php">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Staff Login
-                        </a>
-                    </li>
-                </ul>
+    <div class="public-navbar-wrapper fixed-top">
+        <nav class="navbar navbar-expand-lg public-navbar">
+            <div class="container-fluid px-3">
+                <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-main-b.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2"><?php echo APP_NAME; ?>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="publicNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn public-navbar-login-btn" href="<?php echo BASE_URL; ?>/login.php">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Staff Login
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
     <!-- Hero Section -->
-    <section class="public-hero p-0 position-relative overflow-hidden" style="min-height: 80vh;">
-        <div id="heroBgCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" data-bs-ride="carousel" data-bs-interval="3000" style="z-index: 1;">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic1.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic2.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic3.jpg');"></div>
-                </div>
-                <div class="carousel-item h-100">
-                    <div class="carousel-img-overlay" style="background-image: url('assets/clinic4.jpg');"></div>
-                </div>
-            </div>
-        </div>
+    <section class="hero-section">
+        <!-- Floating background blobs (same as login page) -->
+        <div class="hero-blob hero-blob-1"></div>
+        <div class="hero-blob hero-blob-2"></div>
+        <div class="hero-blob hero-blob-3"></div>
 
-        <div class="container position-relative" style="z-index: 2; padding-top: 10rem; padding-bottom: 10rem;">
-            <div class="row">
-                <div class="col-lg-7 text-white">
-                    <h1 class="display-5 fw-bold mb-3 animate-fade-in"><?php echo APP_NAME; ?></h1>
-                    <p class="lead mb-4 opacity-100 animate-fade-in animate-delay-1"><?php echo APP_TAGLINE; ?></p>
-                    <p class="mb-4 opacity-75 animate-fade-in animate-delay-2">
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center hero-row">
+                <!-- Left: Text Content -->
+                <div class="col-lg-6 text-white hero-text-col text-center d-flex flex-column align-items-center">
+                    <h1 class="hero-title">
+                        <span class="hero-title-campus">Campus</span><span class="hero-title-care">Care</span>
+                    </h1>
+                    <h2 class="hero-subtitle"><?php echo APP_TAGLINE; ?></h2>
+                    <p class="hero-description">
                         Your campus health partner. Access clinic information, announcements, first-aid guidelines, and emergency contacts all in one place.
                     </p>
-                    <div class="animate-fade-in animate-delay-3 d-flex flex-column flex-md-row gap-2">
-                        <a href="#announcements" class="btn btn-primary btn-md px-4 py-3 fw-semibold border-white d-flex align-items-center justify-content-center">
-                            <i class="bi bi-megaphone me-2"></i>Latest Updates
+                    <div class="d-flex flex-row flex-wrap gap-3 justify-content-center">
+                        <a href="#announcements" class="btn hero-btn-primary">
+                            Latest Updates
                         </a>
-                        <a href="#emergency" class="btn btn-outline-light btn-md px-4 py-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-telephone me-2"></i>Emergency
+                        <a href="#emergency" class="btn hero-btn-outline">
+                            Emergencies
                         </a>
+                    </div>
+                </div>
+
+                <!-- Right: Clinic Image Carousel -->
+                <div class="col-lg-6 hero-image-col">
+                    <div class="hero-image-wrapper">
+                        <div id="heroClinicCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
+                            <div class="carousel-indicators hero-carousel-dots">
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                <button type="button" data-bs-target="#heroClinicCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                            </div>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic1.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic2.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic3.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<?php echo BASE_URL; ?>/assets/clinic4.jpg" alt="Campus Clinic" class="hero-image">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,6 +136,54 @@ else: ?>
                             </div>
                             <h5 class="card-title fw-bold mb-2" style="font-size: 1rem;"><?php echo e($ann['title']); ?></h5>
                             <p class="card-text text-muted" style="font-size: 0.875rem;"><?php echo e($ann['content']); ?></p>
+                        </div>
+                    </div>
+                </div>
+                <?php
+    endforeach; ?>
+            </div>
+            <?php
+endif; ?>
+        </div>
+    </section>
+
+    <!-- First Aid Guidelines -->
+    <section class="public-section" id="firstaid">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title"><i class="bi bi-bandaid-fill text-primary-cc me-2"></i>First Aid Guidelines</h2>
+                <p class="section-subtitle">Basic first-aid steps for common emergencies</p>
+            </div>
+            <?php if (empty($firstAidGuidelines)): ?>
+            <div class="empty-state"><i class="bi bi-bandaid"></i><p>No guidelines available.</p></div>
+            <?php
+else: ?>
+            <div class="row g-4 align-items-start">
+                <?php foreach ($firstAidGuidelines as $guide): ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="public-card card fa-expand-card">
+                        <div class="card-body p-0">
+                            <div class="fa-expand-header d-flex align-items-center p-3" role="button" data-bs-toggle="collapse" data-bs-target="#faGuide<?php echo $guide['id']; ?>" aria-expanded="false">
+                                <div class="fa-icon-box me-3">
+                                    <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($guide['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:24px;height:24px;object-fit:contain;">
+                                </div>
+                                <h5 class="card-title fw-bold mb-0 flex-grow-1" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
+                                <i class="bi bi-chevron-down fa-expand-chevron"></i>
+                            </div>
+                            <div class="collapse" id="faGuide<?php echo $guide['id']; ?>">
+                                <div class="fa-expand-content text-muted px-3 pb-3" style="font-size: 0.85rem;">
+                                    <?php echo $guide['content']; ?>
+                                    <div class="fa-export-actions mt-2 pt-2">
+                                        <a href="<?php echo BASE_URL; ?>/export_firstaid_pdf.php?id=<?php echo $guide['id']; ?>" 
+                                           class="btn btn-sm fa-export-btn" 
+                                           onclick="event.stopPropagation();" 
+                                           title="Download as PDF"
+                                           target="_blank">
+                                            <i class="bi bi-file-earmark-pdf me-1"></i>Save as PDF
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,40 +227,6 @@ else: ?>
     endforeach; ?>
                     </div>
                 </div>
-            </div>
-            <?php
-endif; ?>
-        </div>
-    </section>
-
-    <!-- First Aid Guidelines -->
-    <section class="public-section" id="firstaid">
-        <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="section-title"><i class="bi bi-bandaid-fill text-primary-cc me-2"></i>First Aid Guidelines</h2>
-                <p class="section-subtitle">Basic first-aid steps for common emergencies</p>
-            </div>
-            <?php if (empty($firstAidGuidelines)): ?>
-            <div class="empty-state"><i class="bi bi-bandaid"></i><p>No guidelines available.</p></div>
-            <?php
-else: ?>
-            <div class="row g-4">
-                <?php foreach ($firstAidGuidelines as $guide): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="public-card card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div style="width:40px;height:40px;border-radius:10px;background:var(--cc-primary-bg);display:flex;align-items:center;justify-content:center;" class="me-3">
-                                    <i class="bi bi-bandaid text-primary-cc"></i>
-                                </div>
-                                <h5 class="card-title fw-bold mb-0" style="font-size: 0.95rem;"><?php echo e($guide['title']); ?></h5>
-                            </div>
-                            <div class="text-muted" style="font-size: 0.85rem;"><?php echo $guide['content']; ?></div>
-                        </div>
-                    </div>
-                </div>
-                <?php
-    endforeach; ?>
             </div>
             <?php
 endif; ?>
@@ -245,33 +281,56 @@ endif; ?>
                 <p class="section-subtitle">Our operating schedule</p>
             </div>
             <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="card border-0" style="border-radius: 12px;">
-                        <div class="card-body p-0">
-                            <table class="table table-borderless mb-0">
-                                <tbody>
-                                    <?php foreach ($clinicHours as $hour): ?>
-                                    <tr>
-                                        <td class="fw-semibold py-3 ps-4" style="font-size: 0.9rem;"><?php echo e($hour['day_of_week']); ?></td>
-                                        <td class="text-end py-3 pe-4" style="font-size: 0.9rem;">
+                <div class="col-lg-6 col-md-8">
+                    <div class="clinic-hours-schedule">
+                        <?php 
+                        $daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                        $todayName = $daysOfWeek[date('w')];
+                        $dayIcons = [
+                            'Monday' => 'bi-calendar-event',
+                            'Tuesday' => 'bi-calendar-event',
+                            'Wednesday' => 'bi-calendar-event',
+                            'Thursday' => 'bi-calendar-event',
+                            'Friday' => 'bi-calendar-event',
+                            'Saturday' => 'bi-calendar-heart',
+                            'Sunday' => 'bi-calendar-heart',
+                        ];
+                        foreach ($clinicHours as $hour): 
+                            $isToday = ($hour['day_of_week'] === $todayName);
+                        ?>
+                        <div class="clinic-hours-row <?php echo $isToday ? 'clinic-hours-today' : ''; ?>">
+                            <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                <div class="clinic-hours-day-icon <?php echo $isToday ? 'active' : ''; ?>">
+                                    <i class="bi <?php echo $dayIcons[$hour['day_of_week']] ?? 'bi-calendar-event'; ?>"></i>
+                                </div>
+                                <div>
+                                    <div class="clinic-hours-day-name <?php echo $isToday ? 'fw-bold' : ''; ?>">
+                                        <?php echo e($hour['day_of_week']); ?>
+                                        <?php if ($isToday): ?>
                                             <?php if ($hour['is_closed']): ?>
-                                                <span class="badge bg-secondary">Closed</span>
-                                            <?php
-    else: ?>
-                                                <?php echo formatTime($hour['opening_time']); ?> - <?php echo formatTime($hour['closing_time']); ?>
-                                                <?php if ($hour['notes']): ?>
-                                                <br><small class="text-muted"><?php echo e($hour['notes']); ?></small>
-                                                <?php
-        endif; ?>
-                                            <?php
-    endif; ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-endforeach; ?>
-                                </tbody>
-                            </table>
+                                                <span class="clinic-hours-status-badge closed">Closed</span>
+                                            <?php else:
+                                                $now = date('H:i:s');
+                                                $isOpen = ($now >= $hour['opening_time'] && $now <= $hour['closing_time']);
+                                            ?>
+                                                <span class="clinic-hours-status-badge <?php echo $isOpen ? 'open' : 'closed'; ?>"><?php echo $isOpen ? 'Open' : 'Closed'; ?></span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($hour['notes'] && !$hour['is_closed']): ?>
+                                        <small class="text-muted" style="font-size: 0.75rem;"><?php echo e($hour['notes']); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="clinic-hours-time">
+                                <?php if ($hour['is_closed']): ?>
+                                    <span class="clinic-hours-closed-badge">Closed</span>
+                                <?php else: ?>
+                                    <span class="clinic-hours-open-time"><?php echo formatTime($hour['opening_time']); ?> – <?php echo formatTime($hour['closing_time']); ?></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -301,15 +360,13 @@ endforeach; ?>
             });
         });
 
-        // Navbar background on scroll
+        // Navbar scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.public-navbar');
             if (window.scrollY > 50) {
-                navbar.style.background = '';
-                navbar.style.backdropFilter = 'blur(10px)';
+                navbar.classList.add('scrolled');
             } else {
-                navbar.style.background = '';
-                navbar.style.backdropFilter = '';
+                navbar.classList.remove('scrolled');
             }
         });
     </script>

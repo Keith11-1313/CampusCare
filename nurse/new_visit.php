@@ -26,24 +26,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     $sid = intval($_POST['student_id'] ?? 0);
-    $complaint = trim($_POST['complaint'] ?? '');
+    $complaintCategory = trim($_POST['complaint_category'] ?? '');
+    $complaintDesc = trim($_POST['complaint_description'] ?? '');
 
-    if (!$sid || empty($complaint)) {
+    if (!$sid || empty($complaintCategory)) {
         setFlashMessage('error', 'Student and complaint are required.');
         header('Location: new_visit.php');
         exit;
     }
 
     $db->query(
-        "INSERT INTO visits (student_id, attended_by, visit_date, blood_pressure, temperature, pulse_rate, respiratory_rate, weight, height, complaint, assessment, treatment, follow_up_notes, follow_up_date, status) VALUES (?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO visits (student_id, attended_by, visit_date, blood_pressure, temperature, pulse_rate, respiratory_rate, weight, height, complaint_category, complaint, assessment, treatment, follow_up_notes, follow_up_date, status) VALUES (?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [$sid, $_SESSION['user_id'],
-        trim($_POST['blood_pressure'] ?? '') ?: null,
+        (!empty($_POST['bp_systolic']) && !empty($_POST['bp_diastolic'])) ? trim($_POST['bp_systolic']) . '/' . trim($_POST['bp_diastolic']) : null,
         trim($_POST['temperature'] ?? '') ?: null,
         trim($_POST['pulse_rate'] ?? '') ?: null,
         trim($_POST['respiratory_rate'] ?? '') ?: null,
         trim($_POST['weight'] ?? '') ?: null,
         trim($_POST['height'] ?? '') ?: null,
-        $complaint,
+        $complaintCategory,
+        $complaintDesc ?: null,
         trim($_POST['assessment'] ?? '') ?: null,
         trim($_POST['treatment'] ?? '') ?: null,
         trim($_POST['follow_up_notes'] ?? '') ?: null,
@@ -58,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$students = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' ORDER BY last_name LIMIT 500");
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
@@ -97,14 +98,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-person me-2"></i>Patient Information</h6>
     <div class="mb-3">
         <label class="form-label">Student <span class="required-asterisk">*</span></label>
-        <select class="form-select" name="student_id" id="studentSelect" required>
-            <option value="">Select Student...</option>
-            <?php foreach ($students as $s): ?>
-            <option value="<?php echo $s['id']; ?>" <?php echo($preStudent && $preStudent['id'] == $s['id']) ? 'selected' : ''; ?>><?php echo e($s['student_id'] . ' — ' . $s['last_name'] . ', ' . $s['first_name']); ?></option>
-            <?php
-endforeach; ?>
-        </select>
-        <div class="invalid-feedback">Please select a student.</div>
+        <div class="student-autocomplete" id="studentAutocomplete">
+            <div class="student-ac-input-wrap search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" id="studentSearchInput"
+                       placeholder="Search by name or student ID..."
+                       autocomplete="off"
+                       <?php if ($preStudent): ?>
+                       value="<?php echo e($preStudent['student_id'] . ' — ' . $preStudent['last_name'] . ', ' . $preStudent['first_name']); ?>"
+                       <?php endif; ?>>
+            </div>
+            <input type="hidden" name="student_id" id="studentIdHidden" value="<?php echo $preStudent ? $preStudent['id'] : ''; ?>" required>
+            <div class="student-ac-dropdown" id="studentDropdown"></div>
+            <div class="invalid-feedback" style="display:none;" id="studentInvalidFeedback">Please select a student.</div>
+        </div>
     </div>
 </div>
 
@@ -112,7 +119,18 @@ endforeach; ?>
 <div class="step-section" data-step="2">
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-heart-pulse me-2"></i>Vital Signs</h6>
     <div class="row g-3">
-        <div class="col-md-4"><label class="form-label">Blood Pressure</label><input type="text" class="form-control" name="blood_pressure" placeholder="e.g. 120/80"></div>
+        <div class="col-md-4">
+            <div class="row g-2">
+                <div class="col-6">
+                    <label class="form-label">Systolic</label>
+                    <input type="number" class="form-control" name="bp_systolic" placeholder="e.g. 120">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Diastolic</label>
+                    <input type="number" class="form-control" name="bp_diastolic" placeholder="e.g. 80">
+                </div>
+            </div>
+        </div>
         <div class="col-md-4"><label class="form-label">Temperature (°C)</label><input type="number" step="0.1" class="form-control" name="temperature" placeholder="e.g. 36.5"></div>
         <div class="col-md-4"><label class="form-label">Pulse Rate (bpm)</label><input type="number" class="form-control" name="pulse_rate" placeholder="e.g. 72"></div>
         <div class="col-md-4"><label class="form-label">Respiratory Rate</label><input type="number" class="form-control" name="respiratory_rate" placeholder="e.g. 18"></div>
@@ -124,7 +142,68 @@ endforeach; ?>
 <!-- Step 3: Clinical Notes -->
 <div class="step-section" data-step="3">
     <h6 class="fw-bold text-primary-cc mb-3"><i class="bi bi-clipboard2-pulse me-2"></i>Clinical Notes</h6>
-    <div class="mb-3"><label class="form-label">Complaint <span class="required-asterisk">*</span></label><textarea class="form-control" name="complaint" rows="3" required placeholder="Describe the patient's complaint..."></textarea><div class="invalid-feedback">Complaint is required.</div></div>
+    <div class="mb-3">
+        <label class="form-label">Complaint Category <span class="required-asterisk">*</span></label>
+        <select class="form-select" name="complaint_category" id="complaintCategory" required>
+            <option value="">Select complaint category...</option>
+            <optgroup label="Head & Neurological">
+                <option value="Headache - Severe">Headache - Severe</option>
+                <option value="Headache - Minor">Headache - Minor</option>
+                <option value="Headache - Migraine">Headache - Migraine</option>
+                <option value="Dizziness">Dizziness</option>
+                <option value="Fainting">Fainting</option>
+            </optgroup>
+            <optgroup label="Respiratory">
+                <option value="Cough">Cough</option>
+                <option value="Cold / Flu">Cold / Flu</option>
+                <option value="Sore Throat">Sore Throat</option>
+                <option value="Difficulty Breathing">Difficulty Breathing</option>
+                <option value="Asthma Attack">Asthma Attack</option>
+            </optgroup>
+            <optgroup label="Gastrointestinal">
+                <option value="Stomach Pain">Stomach Pain</option>
+                <option value="Nausea / Vomiting">Nausea / Vomiting</option>
+                <option value="Diarrhea">Diarrhea</option>
+                <option value="Loss of Appetite">Loss of Appetite</option>
+            </optgroup>
+            <optgroup label="Pain & Musculoskeletal">
+                <option value="Body Pain">Body Pain</option>
+                <option value="Back Pain">Back Pain</option>
+                <option value="Chest Pain">Chest Pain</option>
+                <option value="Joint Pain">Joint Pain</option>
+                <option value="Muscle Cramp">Muscle Cramp</option>
+            </optgroup>
+            <optgroup label="Skin & Allergies">
+                <option value="Skin Rash">Skin Rash</option>
+                <option value="Allergic Reaction">Allergic Reaction</option>
+                <option value="Insect Bite">Insect Bite</option>
+                <option value="Wound / Cut">Wound / Cut</option>
+            </optgroup>
+            <optgroup label="General">
+                <option value="Fever">Fever</option>
+                <option value="Fatigue / Weakness">Fatigue / Weakness</option>
+                <option value="Eye Problem">Eye Problem</option>
+                <option value="Ear Pain">Ear Pain</option>
+                <option value="Toothache">Toothache</option>
+                <option value="Menstrual Cramps">Menstrual Cramps</option>
+                <option value="Anxiety / Panic Attack">Anxiety / Panic Attack</option>
+            </optgroup>
+            <optgroup label="Injury">
+                <option value="Sprain / Strain">Sprain / Strain</option>
+                <option value="Fracture (Suspected)">Fracture (Suspected)</option>
+                <option value="Bruise / Contusion">Bruise / Contusion</option>
+                <option value="Burns">Burns</option>
+            </optgroup>
+            <optgroup label="Other">
+                <option value="Other">Other (Specify in description)</option>
+            </optgroup>
+        </select>
+        <div class="invalid-feedback">Please select a complaint category.</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Complaint Description</label>
+        <textarea class="form-control" name="complaint_description" rows="3" placeholder="Provide additional details about the complaint..."></textarea>
+    </div>
     <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
     <div class="mb-3"><label class="form-label">Treatment Provided</label><textarea class="form-control" name="treatment" rows="3" placeholder="Treatment given or recommended..."></textarea></div>
 </div>
@@ -165,25 +244,21 @@ const totalVisitSteps = 4;
 
 function goToVisitStep(step) {
     currentVisitStep = step;
-    // Update stepper indicators
     document.querySelectorAll('#visitStepper .stepper-step').forEach(s => {
         const sStep = parseInt(s.dataset.step);
         s.classList.remove('active', 'completed');
         if (sStep === step) s.classList.add('active');
         else if (sStep < step) s.classList.add('completed');
     });
-    // Update completed circles with check icon
     document.querySelectorAll('#visitStepper .stepper-step').forEach(s => {
         const sStep = parseInt(s.dataset.step);
         const circle = s.querySelector('.stepper-circle');
         if (sStep < step) circle.innerHTML = '<i class="bi bi-check-lg"></i>';
         else circle.textContent = sStep;
     });
-    // Show/hide step sections
     document.querySelectorAll('.step-section').forEach(sec => {
         sec.classList.toggle('active', parseInt(sec.dataset.step) === step);
     });
-    // Show/hide nav buttons
     document.getElementById('visitStepBack').style.display = step > 1 ? '' : 'none';
     document.getElementById('visitStepNext').style.display = step < totalVisitSteps ? '' : 'none';
     document.getElementById('visitSubmitBtn').style.display = step === totalVisitSteps ? '' : 'none';
@@ -192,7 +267,168 @@ function goToVisitStep(step) {
 function visitStepNav(dir) {
     const next = currentVisitStep + dir;
     if (next < 1 || next > totalVisitSteps) return;
+
+    // Validate current step before moving forward
+    if (dir === 1) {
+        const currentSection = document.querySelector(`.step-section[data-step="${currentVisitStep}"]`);
+        let stepValid = true;
+
+        // Check standard required fields (input, select, textarea)
+        const requiredFields = currentSection.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            // For hidden student_id input, validate via the visible search input
+            if (field.type === 'hidden' && field.id === 'studentIdHidden') {
+                if (!field.value) {
+                    stepValid = false;
+                    const searchInput = document.getElementById('studentSearchInput');
+                    searchInput.classList.add('is-invalid');
+                    document.getElementById('studentInvalidFeedback').style.display = 'block';
+                }
+                return;
+            }
+            if (!field.value.trim()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+            if (!field.checkValidity()) {
+                stepValid = false;
+                field.classList.add('is-invalid');
+            }
+        });
+
+        if (!stepValid) {
+            currentSection.style.animation = 'none';
+            currentSection.offsetHeight;
+            currentSection.style.animation = 'shake 0.4s ease';
+            return;
+        }
+    }
+
     goToVisitStep(next);
 }
+
+// Clear validation errors on input/change within visit stepper fields
+document.querySelectorAll('form.needs-validation .step-section input[required], form.needs-validation .step-section select[required], form.needs-validation .step-section textarea[required]').forEach(field => {
+    field.addEventListener('input', () => field.classList.remove('is-invalid'));
+    field.addEventListener('change', () => field.classList.remove('is-invalid'));
+});
+
+// ── Student Autocomplete ──
+(function() {
+    const input    = document.getElementById('studentSearchInput');
+    const hidden   = document.getElementById('studentIdHidden');
+    const dropdown = document.getElementById('studentDropdown');
+    const feedback = document.getElementById('studentInvalidFeedback');
+    let debounce   = null;
+    let activeIdx  = -1;
+
+    input.addEventListener('input', function() {
+        const q = this.value.trim();
+        hidden.value = '';
+        feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+
+        clearTimeout(debounce);
+        if (q.length < 1) { closeDropdown(); return; }
+
+        debounce = setTimeout(() => {
+            fetch('new_visit.php?search_student=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(data => renderDropdown(data.results || []))
+                .catch(() => closeDropdown());
+        }, 250);
+    });
+
+    input.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.student-ac-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            highlightItem(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIdx = Math.max(activeIdx - 1, 0);
+            highlightItem(items);
+        } else if (e.key === 'Enter' && activeIdx >= 0) {
+            e.preventDefault();
+            items[activeIdx].click();
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function renderDropdown(results) {
+        activeIdx = -1;
+        if (!results.length) {
+            dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-info-circle me-2"></i>No students found</div>';
+            dropdown.classList.add('show');
+            return;
+        }
+        dropdown.innerHTML = results.map((s, i) =>
+            `<div class="student-ac-item" data-id="${s.id}" data-index="${i}">
+                <span class="student-ac-item-id">${escHtml(s.student_id)}</span><span> — </span>
+                <span class="student-ac-item-name">${escHtml(s.last_name)}, ${escHtml(s.first_name)}</span>
+            </div>`
+        ).join('');
+        dropdown.classList.add('show');
+
+        dropdown.querySelectorAll('.student-ac-item').forEach(item => {
+            item.addEventListener('click', function() {
+                selectStudent(this.dataset.id,
+                    this.querySelector('.student-ac-item-id').textContent,
+                    this.querySelector('.student-ac-item-name').textContent);
+            });
+        });
+    }
+
+    function selectStudent(id, sid, name) {
+        hidden.value = id;
+        input.value = sid + ' — ' + name;
+        feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+        closeDropdown();
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('show');
+        dropdown.innerHTML = '';
+        activeIdx = -1;
+    }
+
+    function highlightItem(items) {
+        items.forEach(i => i.classList.remove('active'));
+        if (items[activeIdx]) {
+            items[activeIdx].classList.add('active');
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function escHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#studentAutocomplete')) closeDropdown();
+    });
+
+    // Validate before form submit
+    document.querySelector('form.needs-validation').addEventListener('submit', function(e) {
+        if (!hidden.value) {
+            e.preventDefault();
+            e.stopPropagation();
+            input.classList.add('is-invalid');
+            feedback.style.display = 'block';
+            goToVisitStep(1);
+            input.focus();
+        }
+    });
+})();
 </script>
 

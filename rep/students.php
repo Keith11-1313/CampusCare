@@ -142,6 +142,9 @@ $search = trim($_GET['search'] ?? '');
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
+$sortColumns = ['student_id' => 's.student_id', 'name' => 's.last_name', 'gender' => 's.gender', 'dob' => 's.date_of_birth', 'blood_type' => 's.blood_type', 'contact' => 's.contact_number'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? $_GET['order'] : 'asc';
 
 $where = "WHERE s.status='active'";
 $params = [];
@@ -158,14 +161,15 @@ if ($section) {
     $params[] = $section;
 }
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
 }
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
 $totalPages = ceil($total / $perPage);
-$students = $db->fetchAll("SELECT s.* FROM students s $where ORDER BY s.last_name, s.first_name LIMIT $perPage OFFSET $offset", $params);
+$orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+$students = $db->fetchAll("SELECT s.* FROM students s $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -184,7 +188,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-11">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>">
+                <input type="text" class="form-control" name="search" placeholder="Search records..." value="<?php echo e($search); ?>">
             </div>
         </div>
         <div class="col-md-1">
@@ -200,7 +204,7 @@ endif; ?>
 </div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Student ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Blood Type</th><th>Contact</th><th class="text-center">Actions</th></tr></thead>
+<thead><tr><?php echo sortableHeader('Student ID', 'student_id', $sort, $order); ?><?php echo sortableHeader('Name', 'name', $sort, $order); ?><?php echo sortableHeader('Gender', 'gender', $sort, $order); ?><?php echo sortableHeader('DOB', 'dob', $sort, $order); ?><?php echo sortableHeader('Blood Type', 'blood_type', $sort, $order); ?><?php echo sortableHeader('Contact', 'contact', $sort, $order); ?><th class="text-center">Actions</th></tr></thead>
 <tbody>
 <?php if (empty($students)): ?><tr><td colspan="7" class="text-center text-muted py-4">No students found.</td></tr>
 <?php
@@ -219,7 +223,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 
@@ -259,10 +263,12 @@ endif; ?>
                 <input type="file" class="form-control" name="csv_file" id="csvFile" accept=".csv" required>
                 <div class="form-text">Upload a .csv file with student data.</div>
             </div>
-            <div class="alert alert-info small mb-0 py-2">
+            <div class="alert alert-info small mb-3 py-2">
                 <i class="bi bi-info-circle me-1"></i><strong>Required columns:</strong> student_id, first_name, last_name, gender, date_of_birth<br>
-                <strong>Optional columns:</strong> middle_name, blood_type, contact_number, email, address<br>
-                <a href="#" onclick="downloadTemplate(); return false;" class="alert-link"><i class="bi bi-download me-1"></i>Download CSV template</a>
+                <strong>Optional columns:</strong> middle_name, blood_type, contact_number, email, address
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="downloadTemplate()"><i class="bi bi-download me-1"></i>Download CSV Template</button>
             </div>
         </div>
         <div class="modal-footer">
@@ -306,7 +312,7 @@ function editStudent(id){
 document.getElementById('studentForm').addEventListener('submit',function(e){
     e.preventDefault();
     fetch('students.php',{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{
-        if(d.success){studentModal.hide();showToast('success',d.message);setTimeout(()=>location.reload(),800);}
+        if(d.success){studentModal.hide();scheduleToast('success',d.message);}
         else showToast('error',d.message);
     });
 });

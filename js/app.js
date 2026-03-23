@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Show any toast that was scheduled before a page reload
+    const pendingToast = sessionStorage.getItem('pendingToast');
+    if (pendingToast) {
+        sessionStorage.removeItem('pendingToast');
+        const { icon, title } = JSON.parse(pendingToast);
+        showToast(icon, title);
+    }
+
     // Auto-dismiss alerts after page load
     initFormValidation();
 });
@@ -91,12 +99,21 @@ function showToast(icon, title) {
 }
 
 /**
+ * Schedule a toast to show after the next page reload.
+ * Saves the toast data in sessionStorage, then immediately reloads.
+ */
+function scheduleToast(icon, title) {
+    sessionStorage.setItem('pendingToast', JSON.stringify({ icon, title }));
+    location.reload();
+}
+
+/**
  * Show a confirmation dialog
  */
 function showConfirm(title, text, confirmText, icon) {
     return Swal.fire({
         title: title || 'Are you sure?',
-        text: text || 'This action cannot be undone.',
+        html: text || 'This action cannot be undone.',
         icon: icon || 'warning',
         showCancelButton: true,
         confirmButtonColor: '#0d6e3f',

@@ -28,12 +28,15 @@ $genderFilter = $_GET['gender'] ?? '';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
+$sortColumns = ['student_id' => 's.student_id', 'name' => 's.last_name', 'program' => 'p.code', 'year_sec' => 's.year_level_id'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? $_GET['order'] : 'desc';
 $where = "WHERE s.status='archived'";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
     $sk = "%$search%";
-    $params = [$sk, $sk, $sk];
+    $params = [$sk, $sk, $sk, $sk, $sk, $sk];
 }
 if (!empty($programFilter)) {
     $where .= " AND s.program_id = ?";
@@ -51,9 +54,10 @@ if (!empty($genderFilter)) {
     $where .= " AND s.gender = ?";
     $params[] = $genderFilter;
 }
-$total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
+$total = $db->fetchColumn("SELECT COUNT(*) FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $where", $params);
 $totalPages = ceil($total / $perPage);
-$students = $db->fetchAll("SELECT s.*, p.code as program_code, yl.name as year_level_name FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $where ORDER BY s.updated_at DESC LIMIT $perPage OFFSET $offset", $params);
+$orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+$students = $db->fetchAll("SELECT s.*, p.code as program_code, yl.name as year_level_name FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 $programs = $db->fetchAll("SELECT * FROM programs WHERE status='active' ORDER BY code");
 $yearLevels = $db->fetchAll("SELECT * FROM year_levels WHERE status='active' ORDER BY order_num");
 $sections = $db->fetchAll("SELECT DISTINCT section FROM students WHERE status='archived' AND section IS NOT NULL AND section != '' ORDER BY section");
@@ -64,7 +68,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="page-header">
     <div>
         <h1><i class="bi bi-archive me-2"></i>Archived Records</h1>
-        <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archive</li></ol></nav>
+        <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archived Records</li></ol></nav>
     </div>
 </div>
 
@@ -73,7 +77,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-3">
             <div class="search-box">
             <i class="bi bi-search search-icon"></i>
-            <input type="text" class="form-control" name="search" placeholder="Search archived students..." value="<?php echo e($search); ?>">
+            <input type="text" class="form-control" name="search" placeholder="Search archive..." value="<?php echo e($search); ?>">
         </div>
     </div>
     <div class="col-md-2">
@@ -119,24 +123,24 @@ endif; ?>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive">
 <table class="table table-hover mb-0">
-<thead><tr><th>Student ID</th><th>Name</th><th>Program</th><th>Year/Sec</th><th class="text-center">Action</th></tr></thead>
+<thead><tr><?php echo sortableHeader('Student ID', 'student_id', $sort, $order); ?><?php echo sortableHeader('Name', 'name', $sort, $order); ?><?php echo sortableHeader('Program', 'program', $sort, $order); ?><?php echo sortableHeader('Year/Sec', 'year_sec', $sort, $order); ?><th class="text-center">Action</th></tr></thead>
 <tbody>
 <?php if (empty($students)): ?><tr><td colspan="5" class="text-center text-muted py-4">No archived records.</td></tr>
 <?php
 else:
     foreach ($students as $s): ?>
 <tr>
-<td><code><?php echo e($s['student_id']); ?></code></td>
+<td><span class="font-monospace"><?php echo e($s['student_id']); ?></span></td>
 <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . $s['last_name']); ?></td>
 <td><?php echo e($s['program_code'] ?? 'N/A'); ?></td>
 <td><?php echo e(($s['year_level_name'] ?? '') . ' ' . ($s['section'] ?? '')); ?></td>
-<td class="text-center"><button class="btn btn-sm btn-outline-success" onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>')"><i class="bi bi-arrow-counterclockwise me-1"></i>Restore</button></td>
+<td class="text-center"><button class="btn btn-sm btn-outline-success" onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>','<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')"><i class="bi bi-arrow-counterclockwise"></i></button></td>
 </tr>
 <?php
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'archive.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'archive.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 
@@ -145,16 +149,16 @@ endif; ?>
 <script>
 const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
-function restoreStudent(id, sid) {
-    showConfirm('Restore Student?', 'Restore student ' + sid + ' to active records?', 'Yes, Restore', 'question').then(r => {
+function restoreStudent(id, sid, name) {
+    showConfirm('Restore Student?', 'Restore <strong>' + name + '</strong> (' + sid + ') to active records?', 'Yes, Restore', 'question').then(r => {
         if (r.isConfirmed) {
             const fd = new FormData();
             fd.append('action', 'restore');
             fd.append('id', id);
             fd.append('csrf_token', CSRF_TOKEN);
             fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
-                if (d.success) setTimeout(() => location.reload(), 800);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });
@@ -173,7 +177,8 @@ function archiveStudent(id, sid) {
             fd.append('id', id);
             fd.append('csrf_token', CSRF_TOKEN);
             fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });

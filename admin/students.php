@@ -9,6 +9,9 @@ $programFilter = $_GET['program'] ?? '';
 $yearLevelFilter = $_GET['year_level'] ?? '';
 $sectionFilter = $_GET['section'] ?? '';
 $genderFilter = $_GET['gender'] ?? '';
+$sortColumns = ['student_id' => 's.student_id', 'name' => 's.last_name', 'program' => 'p.code', 'year_sec' => 's.year_level_id', 'gender' => 's.gender', 'blood_type' => 's.blood_type'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? $_GET['order'] : 'asc';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
@@ -16,9 +19,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE s.status='active'";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ? OR s.gender LIKE ? OR s.blood_type LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
 }
 if (!empty($programFilter)) {
     $where .= " AND s.program_id = ?";
@@ -37,7 +40,7 @@ if (!empty($genderFilter)) {
     $params[] = $genderFilter;
 }
 
-$total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
+$total = $db->fetchColumn("SELECT COUNT(*) FROM students s LEFT JOIN programs p ON s.program_id = p.id LEFT JOIN year_levels yl ON s.year_level_id = yl.id $where", $params);
 $totalPages = ceil($total / $perPage);
 $students = $db->fetchAll(
     "SELECT s.*, p.code as program_code, yl.name as year_level_name
@@ -45,7 +48,7 @@ $students = $db->fetchAll(
      LEFT JOIN programs p ON s.program_id = p.id
      LEFT JOIN year_levels yl ON s.year_level_id = yl.id
      $where
-     ORDER BY s.last_name, s.first_name
+     ORDER BY " . $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC') . "
      LIMIT $perPage OFFSET $offset",
     $params
 );
@@ -68,7 +71,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-3">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control" name="search" placeholder="Search by Student ID or Name..." value="<?php echo e($search); ?>" autofocus>
+                <input type="text" class="form-control" name="search" placeholder="Search by records..." value="<?php echo e($search); ?>" autofocus>
             </div>
         </div>
         <div class="col-md-2">
@@ -113,7 +116,7 @@ endif; ?>
 </div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Student ID</th><th>Name</th><th>Program</th><th>Year / Section</th><th>Gender</th><th>Blood Type</th><th class="text-center">Actions</th></tr></thead>
+<thead><tr><?php echo sortableHeader('Student ID', 'student_id', $sort, $order); ?><?php echo sortableHeader('Name', 'name', $sort, $order); ?><?php echo sortableHeader('Program', 'program', $sort, $order); ?><?php echo sortableHeader('Year / Section', 'year_sec', $sort, $order); ?><?php echo sortableHeader('Gender', 'gender', $sort, $order); ?><?php echo sortableHeader('Blood Type', 'blood_type', $sort, $order); ?><th class="text-center">Actions</th></tr></thead>
 <tbody>
 <?php if (empty($students)): ?><tr><td colspan="7" class="text-center text-muted py-4">No students found. Try a different search.</td></tr>
 <?php
@@ -127,8 +130,8 @@ else:
 <td><?php echo e($s['gender']); ?></td>
 <td><?php echo e($s['blood_type'] ?? '—'); ?></td>
 <td class="text-center">
-    <button class="btn btn-sm btn-outline-danger" onclick="archiveStudent(<?php echo $s['id']; ?>, '<?php echo e($s['student_id']); ?>')">
-        <i class="bi bi-archive me-1"></i>Archive
+    <button class="btn btn-sm btn-outline-danger" onclick="archiveStudent(<?php echo $s['id']; ?>, '<?php echo e($s['student_id']); ?>', '<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')">
+        <i class="bi bi-archive"></i>
     </button>
 </td>
 </tr>
@@ -136,7 +139,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 <p class="text-muted small mt-2">Showing <?php echo count($students); ?> of <?php echo number_format($total); ?> active students.</p>
@@ -146,10 +149,10 @@ endif; ?>
 <script>
 const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
-function archiveStudent(id, sid) {
+function archiveStudent(id, sid, name) {
     showConfirm(
         'Archive Student?',
-        'Archive student <strong>' + sid + '</strong>? They will be removed from active records but can be restored later.',
+        'Archive <strong>' + name + '</strong> (' + sid + ')? They will be removed from active records but can be restored later.',
         'Yes, Archive',
         'warning'
     ).then(r => {
@@ -161,8 +164,8 @@ function archiveStudent(id, sid) {
             fetch('<?php echo BASE_URL; ?>/admin/archive.php', { method: 'POST', body: fd })
                 .then(r => r.json())
                 .then(d => {
-                    showToast(d.success ? 'success' : 'error', d.message);
-                    if (d.success) setTimeout(() => location.reload(), 800);
+                    if (d.success) scheduleToast('success', d.message);
+                    else showToast('error', d.message);
                 });
         }
     });

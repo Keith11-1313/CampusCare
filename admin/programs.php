@@ -22,10 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Code and name are required.']);
         }
 
-        // Check uniqueness
-        $existing = $db->fetch("SELECT id FROM programs WHERE code = ? AND id != ?", [$code, $id]);
-        if ($existing) {
+        // Check uniqueness for code
+        $existingCode = $db->fetch("SELECT id FROM programs WHERE code = ? AND id != ?", [$code, $id]);
+        if ($existingCode) {
             jsonResponse(['success' => false, 'message' => 'Program code already exists.']);
+        }
+
+        // Check uniqueness for name
+        $existingName = $db->fetch("SELECT id FROM programs WHERE name = ? AND id != ?", [$name, $id]);
+        if ($existingName) {
+            jsonResponse(['success' => false, 'message' => 'Program name already exists.']);
         }
 
         if ($id > 0) {
@@ -74,7 +80,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead><tr><th>Code</th><th>Program Name</th><th>Students</th><th>Status</th><th class="text-center">Actions</th></tr></thead>
+                <thead><tr><th class="sortable-th" data-col="0"><a href="#">Code <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="1"><a href="#">Program Name <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="2"><a href="#">Students <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="3"><a href="#">Status <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="text-center">Actions</th></tr></thead>
                 <tbody>
                     <?php if (empty($programs)): ?>
                     <tr><td colspan="5" class="text-center text-muted py-4">No programs found.</td></tr>
@@ -89,7 +95,7 @@ else: ?>
                         <td class="text-center table-action-btns">
                             <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editProgram(<?php echo $p['id']; ?>)"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-sm btn-outline-<?php echo $p['status'] === 'active' ? 'warning' : 'success'; ?> btn-icon" 
-                                    onclick="toggleProgramStatus(<?php echo $p['id']; ?>)">
+                                    onclick="toggleProgramStatus(<?php echo $p['id']; ?>, '<?php echo $p['status']; ?>')">
                                 <i class="bi bi-<?php echo $p['status'] === 'active' ? 'eye-slash' : 'eye'; ?>"></i>
                             </button>
                         </td>
@@ -158,14 +164,21 @@ function editProgram(id) {
     });
 }
 
-function toggleProgramStatus(id) {
-    showConfirm('Toggle Status?', 'Change this program\'s status?', 'Yes').then(r => {
+function toggleProgramStatus(id, currentStatus) {
+    const isActive = currentStatus === 'active';
+    const title = isActive ? 'Deactivate Program?' : 'Reactivate Program?';
+    const message = isActive
+        ? 'This program will be hidden from selection forms.'
+        : 'This program will be available in selection forms again.';
+    const confirmBtn = isActive ? 'Yes, Deactivate' : 'Yes, Reactivate';
+
+    showConfirm(title, message, confirmBtn).then(r => {
         if (r.isConfirmed) {
             const fd = new FormData();
             fd.append('action', 'toggle_status'); fd.append('id', id); fd.append('csrf_token', '<?php echo getCSRFToken(); ?>');
             fetch('programs.php', {method:'POST', body:fd}).then(r=>r.json()).then(d => {
-                showToast(d.success ? 'success' : 'error', d.message);
-                if (d.success) setTimeout(() => location.reload(), 800);
+                if (d.success) scheduleToast('success', d.message);
+                else showToast('error', d.message);
             });
         }
     });
@@ -174,8 +187,41 @@ function toggleProgramStatus(id) {
 document.getElementById('programForm').addEventListener('submit', function(e) {
     e.preventDefault();
     fetch('programs.php', {method:'POST', body: new FormData(this)}).then(r=>r.json()).then(d => {
-        if (d.success) { programModal.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+        if (d.success) { programModal.hide(); scheduleToast('success', d.message); }
         else showToast('error', d.message);
     });
 });
+
+// Client-side table sorting
+(function() {
+    const table = document.querySelector('.table');
+    const headers = table.querySelectorAll('th.sortable-th');
+    let currentSort = { col: -1, asc: true };
+    headers.forEach(th => {
+        th.addEventListener('click', function(e) {
+            e.preventDefault();
+            const col = parseInt(this.dataset.col);
+            const asc = currentSort.col === col ? !currentSort.asc : true;
+            currentSort = { col, asc };
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.sort((a, b) => {
+                const aVal = (a.cells[col]?.textContent || '').trim().toLowerCase();
+                const bVal = (b.cells[col]?.textContent || '').trim().toLowerCase();
+                const aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+                if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+                return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            });
+            rows.forEach(r => tbody.appendChild(r));
+            headers.forEach(h => {
+                h.classList.remove('sortable-active');
+                const icon = h.querySelector('i');
+                icon.className = 'bi bi-chevron-expand sort-icon-idle';
+            });
+            this.classList.add('sortable-active');
+            const icon = this.querySelector('i');
+            icon.className = asc ? 'bi bi-caret-up-fill sort-icon' : 'bi bi-caret-down-fill sort-icon';
+        });
+    });
+})();
 </script>

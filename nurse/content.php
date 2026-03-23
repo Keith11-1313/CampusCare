@@ -65,12 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($action === 'save') {
             $title = trim($_POST['title'] ?? '');
             $content = trim($_POST['content'] ?? '');
+            $icon = trim($_POST['icon'] ?? 'general-first-aid');
             if (empty($title) || empty($content))
                 jsonResponse(['success' => false, 'message' => 'Title and content required.']);
             if ($id > 0)
-                $db->query("UPDATE first_aid_guidelines SET title=?, content=?, sort_order=? WHERE id=?", [$title, $content, intval($_POST['sort_order'] ?? 0), $id]);
+                $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=?, sort_order=? WHERE id=?", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0), $id]);
             else
-                $db->query("INSERT INTO first_aid_guidelines (title,content,sort_order) VALUES (?,?,?)", [$title, $content, intval($_POST['sort_order'] ?? 0)]);
+                $db->query("INSERT INTO first_aid_guidelines (title,icon,content,sort_order) VALUES (?,?,?,?)", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0)]);
             jsonResponse(['success' => true, 'message' => 'Guideline saved.']);
         }
         if ($action === 'delete') {
@@ -132,8 +133,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <ul class="nav nav-tabs mb-0" role="tablist">
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'announcements' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#announcementsTab">Announcements</a></li>
-    <li class="nav-item"><a class="nav-link <?php echo $tab === 'faqs' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#faqsTab">FAQs</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'first_aid' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#firstAidTab">First Aid</a></li>
+    <li class="nav-item"><a class="nav-link <?php echo $tab === 'faqs' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#faqsTab">FAQs</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'emergency' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#emergencyTab">Emergency</a></li>
     <li class="nav-item"><a class="nav-link <?php echo $tab === 'hours' ? 'active' : ''; ?>" data-bs-toggle="tab" href="#hoursTab">Clinic Hours</a></li>
 </ul>
@@ -141,169 +142,329 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="tab-content">
 <!-- Announcements Tab -->
 <div class="tab-pane fade <?php echo $tab === 'announcements' ? 'show active' : ''; ?>" id="announcementsTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>Announcements</span><button class="btn btn-sm btn-primary" onclick="addAnnouncement()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Title</th><th>Status</th><th>Created By</th><th>Date</th><th class="text-center">Actions</th></tr></thead>
-<tbody>
-<?php foreach ($announcements as $a): ?>
-<tr><td class="fw-semibold"><?php echo e(substr($a['title'], 0, 50)); ?></td><td><?php echo statusBadge($a['status']); ?></td>
-<td><small><?php echo e(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? '')); ?></small></td>
-<td><small><?php echo formatDate($a['created_at']); ?></small></td>
-<td class="text-center table-action-btns">
-<button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-pencil"></i></button>
-<button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-trash"></i></button>
-</td></tr>
-<?php
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between"><span>Announcements</span><button class="btn btn-sm btn-primary" onclick="addAnnouncement()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+            <div class="card-body p-0"><div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Title</th><th>Status</th><th>Created By</th><th>Date</th><th class="text-center">Actions</th></tr></thead>
+                    <tbody>
+                        <?php foreach ($announcements as $a): ?>
+                            <tr><td class="fw-semibold"><?php echo e(substr($a['title'], 0, 50)); ?></td><td><?php echo statusBadge($a['status']); ?></td>
+                            <td><small><?php echo e(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? '')); ?></small></td>
+                            <td><small><?php echo formatDate($a['created_at']); ?></small></td>
+                            <td class="text-center table-action-btns">
+                                <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('announcements',<?php echo $a['id']; ?>)"><i class="bi bi-trash"></i></button>
+                            </td></tr>
+                        <?php
 endforeach; ?>
-</tbody></table></div></div></div>
-</div>
-
-<!-- FAQs Tab -->
-<div class="tab-pane fade <?php echo $tab === 'faqs' ? 'show active' : ''; ?>" id="faqsTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>FAQs</span><button class="btn btn-sm btn-primary" onclick="addFaq()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Order</th><th>Question</th><th>Answer</th><th class="text-center">Actions</th></tr></thead>
-<tbody>
-<?php foreach ($faqs as $f): ?>
-<tr><td><?php echo $f['sort_order']; ?></td><td class="fw-semibold"><?php echo truncate($f['question'], 40); ?></td><td><small><?php echo truncate($f['answer'], 50); ?></small></td>
-<td class="text-center table-action-btns"><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('faqs',<?php echo $f['id']; ?>)"><i class="bi bi-pencil"></i></button>
-<button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('faqs',<?php echo $f['id']; ?>)"><i class="bi bi-trash"></i></button></td></tr>
-<?php
-endforeach; ?>
-</tbody></table></div></div></div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- First Aid Tab -->
 <div class="tab-pane fade <?php echo $tab === 'first_aid' ? 'show active' : ''; ?>" id="firstAidTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>First Aid Guidelines</span><button class="btn btn-sm btn-primary" onclick="addFirstAid()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Order</th><th>Title</th><th>Content Preview</th><th class="text-center">Actions</th></tr></thead>
-<tbody>
-<?php foreach ($firstAid as $f): ?>
-<tr><td><?php echo $f['sort_order']; ?></td><td class="fw-semibold"><?php echo e($f['title']); ?></td><td><small><?php echo truncate(strip_tags($f['content']), 50); ?></small></td>
-<td class="text-center table-action-btns"><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('first_aid',<?php echo $f['id']; ?>)"><i class="bi bi-pencil"></i></button>
-<button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('first_aid',<?php echo $f['id']; ?>)"><i class="bi bi-trash"></i></button></td></tr>
-<?php
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between"><span>First Aid Guidelines</span><button class="btn btn-sm btn-primary" onclick="addFirstAid()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Icon</th>
+                            <th>Title</th>
+                            <th>Content Preview</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($firstAid as $f): ?>
+                        <tr>
+                            <td><?php echo $f['sort_order']; ?></td>
+                            <td><img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($f['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:28px;height:28px;object-fit:contain;"></td>
+                            <td class="fw-semibold"><?php echo e($f['title']); ?></td>
+                            <td><small><?php echo truncate(strip_tags($f['content']), 50); ?></small></td>
+                            <td class="text-center table-action-btns">
+                                <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('first_aid',<?php echo $f['id']; ?>)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('first_aid',<?php echo $f['id']; ?>)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        <?php
 endforeach; ?>
-</tbody></table></div></div></div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAQs Tab -->
+<div class="tab-pane fade <?php echo $tab === 'faqs' ? 'show active' : ''; ?>" id="faqsTab">
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between"><span>FAQs</span><button class="btn btn-sm btn-primary" onclick="addFaq()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Question</th>
+                            <th>Answer</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($faqs as $f): ?>
+                        <tr>
+                            <td><?php echo $f['sort_order']; ?></td>
+                            <td class="fw-semibold"><?php echo truncate($f['question'], 40); ?></td>
+                            <td><small><?php echo truncate($f['answer'], 50); ?></small></td>
+                            <td class="text-center table-action-btns">
+                                <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('faqs',<?php echo $f['id']; ?>)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('faqs',<?php echo $f['id']; ?>)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        <?php
+endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Emergency Contacts Tab -->
 <div class="tab-pane fade <?php echo $tab === 'emergency' ? 'show active' : ''; ?>" id="emergencyTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header d-flex justify-content-between"><span>Emergency Contacts</span><button class="btn btn-sm btn-primary" onclick="addEmergency()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
-<div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Name</th><th>Role</th><th>Phone</th><th class="text-center">Actions</th></tr></thead>
-<tbody>
-<?php foreach ($emergency as $ec): ?>
-<tr><td class="fw-semibold"><?php echo e($ec['name']); ?></td><td><?php echo e($ec['role'] ?? '—'); ?></td><td><?php echo e($ec['phone_number']); ?></td>
-<td class="text-center table-action-btns"><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('emergency',<?php echo $ec['id']; ?>)"><i class="bi bi-pencil"></i></button>
-<button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('emergency',<?php echo $ec['id']; ?>)"><i class="bi bi-trash"></i></button></td></tr>
-<?php
-endforeach; ?>
-</tbody></table></div></div></div>
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header d-flex justify-content-between"><span>Emergency Contacts</span><button class="btn btn-sm btn-primary" onclick="addEmergency()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($emergency as $ec): ?>
+                        <tr>
+                            <td class="fw-semibold"><?php echo e($ec['name']); ?></td>
+                            <td><?php echo e($ec['role'] ?? '—'); ?></td>
+                            <td><?php echo e($ec['phone_number']); ?></td>
+                            <td class="text-center table-action-btns">
+                                <button class="btn btn-sm btn-outline-primary btn-icon" onclick="editItem('emergency',<?php echo $ec['id']; ?>)"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteItem('emergency',<?php echo $ec['id']; ?>)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        <?php
+endforeach; ?>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Clinic Hours Tab -->
 <div class="tab-pane fade <?php echo $tab === 'hours' ? 'show active' : ''; ?>" id="hoursTab">
-<div class="card border-top-0" style="border-radius:0 0 12px 12px;">
-<div class="card-header">Clinic Hours</div>
-<div class="card-body">
-<form id="hoursForm">
-<input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-<input type="hidden" name="action" value="save_all">
-<input type="hidden" name="section" value="clinic_hours">
-<table class="table"><thead><tr><th>Day</th><th>Opens</th><th>Closes</th><th>Closed?</th><th>Notes</th></tr></thead>
-<tbody>
-<?php foreach ($clinicHours as $i => $h): ?>
-<tr>
-<td class="fw-semibold"><?php echo e($h['day_of_week']); ?></td>
-<input type="hidden" name="hours[<?php echo $i; ?>][id]" value="<?php echo $h['id']; ?>">
-<td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>"></td>
-<td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>"></td>
-<td><input type="checkbox" class="form-check-input" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
-<td><input type="text" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][notes]" value="<?php echo e($h['notes'] ?? ''); ?>"></td>
-</tr>
-<?php
+    <div class="card border-top-0" style="border-radius:0 0 12px 12px;">
+        <div class="card-header">Clinic Hours</div>
+            <div class="card-body">
+                <form id="hoursForm">
+                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                    <input type="hidden" name="action" value="save_all">
+                    <input type="hidden" name="section" value="clinic_hours">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Opens</th>
+                                <th>Closes</th>
+                                <th>Closed?</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($clinicHours as $i => $h): ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo e($h['day_of_week']); ?></td>
+                                <input type="hidden" name="hours[<?php echo $i; ?>][id]" value="<?php echo $h['id']; ?>">
+                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>"></td>
+                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>"></td>
+                                <td><input type="checkbox" class="form-check-input" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
+                                <td><input type="text" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][notes]" value="<?php echo e($h['notes'] ?? ''); ?>"></td>
+                            </tr>
+                            <?php
 endforeach; ?>
-</tbody></table>
-<button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Hours</button>
-</form></div></div>
-</div>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Hours</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Announcement Modal -->
-<div class="modal fade" id="announcementModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title" id="announcementModalTitle">Add Announcement</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form id="announcementForm">
-        <div class="modal-body">
-            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-            <input type="hidden" name="action" value="save">
-            <input type="hidden" name="section" value="announcements">
-            <input type="hidden" name="id" id="annId" value="0">
-            <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="annTitle" required placeholder="Enter title"></div>
-            <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="annContent" rows="4" required placeholder="Enter content"></textarea></div>
-            <div class="mb-3"><label class="form-label">Status</label><select class="form-select" name="status" id="annStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+<div class="modal fade" id="announcementModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="announcementModalTitle">Add Announcement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="announcementForm">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="section" value="announcements">
+                    <input type="hidden" name="id" id="annId" value="0">
+                    <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="annTitle" required placeholder="Enter title"></div>
+                    <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="annContent" rows="4" required placeholder="Enter content"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Status</label><select class="form-select" name="status" id="annStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+            </form>
         </div>
-        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
-    </form>
-</div></div></div>
+    </div>
+</div>
 
 <!-- FAQ Modal -->
-<div class="modal fade" id="faqModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title" id="faqModalTitle">Add FAQ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form id="faqForm">
-        <div class="modal-body">
-            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-            <input type="hidden" name="action" value="save">
-            <input type="hidden" name="section" value="faqs">
-            <input type="hidden" name="id" id="faqId" value="0">
-            <div class="mb-3"><label class="form-label">Question <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="question" id="faqQuestion" required placeholder="Enter question"></div>
-            <div class="mb-3"><label class="form-label">Answer <span class="required-asterisk">*</span></label><textarea class="form-control" name="answer" id="faqAnswer" rows="4" required placeholder="Enter answer"></textarea></div>
-            <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
+<div class="modal fade" id="faqModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="faqModalTitle">Add FAQ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="faqForm">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="section" value="faqs">
+                    <input type="hidden" name="id" id="faqId" value="0">
+                    <div class="mb-3"><label class="form-label">Question <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="question" id="faqQuestion" required placeholder="Enter question"></div>
+                    <div class="mb-3"><label class="form-label">Answer <span class="required-asterisk">*</span></label><textarea class="form-control" name="answer" id="faqAnswer" rows="4" required placeholder="Enter answer"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+            </form>
         </div>
-        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
-    </form>
-</div></div></div>
+    </div>  
+</div>
 
 <!-- First Aid Modal -->
-<div class="modal fade" id="firstAidModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title" id="firstAidModalTitle">Add Guideline</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form id="firstAidForm">
-        <div class="modal-body">
-            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-            <input type="hidden" name="action" value="save">
-            <input type="hidden" name="section" value="first_aid">
-            <input type="hidden" name="id" id="faId" value="0">
-            <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="faTitle" required placeholder="Enter title"></div>
-            <div class="mb-3"><label class="form-label">Content <span class="required-asterisk">*</span></label><textarea class="form-control" name="content" id="faContent" rows="4" required placeholder="Enter content (HTML allowed)"></textarea></div>
-            <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
+<div class="modal fade" id="firstAidModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="firstAidModalTitle">Add Guideline</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="firstAidForm">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="section" value="first_aid">
+                    <input type="hidden" name="id" id="faId" value="0">
+                    <div class="mb-3"><label class="form-label">Title <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="title" id="faTitle" required placeholder="Enter title"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Icon</label>
+                        <input type="hidden" name="icon" id="faIcon" value="general-first-aid">
+                        <div class="icon-picker-preview d-flex align-items-center gap-2 mb-2 p-2 border rounded" id="faIconPreview" style="cursor:pointer;" onclick="document.getElementById('faIconDropdown').classList.toggle('show')">
+                            <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/general-first-aid.png" id="faIconPreviewImg" style="width:28px;height:28px;object-fit:contain;">
+                            <span id="faIconPreviewLabel" class="text-muted" style="font-size:0.875rem;">General First Aid</span>
+                            <i class="bi bi-chevron-down ms-auto text-muted"></i>
+                        </div>
+                        <div class="icon-picker-dropdown border rounded shadow-sm" id="faIconDropdown" style="display:none;max-height:220px;overflow-y:auto;background:#fff;position:relative;z-index:10;">
+                            <?php
+                            $iconOptions = [
+                                'allergic-reaction' => 'Allergic Reaction',
+                                'asthma-attack' => 'Asthma Attack',
+                                'burns' => 'Burns',
+                                'chocking' => 'Choking',
+                                'cpr-basic-life-support' => 'CPR / Life Support',
+                                'cuts-and-wounds' => 'Cuts & Wounds',
+                                'eye-injury' => 'Eye Injury',
+                                'fainting-dizziness' => 'Fainting / Dizziness',
+                                'fever' => 'Fever',
+                                'fracture-and-sprains' => 'Fractures & Sprains',
+                                'general-first-aid' => 'General First Aid',
+                                'head-injury' => 'Head Injury',
+                                'heat-stroke-dehydration' => 'Heat Stroke / Dehydration',
+                                'insect-bite-and-sting' => 'Insect Bites & Stings',
+                                'nosebleed' => 'Nosebleed',
+                                'stomach-pain' => 'Stomach Pain',
+                            ];
+                            foreach ($iconOptions as $key => $label): ?>
+                                <div class="icon-picker-option d-flex align-items-center gap-2 px-3 py-2" style="cursor:pointer;transition:background .15s;" data-icon="<?php echo $key; ?>" data-label="<?php echo $label; ?>" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'">
+                                    <img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo $key; ?>.png" style="width:24px;height:24px;object-fit:contain;">
+                                    <span style="font-size:0.85rem;"><?php echo $label; ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Content <span class="required-asterisk">*</span></label>
+                        <input type="hidden" name="content" id="faContentHidden">
+                        <div id="faContentEditor" style="height:200px;background:#fff;border-radius:0 0 6px 6px;"></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
+                </div>  
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+            </form>
         </div>
-        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
-    </form>
-</div></div></div>
+    </div>
+</div>
 
 <!-- Emergency Contact Modal -->
-<div class="modal fade" id="emergencyModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title" id="emergencyModalTitle">Add Contact</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form id="emergencyForm">
-        <div class="modal-body">
-            <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-            <input type="hidden" name="action" value="save">
-            <input type="hidden" name="section" value="emergency">
-            <input type="hidden" name="id" id="emId" value="0">
-            <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
-            <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
-            <div class="mb-3"><label class="form-label">Phone Number <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="Enter phone number"></div>
+<div class="modal fade" id="emergencyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emergencyModalTitle">Add Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="emergencyForm">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="section" value="emergency">
+                    <input type="hidden" name="id" id="emId" value="0">
+                    <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
+                    <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">+63</span>
+                            <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="09xxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
+            </form>
         </div>
-        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
-    </form>
-</div></div></div>
+    </div>
+</div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<!-- Quill Rich Text Editor -->
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+<style>
+    #firstAidModal .ql-toolbar { border-radius: 6px 6px 0 0; border-color: #dee2e6; background: #f8f9fa; }
+    #firstAidModal .ql-container { border-color: #dee2e6; font-family: 'Inter', sans-serif; font-size: 14px; }
+    #firstAidModal .ql-editor { min-height: 150px; }
+    #firstAidModal .ql-editor.ql-blank::before { font-style: normal; color: #adb5bd; }
+</style>
 
 <script>
 const csrf = '<?php echo getCSRFToken(); ?>';
@@ -324,8 +485,7 @@ function postAction(data) {
 
 function handleResult(d) {
     if (d.success) {
-        showToast('success', d.message);
-        setTimeout(()=>location.reload(), 800);
+        scheduleToast('success', d.message);
     } else {
         showAlert('error', 'Error', d.message);
     }
@@ -336,7 +496,7 @@ function deleteItem(section, id) {
         if(r.isConfirmed){
             const fd=new FormData();fd.append('action','delete');fd.append('section',section);fd.append('id',id);
             postAction(fd).then(d=>{
-                if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+                if(d.success){ scheduleToast('success', d.message); }
                 else showAlert('error','Error',d.message);
             });
         }
@@ -380,10 +540,56 @@ function showFirstAidForm(item){
     document.getElementById('firstAidModalTitle').textContent = item ? 'Edit Guideline' : 'Add Guideline';
     document.getElementById('faId').value = item ? item.id : 0;
     document.getElementById('faTitle').value = item ? (item.title||'') : '';
-    document.getElementById('faContent').value = item ? (item.content||'') : '';
     document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
+    const icon = item ? (item.icon || 'general-first-aid') : 'general-first-aid';
+    selectIcon(icon);
+    document.getElementById('faIconDropdown').classList.remove('show');
     firstAidModal.show();
+    // Set Quill content after modal is shown
+    setTimeout(function() {
+        if (window.quillEditor) {
+            const content = item ? (item.content||'') : '';
+            if (content) {
+                window.quillEditor.root.innerHTML = content;
+            } else {
+                window.quillEditor.setText('');
+            }
+        }
+    }, 200);
 }
+
+function selectIcon(iconKey) {
+    const baseUrl = '<?php echo BASE_URL; ?>';
+    document.getElementById('faIcon').value = iconKey;
+    document.getElementById('faIconPreviewImg').src = baseUrl + '/assets/first-aid-icons/' + iconKey + '.png';
+    const option = document.querySelector('.icon-picker-option[data-icon="' + iconKey + '"]');
+    document.getElementById('faIconPreviewLabel').textContent = option ? option.dataset.label : iconKey;
+    document.getElementById('faIconDropdown').style.display = 'none';
+    document.getElementById('faIconDropdown').classList.remove('show');
+}
+
+// Icon picker click handlers
+document.querySelectorAll('.icon-picker-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        selectIcon(this.dataset.icon);
+    });
+});
+
+// Toggle dropdown visibility
+const faIconDropdown = document.getElementById('faIconDropdown');
+const faIconPreview = document.getElementById('faIconPreview');
+if (faIconPreview) {
+    faIconPreview.addEventListener('click', function(e) {
+        e.stopPropagation();
+        faIconDropdown.style.display = faIconDropdown.style.display === 'none' ? 'block' : 'none';
+    });
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (faIconDropdown && !faIconDropdown.contains(e.target) && e.target !== faIconPreview) {
+        faIconDropdown.style.display = 'none';
+    }
+});
 
 function addEmergency(){showEmergencyForm(null);}
 function showEmergencyForm(item){
@@ -398,8 +604,17 @@ function showEmergencyForm(item){
 function submitModalForm(formId, modalInstance) {
     document.getElementById(formId).addEventListener('submit', function(e){
         e.preventDefault();
+        // Sync Quill content to hidden input before submit
+        if (formId === 'firstAidForm' && window.quillEditor) {
+            const html = window.quillEditor.root.innerHTML;
+            document.getElementById('faContentHidden').value = (html === '<p><br></p>') ? '' : html;
+            if (!document.getElementById('faContentHidden').value.trim()) {
+                showAlert('error', 'Error', 'Content is required.');
+                return;
+            }
+        }
         postAction(new FormData(this)).then(d=>{
-            if(d.success){ modalInstance.hide(); showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+            if(d.success){ modalInstance.hide(); scheduleToast('success', d.message); }
             else showAlert('error','Error',d.message);
         });
     });
@@ -409,10 +624,24 @@ submitModalForm('faqForm', faqModal);
 submitModalForm('firstAidForm', firstAidModal);
 submitModalForm('emergencyForm', emergencyModal);
 
+// Initialize Quill rich text editor for First Aid content
+window.quillEditor = new Quill('#faContentEditor', {
+    theme: 'snow',
+    placeholder: 'Type your first aid instructions here...',
+    modules: {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link'],
+            ['clean']
+        ]
+    }
+});
+
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
     postAction(new FormData(this)).then(d=>{
-        if(d.success){ showToast('success', d.message); setTimeout(()=>location.reload(), 800); }
+        if(d.success){ scheduleToast('success', d.message); }
         else showAlert('error','Error',d.message);
     });
 });
