@@ -92,10 +92,11 @@ endif; ?>
                             <th>Treatment</th>
                             <th>Nurse</th>
                             <th>Status</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-<?php if (empty($visits)): ?><tr><td colspan="7" class="text-center text-muted py-4">No visits found.</td></tr>
+<?php if (empty($visits)): ?><tr><td colspan="9" class="text-center text-muted py-4">No visits found.</td></tr>
 <?php
 else:
     foreach ($visits as $v): ?>
@@ -108,6 +109,28 @@ else:
 <td><small><?php echo truncate($v['treatment'] ?? '—'); ?></small></td>
 <td><small><?php echo e($v['nurse_name'] ?? '—'); ?></small></td>
 <td><?php echo statusBadge($v['status']); ?></td>
+<td class="text-center">
+<button type="button" class="btn btn-sm btn-primary view-visit-btn"
+    data-date="<?php echo e(formatDateTime($v['visit_date'], 'M d, Y h:i A')); ?>"
+    data-student="<?php echo e($v['first_name'] . ' ' . $v['last_name']); ?>"
+    data-sid="<?php echo e($v['sid']); ?>"
+    data-category="<?php echo e($v['complaint_category']); ?>"
+    data-complaint="<?php echo e($v['complaint'] ?? '—'); ?>"
+    data-assessment="<?php echo e($v['assessment'] ?? '—'); ?>"
+    data-treatment="<?php echo e($v['treatment'] ?? '—'); ?>"
+    data-nurse="<?php echo e($v['nurse_name'] ?? '—'); ?>"
+    data-status="<?php echo e($v['status']); ?>"
+    data-bp="<?php echo e($v['blood_pressure'] ?? ''); ?>"
+    data-temp="<?php echo e($v['temperature'] ?? ''); ?>"
+    data-pulse="<?php echo e($v['pulse_rate'] ?? ''); ?>"
+    data-rr="<?php echo e($v['respiratory_rate'] ?? ''); ?>"
+    data-weight="<?php echo e($v['weight'] ?? ''); ?>"
+    data-height="<?php echo e($v['height'] ?? ''); ?>"
+    data-followup="<?php echo e($v['follow_up_notes'] ?? ''); ?>"
+    data-followupdate="<?php echo e($v['follow_up_date'] ?? ''); ?>"
+    data-studentid="<?php echo $v['student_id']; ?>"
+><i class="bi bi-eye me-1"></i>View</button>
+</td>
 </tr>
 <?php
     endforeach;
@@ -118,3 +141,127 @@ endif; ?>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<!-- Visit Detail Modal -->
+<div class="modal fade" id="visitDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-clipboard2-pulse me-2"></i>Visit Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h6 class="fw-bold mb-0" id="mdStudentName"></h6>
+                        <small class="text-muted" id="mdStudentId"></small>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted" id="mdDate"></small><br>
+                        <span id="mdStatus"></span>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-2"><i class="bi bi-heart-pulse me-2"></i>Vital Signs</h6>
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Blood Pressure</small>
+                            <span class="fw-semibold" id="mdBp">—</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Temperature</small>
+                            <span class="fw-semibold" id="mdTemp">—</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Pulse Rate</small>
+                            <span class="fw-semibold" id="mdPulse">—</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Respiratory Rate</small>
+                            <span class="fw-semibold" id="mdRr">—</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Weight</small>
+                            <span class="fw-semibold" id="mdWeight">—</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-2 text-center">
+                            <small class="text-muted d-block">Height</small>
+                            <span class="fw-semibold" id="mdHeight">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-2"><i class="bi bi-journal-text me-2"></i>Clinical Notes</h6>
+                <div class="mb-2"><strong>Category:</strong> <span id="mdCategory"></span></div>
+                <div class="mb-2"><strong>Complaint:</strong><br><span id="mdComplaint" class="text-muted"></span></div>
+                <div class="mb-2"><strong>Assessment:</strong><br><span id="mdAssessment" class="text-muted"></span></div>
+                <div class="mb-2"><strong>Treatment:</strong><br><span id="mdTreatment" class="text-muted"></span></div>
+
+                <div id="mdFollowupSection" style="display:none;">
+                    <h6 class="fw-bold mb-2 mt-3"><i class="bi bi-calendar-event me-2"></i>Follow-up</h6>
+                    <div class="mb-1"><strong>Date:</strong> <span id="mdFollowupDate"></span></div>
+                    <div><strong>Notes:</strong> <span id="mdFollowupNotes" class="text-muted"></span></div>
+                </div>
+
+                <div class="mt-3"><small class="text-muted"><i class="bi bi-person me-1"></i>Attended by: <span id="mdNurse"></span></small></div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-outline-primary" id="mdViewProfile"><i class="bi bi-eye me-1"></i>View Profile</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const visitModal = new bootstrap.Modal(document.getElementById('visitDetailModal'));
+
+document.querySelectorAll('.view-visit-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const d = this.dataset;
+        document.getElementById('mdStudentName').textContent = d.student;
+        document.getElementById('mdStudentId').textContent = d.sid;
+        document.getElementById('mdDate').textContent = d.date;
+        document.getElementById('mdCategory').textContent = d.category;
+        document.getElementById('mdComplaint').textContent = d.complaint;
+        document.getElementById('mdAssessment').textContent = d.assessment;
+        document.getElementById('mdTreatment').textContent = d.treatment;
+        document.getElementById('mdNurse').textContent = d.nurse;
+
+        // Status badge
+        const colors = { 'Completed': 'success', 'Follow-up': 'warning', 'Referred': 'info' };
+        document.getElementById('mdStatus').innerHTML = `<span class="badge bg-${colors[d.status] || 'secondary'}">${d.status}</span>`;
+
+        // Vital signs
+        document.getElementById('mdBp').textContent = d.bp || '—';
+        document.getElementById('mdTemp').textContent = d.temp ? d.temp + ' °C' : '—';
+        document.getElementById('mdPulse').textContent = d.pulse ? d.pulse + ' bpm' : '—';
+        document.getElementById('mdRr').textContent = d.rr ? d.rr + ' /min' : '—';
+        document.getElementById('mdWeight').textContent = d.weight ? d.weight + ' kg' : '—';
+        document.getElementById('mdHeight').textContent = d.height ? d.height + ' cm' : '—';
+
+        // Follow-up
+        const hasFollowup = d.followupdate || d.followup;
+        document.getElementById('mdFollowupSection').style.display = hasFollowup ? '' : 'none';
+        document.getElementById('mdFollowupDate').textContent = d.followupdate || '—';
+        document.getElementById('mdFollowupNotes').textContent = d.followup || '—';
+
+        // Profile link
+        document.getElementById('mdViewProfile').href = 'student_profile.php?id=' + d.studentid;
+
+        visitModal.show();
+    });
+});
+</script>
+
