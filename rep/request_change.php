@@ -49,34 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
     }
 }
 
-// Handle password reset request
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_password_reset'])) {
-    $resetReason = trim($_POST['reset_reason'] ?? '');
 
-    if (empty($resetReason)) {
-        $error = 'Please provide a reason for the password reset request.';
-    }
-    else {
-        try {
-            $pending = $db->fetchColumn("SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'", [$user['id']]);
-
-            if ($pending > 0) {
-                $error = 'You already have a pending password reset request. Please wait for the admin to process it.';
-            }
-            else {
-                $db->query(
-                    "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
-                    [$user['id'], $resetReason]
-                );
-                logAccess($_SESSION['user_id'], 'request_password_reset', 'Requested password reset. Reason: ' . $resetReason);
-                $message = 'Your password reset request has been submitted. The admin will reset your password shortly.';
-            }
-        }
-        catch (Exception $e) {
-            $error = 'Error submitting request: ' . $e->getMessage();
-        }
-    }
-}
 
 // Check if there's already a pending or approved replacement request
 $existingRequest = $db->fetch(
@@ -89,12 +62,7 @@ $existingRequest = $db->fetch(
 );
 $hasActiveRequest = !empty($existingRequest);
 
-// Check for pending password reset request
-$existingPwdRequest = $db->fetch(
-    "SELECT * FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending' ORDER BY created_at DESC LIMIT 1",
-    [$user['id']]
-);
-$hasPendingPwdReset = !empty($existingPwdRequest);
+
 
 // Get students from the same section
 $students = [];
@@ -130,43 +98,8 @@ endif; ?>
 endif; ?>
 
 <div class="row g-4">
-    <!-- Password Reset Request Card -->
-    <div class="col-lg-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-header">
-                <i class="bi bi-key me-2"></i>Request Password Reset
-            </div>
-            <div class="card-body p-4">
-                <?php if ($hasPendingPwdReset): ?>
-                    <div class="text-center py-3">
-                        <i class="bi bi-hourglass-split text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3 fw-bold">Request Pending</h5>
-                        <p class="text-muted small">Your password reset request is awaiting admin approval.</p>
-                        <div class="bg-light rounded p-3 text-start">
-                            <small class="text-muted d-block">Reason</small>
-                            <span class="small"><?php echo e($existingPwdRequest['reason']); ?></span>
-                            <small class="text-muted d-block mt-2">Submitted</small>
-                            <span class="small"><?php echo formatDateTime($existingPwdRequest['created_at']); ?></span>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <p class="text-muted small mb-3">Request the administrator to reset your password.</p>
-                    <form method="POST" action="">
-                        <div class="mb-3">
-                            <label for="reset_reason" class="form-label fw-bold">Reason for Password Reset</label>
-                            <textarea name="reset_reason" id="reset_reason" class="form-control" rows="3" placeholder="Briefly explain why you need a password reset..." required></textarea>
-                        </div>
-                        <button type="submit" name="submit_password_reset" class="btn btn-primary w-100 fw-semibold">
-                            <i class="bi bi-send-fill me-2"></i>Submit Request
-                        </button>
-                    </form>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
     <!-- Replacement Request Card -->
-    <div class="col-lg-6">
+    <div class="col-lg-8 mx-auto">
         <div class="card shadow-sm h-100">
             <div class="card-header">
                 <i class="bi bi-person-x me-2"></i>Request Change of Role
