@@ -6,9 +6,9 @@ $db = Database::getInstance();
 
 $search = trim($_GET['search'] ?? '');
 $actionFilter = $_GET['action_filter'] ?? '';
-$sortColumns = ['datetime'=>'al.created_at','user'=>'u.last_name','action'=>'al.action','description'=>'al.description','ip'=>'al.ip_address'];
+$sortColumns = ['datetime' => 'al.created_at', 'user' => 'u.last_name', 'action' => 'al.action', 'description' => 'al.description', 'ip' => 'al.ip_address'];
 $sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'datetime';
-$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'desc';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? $_GET['order'] : 'desc';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 20;
 $offset = ($page - 1) * $perPage;
@@ -16,9 +16,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE 1=1";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (u.username LIKE ? OR al.description LIKE ?)";
+    $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR al.description LIKE ?)";
     $s = "%$search%";
-    $params = array_merge($params, [$s, $s]);
+    $params = array_merge($params, [$s, $s, $s, $s]);
 }
 if (!empty($actionFilter)) {
     $where .= " AND al.action = ?";
@@ -41,7 +41,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-9">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo e($search); ?>">
+                <input type="text" class="form-control" name="search" placeholder="Search logs..." value="<?php echo e($search); ?>">
             </div>
         </div>
         <div class="col-md-2">

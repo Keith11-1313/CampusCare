@@ -142,9 +142,9 @@ $search = trim($_GET['search'] ?? '');
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
-$sortColumns = ['student_id'=>'s.student_id','name'=>'s.last_name','gender'=>'s.gender','dob'=>'s.date_of_birth','blood_type'=>'s.blood_type','contact'=>'s.contact_number'];
+$sortColumns = ['student_id' => 's.student_id', 'name' => 's.last_name', 'gender' => 's.gender', 'dob' => 's.date_of_birth', 'blood_type' => 's.blood_type', 'contact' => 's.contact_number'];
 $sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
-$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'asc';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? $_GET['order'] : 'asc';
 
 $where = "WHERE s.status='active'";
 $params = [];
@@ -161,9 +161,9 @@ if ($section) {
     $params[] = $section;
 }
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
 }
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
@@ -188,7 +188,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-11">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="form-control" name="search" placeholder="Search by ID or name..." value="<?php echo e($search); ?>">
+                <input type="text" class="form-control" name="search" placeholder="Search records..." value="<?php echo e($search); ?>">
             </div>
         </div>
         <div class="col-md-1">
