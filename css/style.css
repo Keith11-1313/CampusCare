@@ -557,6 +557,46 @@ a:hover {
     white-space: nowrap;
 }
 
+/* Sortable table header: clickable column headers that toggle sort */
+.sortable-th {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sortable-th a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sortable-th:hover {
+    background: #eef2f1;
+    color: var(--cc-primary);
+}
+
+.sortable-th .sort-icon-idle {
+    font-size: 0.6rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sortable-th:hover .sort-icon-idle {
+    opacity: 0.5;
+}
+
+.sortable-th.sortable-active {
+    color: var(--cc-primary);
+    border-bottom-color: var(--cc-primary);
+}
+
+.sortable-th .sort-icon {
+    font-size: 0.65rem;
+    color: var(--cc-primary);
+}
+
 /* Table body cells: vertically centered with a subtle bottom border. */
 .table tbody td {
     padding: 0.75rem 1rem;

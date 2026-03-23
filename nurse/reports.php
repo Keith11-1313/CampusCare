@@ -184,6 +184,23 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records" id="secRecords" checked>
                         <label class="form-check-label" for="secRecords">Visit Records Table</label>
                     </div>
+
+                    <hr class="my-3">
+                    <label class="form-label small fw-semibold mb-1"><i class="bi bi-sort-down me-1"></i>Sort Visit Records by</label>
+                    <select class="form-select form-select-sm" name="sort_by" id="exportSortBy">
+                        <option value="date_desc">Date (Newest First)</option>
+                        <option value="date_asc">Date (Oldest First)</option>
+                        <option value="name_asc">Student Name (A–Z)</option>
+                        <option value="name_desc">Student Name (Z–A)</option>
+                        <option value="program_asc">Program (A–Z)</option>
+                        <option value="program_desc">Program (Z–A)</option>
+                        <option value="complaint_asc">Complaint (A–Z)</option>
+                        <option value="complaint_desc">Complaint (Z–A)</option>
+                        <option value="status_asc">Status (A–Z)</option>
+                        <option value="status_desc">Status (Z–A)</option>
+                        <option value="nurse_asc">Nurse (A–Z)</option>
+                        <option value="nurse_desc">Nurse (Z–A)</option>
+                    </select>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelectorAll('input[name=\'sections[]\']').forEach(cb => cb.checked = true)">Select All</button>

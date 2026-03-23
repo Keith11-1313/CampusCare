@@ -109,6 +109,33 @@ function generatePagination($currentPage, $totalPages, $baseUrl)
 }
 
 /**
+ * Generate a sortable table header <th> element
+ */
+function sortableHeader($label, $column, $currentSort, $currentOrder, $extraClass = '')
+{
+    // Build URL preserving all current GET params
+    $params = $_GET;
+    $params['sort'] = $column;
+    $params['order'] = ($currentSort === $column && $currentOrder === 'asc') ? 'desc' : 'asc';
+    $params['page'] = 1; // Reset to page 1 on sort change
+    $url = '?' . http_build_query($params);
+
+    $icon = '';
+    $activeClass = '';
+    if ($currentSort === $column) {
+        $activeClass = ' sortable-active';
+        $icon = $currentOrder === 'asc'
+            ? ' <i class="bi bi-caret-up-fill sort-icon"></i>'
+            : ' <i class="bi bi-caret-down-fill sort-icon"></i>';
+    } else {
+        $icon = ' <i class="bi bi-chevron-expand sort-icon-idle"></i>';
+    }
+
+    $cls = 'sortable-th' . $activeClass . ($extraClass ? ' ' . $extraClass : '');
+    return '<th class="' . $cls . '"><a href="' . e($url) . '">' . e($label) . $icon . '</a></th>';
+}
+
+/**
  * Get status badge HTML
  */
 function statusBadge($status)

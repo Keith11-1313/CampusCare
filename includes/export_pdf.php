@@ -34,6 +34,27 @@ if ($filterSection)   { $where .= " AND s.section = ?";     $params[] = $filterS
 
 $hasFilters = $filterStartDate || $filterEndDate || $filterProgramId || $filterYearLevelId || $filterSection;
 
+// --- Sort parameters for Visit Records ---
+$allowedSortColumns = [
+    'date_desc' => 'v.visit_date DESC',
+    'date_asc'  => 'v.visit_date ASC',
+    'name_asc'  => 's.last_name ASC, s.first_name ASC',
+    'name_desc' => 's.last_name DESC, s.first_name DESC',
+    'program_asc'  => 'p.code ASC, v.visit_date DESC',
+    'program_desc' => 'p.code DESC, v.visit_date DESC',
+    'complaint_asc'  => 'v.complaint ASC',
+    'complaint_desc' => 'v.complaint DESC',
+    'status_asc'  => 'v.status ASC, v.visit_date DESC',
+    'status_desc' => 'v.status DESC, v.visit_date DESC',
+    'nurse_asc'  => 'attended_by ASC',
+    'nurse_desc' => 'attended_by DESC',
+];
+$sortBy = $_GET['sort_by'] ?? 'date_desc';
+if (!array_key_exists($sortBy, $allowedSortColumns)) {
+    $sortBy = 'date_desc';
+}
+$orderBySql = $allowedSortColumns[$sortBy];
+
 // Fetch report data
 $visits = $db->fetchAll(
     "SELECT v.visit_date, s.student_id, CONCAT(s.first_name,' ',s.last_name) as student_name,
@@ -44,7 +65,7 @@ $visits = $db->fetchAll(
      LEFT JOIN programs p ON s.program_id = p.id
      LEFT JOIN users u ON v.attended_by = u.id
      WHERE $where
-     ORDER BY v.visit_date DESC",
+     ORDER BY $orderBySql",
     $params
 );
 
@@ -276,7 +297,27 @@ endif; ?>
     <!-- Visit Records Table -->
     <?php if (in_array('visit_records', $sections)): ?>
     <div class="section <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
-        <h2>Visit Records</h2>
+        <h2>Visit Records
+            <span style="font-size:11px; font-weight:normal; color:#64748b; margin-left:10px;">
+                Sorted by: <?php
+                    $sortLabels = [
+                        'date_desc' => 'Date (Newest First)',
+                        'date_asc'  => 'Date (Oldest First)',
+                        'name_asc'  => 'Student Name (A–Z)',
+                        'name_desc' => 'Student Name (Z–A)',
+                        'program_asc'  => 'Program (A–Z)',
+                        'program_desc' => 'Program (Z–A)',
+                        'complaint_asc'  => 'Complaint (A–Z)',
+                        'complaint_desc' => 'Complaint (Z–A)',
+                        'status_asc'  => 'Status (A–Z)',
+                        'status_desc' => 'Status (Z–A)',
+                        'nurse_asc'  => 'Nurse (A–Z)',
+                        'nurse_desc' => 'Nurse (Z–A)',
+                    ];
+                    echo e($sortLabels[$sortBy] ?? 'Date (Newest First)');
+                ?>
+            </span>
+        </h2>
         <table>
             <thead><tr><th>Date</th><th>Student ID</th><th>Name</th><th>Program</th><th>Complaint</th><th>Status</th><th>Nurse</th></tr></thead>
             <tbody>

@@ -48,7 +48,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead><tr><th style="width:35%">Name</th><th style="width:35%">Students</th><th style="width:15%">Status</th><th style="width:15%" class="text-center">Actions</th></tr></thead>
+                <thead><tr><th class="sortable-th" data-col="0" style="width:35%"><a href="#">Name <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="1" style="width:35%"><a href="#">Students <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="2" style="width:15%"><a href="#">Status <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th style="width:15%" class="text-center">Actions</th></tr></thead>
                 <tbody>
                     <?php if (empty($yearLevels)): ?>
                     <tr><td colspan="4" class="text-center text-muted py-4">No year levels found.</td></tr>
@@ -159,4 +159,37 @@ endif; ?>
                 }
             });
     });
+
+    // Client-side table sorting
+    (function() {
+        const table = document.querySelector('.table');
+        const headers = table.querySelectorAll('th.sortable-th');
+        let currentSort = { col: -1, asc: true };
+        headers.forEach(th => {
+            th.addEventListener('click', function(e) {
+                e.preventDefault();
+                const col = parseInt(this.dataset.col);
+                const asc = currentSort.col === col ? !currentSort.asc : true;
+                currentSort = { col, asc };
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort((a, b) => {
+                    const aVal = (a.cells[col]?.textContent || '').trim().toLowerCase();
+                    const bVal = (b.cells[col]?.textContent || '').trim().toLowerCase();
+                    const aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+                    if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+                    return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                });
+                rows.forEach(r => tbody.appendChild(r));
+                headers.forEach(h => {
+                    h.classList.remove('sortable-active');
+                    const icon = h.querySelector('i');
+                    icon.className = 'bi bi-chevron-expand sort-icon-idle';
+                });
+                this.classList.add('sortable-active');
+                const icon = this.querySelector('i');
+                icon.className = asc ? 'bi bi-caret-up-fill sort-icon' : 'bi bi-caret-down-fill sort-icon';
+            });
+        });
+    })();
 </script>

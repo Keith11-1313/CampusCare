@@ -9,6 +9,9 @@ $programFilter = $_GET['program'] ?? '';
 $yearLevelFilter = $_GET['year_level'] ?? '';
 $sectionFilter = $_GET['section'] ?? '';
 $genderFilter = $_GET['gender'] ?? '';
+$sortColumns = ['student_id'=>'s.student_id','name'=>'s.last_name','program'=>'p.code','year_sec'=>'s.year_level_id','gender'=>'s.gender','blood_type'=>'s.blood_type'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'asc';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
@@ -45,7 +48,7 @@ $students = $db->fetchAll(
      LEFT JOIN programs p ON s.program_id = p.id
      LEFT JOIN year_levels yl ON s.year_level_id = yl.id
      $where
-     ORDER BY s.last_name, s.first_name
+     ORDER BY " . $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC') . "
      LIMIT $perPage OFFSET $offset",
     $params
 );
@@ -113,7 +116,7 @@ endif; ?>
 </div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Student ID</th><th>Name</th><th>Program</th><th>Year / Section</th><th>Gender</th><th>Blood Type</th><th class="text-center">Actions</th></tr></thead>
+<thead><tr><?php echo sortableHeader('Student ID', 'student_id', $sort, $order); ?><?php echo sortableHeader('Name', 'name', $sort, $order); ?><?php echo sortableHeader('Program', 'program', $sort, $order); ?><?php echo sortableHeader('Year / Section', 'year_sec', $sort, $order); ?><?php echo sortableHeader('Gender', 'gender', $sort, $order); ?><?php echo sortableHeader('Blood Type', 'blood_type', $sort, $order); ?><th class="text-center">Actions</th></tr></thead>
 <tbody>
 <?php if (empty($students)): ?><tr><td colspan="7" class="text-center text-muted py-4">No students found. Try a different search.</td></tr>
 <?php
@@ -136,7 +139,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 <p class="text-muted small mt-2">Showing <?php echo count($students); ?> of <?php echo number_format($total); ?> active students.</p>

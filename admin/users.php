@@ -166,6 +166,9 @@ $statusFilter = $_GET['status'] ?? '';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
+$sortColumns = ['user'=>'last_name','username'=>'username','role'=>'role','last_login'=>'last_login','status'=>'status'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'last_login';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'desc';
 
 $where = "WHERE 1=1";
 $params = [];
@@ -186,7 +189,8 @@ if (!empty($statusFilter)) {
 
 $totalUsers = $db->fetchColumn("SELECT COUNT(*) FROM users $where", $params);
 $totalPages = ceil($totalUsers / $perPage);
-$users = $db->fetchAll("SELECT * FROM users $where ORDER BY created_at DESC LIMIT $perPage OFFSET $offset", $params);
+$orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+$users = $db->fetchAll("SELECT * FROM users $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 $programs = $db->fetchAll("SELECT * FROM programs WHERE status = 'active' ORDER BY name");
 $yearLevels = $db->fetchAll("SELECT * FROM year_levels WHERE status = 'active' ORDER BY order_num");
 
@@ -263,12 +267,12 @@ endif; ?>
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Username</th>
-                        <th>Role</th>
+                        <?php echo sortableHeader('User', 'user', $sort, $order); ?>
+                        <?php echo sortableHeader('Username', 'username', $sort, $order); ?>
+                        <?php echo sortableHeader('Role', 'role', $sort, $order); ?>
                         <th>Assignment</th>
-                        <th>Last Login</th>
-                        <th>Status</th>
+                        <?php echo sortableHeader('Last Login', 'last_login', $sort, $order); ?>
+                        <?php echo sortableHeader('Status', 'status', $sort, $order); ?>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -333,7 +337,7 @@ endif; ?>
     </div>
     <?php if ($totalPages > 1): ?>
     <div class="card-footer bg-white">
-        <?php echo generatePagination($page, $totalPages, 'users.php?search=' . urlencode($search) . '&role=' . urlencode($roleFilter) . '&status=' . urlencode($statusFilter)); ?>
+        <?php echo generatePagination($page, $totalPages, 'users.php?search=' . urlencode($search) . '&role=' . urlencode($roleFilter) . '&status=' . urlencode($statusFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?>
     </div>
     <?php
 endif; ?>

@@ -8,6 +8,9 @@ $search = trim($_GET['search'] ?? '');
 $statusFilter = $_GET['status'] ?? '';
 $dateFrom = $_GET['date_from'] ?? '';
 $dateTo = $_GET['date_to'] ?? '';
+$sortColumns = ['visit_date'=>'v.visit_date','student'=>'s.last_name','category'=>'v.complaint_category','complaint'=>'v.complaint','assessment'=>'v.assessment','treatment'=>'v.treatment','nurse'=>'nurse_name','status'=>'v.status'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'visit_date';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'desc';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
@@ -34,7 +37,8 @@ if (!empty($dateTo)) {
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id $where", $params);
 $totalPages = ceil($total / $perPage);
-$visits = $db->fetchAll("SELECT v.*, s.student_id as sid, s.first_name, s.last_name, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v JOIN students s ON v.student_id=s.id LEFT JOIN users u ON v.attended_by=u.id $where ORDER BY v.visit_date DESC LIMIT $perPage OFFSET $offset", $params);
+$orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+$visits = $db->fetchAll("SELECT v.*, s.student_id as sid, s.first_name, s.last_name, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v JOIN students s ON v.student_id=s.id LEFT JOIN users u ON v.attended_by=u.id $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 
 // HIPAA §164.312(b): Log PHI access — record who viewed visit history
 logAccess($_SESSION['user_id'], 'view_visit_history', 'Viewed visit history (page ' . $page . ')' . (!empty($search) ? ' search: ' . $search : ''));
@@ -84,14 +88,14 @@ endif; ?>
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Student</th>
-                            <th>Category</th>
-                            <th>Complaint</th>
-                            <th>Assessment</th>
-                            <th>Treatment</th>
-                            <th>Nurse</th>
-                            <th>Status</th>
+                            <?php echo sortableHeader('Date', 'visit_date', $sort, $order); ?>
+                            <?php echo sortableHeader('Student', 'student', $sort, $order); ?>
+                            <?php echo sortableHeader('Category', 'category', $sort, $order); ?>
+                            <?php echo sortableHeader('Complaint', 'complaint', $sort, $order); ?>
+                            <?php echo sortableHeader('Assessment', 'assessment', $sort, $order); ?>
+                            <?php echo sortableHeader('Treatment', 'treatment', $sort, $order); ?>
+                            <?php echo sortableHeader('Nurse', 'nurse', $sort, $order); ?>
+                            <?php echo sortableHeader('Status', 'status', $sort, $order); ?>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -136,7 +140,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'visits.php?search=' . urlencode($search) . '&status=' . urlencode($statusFilter) . '&date_from=' . urlencode($dateFrom) . '&date_to=' . urlencode($dateTo)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'visits.php?search=' . urlencode($search) . '&status=' . urlencode($statusFilter) . '&date_from=' . urlencode($dateFrom) . '&date_to=' . urlencode($dateTo) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 

@@ -142,6 +142,9 @@ $search = trim($_GET['search'] ?? '');
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
 $offset = ($page - 1) * $perPage;
+$sortColumns = ['student_id'=>'s.student_id','name'=>'s.last_name','gender'=>'s.gender','dob'=>'s.date_of_birth','blood_type'=>'s.blood_type','contact'=>'s.contact_number'];
+$sort = (isset($_GET['sort']) && array_key_exists($_GET['sort'], $sortColumns)) ? $_GET['sort'] : 'name';
+$order = (isset($_GET['order']) && in_array($_GET['order'], ['asc','desc'])) ? $_GET['order'] : 'asc';
 
 $where = "WHERE s.status='active'";
 $params = [];
@@ -165,7 +168,8 @@ if (!empty($search)) {
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
 $totalPages = ceil($total / $perPage);
-$students = $db->fetchAll("SELECT s.* FROM students s $where ORDER BY s.last_name, s.first_name LIMIT $perPage OFFSET $offset", $params);
+$orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+$students = $db->fetchAll("SELECT s.* FROM students s $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -200,7 +204,7 @@ endif; ?>
 </div>
 
 <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-<thead><tr><th>Student ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Blood Type</th><th>Contact</th><th class="text-center">Actions</th></tr></thead>
+<thead><tr><?php echo sortableHeader('Student ID', 'student_id', $sort, $order); ?><?php echo sortableHeader('Name', 'name', $sort, $order); ?><?php echo sortableHeader('Gender', 'gender', $sort, $order); ?><?php echo sortableHeader('DOB', 'dob', $sort, $order); ?><?php echo sortableHeader('Blood Type', 'blood_type', $sort, $order); ?><?php echo sortableHeader('Contact', 'contact', $sort, $order); ?><th class="text-center">Actions</th></tr></thead>
 <tbody>
 <?php if (empty($students)): ?><tr><td colspan="7" class="text-center text-muted py-4">No students found.</td></tr>
 <?php
@@ -219,7 +223,7 @@ else:
     endforeach;
 endif; ?>
 </tbody></table></div></div>
-<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search)); ?></div><?php
+<?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'students.php?search=' . urlencode($search) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
 
