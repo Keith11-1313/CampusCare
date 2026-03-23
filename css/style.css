@@ -2799,3 +2799,134 @@ a:hover {
 .access-control-hint {
     font-size: 0.75rem;
 }
+
+/* ---- Dashboard Charts & Widgets ---- */
+/* Container for Chart.js canvas elements with a fixed aspect ratio. */
+.chart-container {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
+.chart-container-sm {
+    position: relative;
+    height: 220px;
+    width: 100%;
+}
+
+/* Comparison indicator (↑/↓ arrows with percentage) on stat cards. */
+.stat-comparison {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.stat-comparison.up {
+    color: var(--cc-success);
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.stat-comparison.down {
+    color: var(--cc-danger);
+    background: rgba(192, 57, 43, 0.1);
+}
+
+.stat-comparison.neutral {
+    color: #6b7c93;
+    background: rgba(107, 124, 147, 0.1);
+}
+
+.stat-comparison i {
+    font-size: 0.65rem;
+    margin-right: 3px;
+}
+
+/* Activity feed items in the dashboard. */
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.activity-icon.login {
+    background: rgba(39, 174, 96, 0.12);
+    color: var(--cc-success);
+}
+
+.activity-icon.action {
+    background: rgba(0, 90, 156, 0.12);
+    color: var(--cc-primary);
+}
+
+.activity-icon.warning {
+    background: rgba(243, 156, 18, 0.12);
+    color: var(--cc-warning);
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-content .activity-text {
+    font-size: 0.8rem;
+    color: #3d4f5f;
+    line-height: 1.3;
+}
+
+.activity-content .activity-time {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+
+
+/* Profile completeness progress bar. */
+.completeness-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.completeness-bar .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+/* Request status mini card. */
+.request-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+.request-status-item:last-child {
+    border-bottom: none;
+}
