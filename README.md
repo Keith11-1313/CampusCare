@@ -64,9 +64,10 @@ composer install
 Download and run Composer directly:
 
 ```powershell
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php composer-setup.php
-php composer.phar install
+C:\xampp\php\php.exe -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+C:\xampp\php\php.exe composer-setup.php
+C:\xampp\php\php.exe composer.phar install
+del composer-setup.php
 ```
 
 This installs the PHP packages listed in `composer.json` (e.g., Dompdf for PDF export) into the `vendor/` folder.
