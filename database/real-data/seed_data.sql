@@ -60,44 +60,45 @@ INSERT INTO `year_levels` (`name`, `order_num`) VALUES
 -- ============================================================
 -- Seed: Users
 -- Passwords are hashed using password_hash('password', PASSWORD_DEFAULT)
--- Default passwords listed in comments for testing
+-- Security answers are hashed using password_hash(strtolower(answer), PASSWORD_DEFAULT)
+-- Default passwords and security answers listed in comments for testing
 -- ============================================================
 
--- Admin: username=admin, password=admin123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('admin', '$2y$10$jveCvwI5ZK9yhTQhFGYdxODOrrSSWzUadQVCN4RIKMC811lkc1kh2', 'System', 'Administrator', 'admin@campuscare.edu', 'admin', 'active');
+-- Admin: username=admin, password=admin123, security_answer=manila
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('admin', '$2y$10$jveCvwI5ZK9yhTQhFGYdxODOrrSSWzUadQVCN4RIKMC811lkc1kh2', 'System', 'Administrator', 'admin@campuscare.edu', 'admin', 'active', 'What city were you born in?', '$2y$10$QY3KUcuI7OJa74X6aXpOp.teSFivu1.fI9vPOKUHN4zySDO23sdvC');
 
--- Nurse: username=nurse.garcia, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_garcia', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Maria', 'Garcia', 'maria.garcia@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_garcia, password=nurse123, security_answer=brownie
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_garcia', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Maria', 'Garcia', 'maria.garcia@campuscare.edu', 'nurse', 'active', 'What is the name of your first pet?', '$2y$10$JeHAii7DPfBmNBAIU6epWuRYjTP/xxJQ/zow0n1dowPKI6nuImuo6');
 
--- Nurse: username=nurse.santos, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_santos', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Jose', 'Santos', 'jose.santos@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_santos, password=nurse123, security_answer=adobo
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_santos', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Jose', 'Santos', 'jose.santos@campuscare.edu', 'nurse', 'active', 'What is your favorite food?', '$2y$10$FuoY2jRohdWRA24.FrMWUu7DLQ6PF9y6V43/nGU6zTAmvj58l/tgu');
 
--- Nurse: username=nurse.reyes, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_reyes', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Ana', 'Reyes', 'ana.reyes@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_reyes, password=nurse123, security_answer=quezon city
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_reyes', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Ana', 'Reyes', 'ana.reyes@campuscare.edu', 'nurse', 'active', 'What city were you born in?', '$2y$10$wsM7F.cT/Lg7FmlUPnKQeefbrlyupqFsS2EvKC1L9pz0JkN8p.wdi');
 
--- Nurse: username=nurse.cruz, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_cruz', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Rosa', 'Cruz', 'rosa.cruz@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_cruz, password=nurse123, security_answer=carlo
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_cruz', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Rosa', 'Cruz', 'rosa.cruz@campuscare.edu', 'nurse', 'active', 'What is the name of your best friend?', '$2y$10$oFKGK7tzL//bDmbmMo5c3OX1.9S.1MioHzJ2lx/6MWouRJb2A.vdW');
 
--- Nurse: username=nurse.mendoza, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_mendoza', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Elena', 'Mendoza', 'elena.mendoza@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_mendoza, password=nurse123, security_answer=blue
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_mendoza', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Elena', 'Mendoza', 'elena.mendoza@campuscare.edu', 'nurse', 'active', 'What is your favorite color?', '$2y$10$Oq3yFRSqBnjuo9JfmhsVFOpwJ/BhGHHq1FOH.Tvr.4WN7GZdfZM9e');
 
--- Nurse: username=nurse.villanueva, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_villanueva', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Carmen', 'Villanueva', 'carmen.villanueva@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_villanueva, password=nurse123, security_answer=sinigang
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_villanueva', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Carmen', 'Villanueva', 'carmen.villanueva@campuscare.edu', 'nurse', 'active', 'What is your favorite food?', '$2y$10$FgkUrOz0.eDbkl0CKbI/s.f1ZzJOTgauxQIhkiuAIswo.mQRQtqJm');
 
--- Nurse: username=nurse.torres, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_torres', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Patricia', 'Torres', 'patricia.torres@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_torres, password=nurse123, security_answer=bantay
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_torres', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Patricia', 'Torres', 'patricia.torres@campuscare.edu', 'nurse', 'active', 'What is the name of your first pet?', '$2y$10$CtMLzI3Mmxue8I.UrwZzbe8bkBnJLWdNwichsqErSyIjFwBvBfrlS');
 
--- Nurse: username=nurse.bautista, password=nurse123
-INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_bautista', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Lucia', 'Bautista', 'lucia.bautista@campuscare.edu', 'nurse', 'active');
+-- Nurse: username=nurse_bautista, password=nurse123, security_answer=cebu
+INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`, `security_question`, `security_answer`) VALUES
+('nurse_bautista', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Lucia', 'Bautista', 'lucia.bautista@campuscare.edu', 'nurse', 'active', 'What city were you born in?', '$2y$10$DgpW9fESSrN0tWbK/JcAresqthJqaPN6piFspMEddVEpHYDPJF61a');
 
 -- ============================================================
 -- Seed: Announcements
