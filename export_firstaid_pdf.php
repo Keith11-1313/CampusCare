@@ -23,7 +23,7 @@ if ($id <= 0) {
 $db = Database::getInstance();
 $guide = $db->fetch(
     "SELECT * FROM first_aid_guidelines WHERE id = ? AND status = 'active'",
-    [$id]
+[$id]
 );
 
 if (!$guide) {
@@ -31,35 +31,26 @@ if (!$guide) {
     exit('Guideline not found.');
 }
 
-$title   = htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8');
+$title = htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8');
 $content = $guide['content']; // already HTML from Quill editor
 
 // Resolve icon as base64 data URI so Dompdf can embed it
-$iconName = $guide['icon'] ?? 'general-first-aid';
-// Normalize icon name (lowercase, no extension)
-$iconName = strtolower(preg_replace('/\.png$/i', '', $iconName));
-$iconFile = $iconName . '.png';
+$iconFile = ($guide['icon'] ?? 'general-first-aid') . '.png';
 $iconPath = __DIR__ . '/assets/first-aid-icons/' . $iconFile;
-
-// Fallback to general icon if specific one doesn't exist
-if (!file_exists($iconPath)) {
-    $iconPath = __DIR__ . '/assets/first-aid-icons/general-first-aid.png';
-}
-
 $iconHtml = '';
 if (file_exists($iconPath)) {
-    $iconData    = file_get_contents($iconPath);
+    $iconData = file_get_contents($iconPath);
     $iconDataUri = 'data:image/png;base64,' . base64_encode($iconData);
-    $iconHtml    = '<img class="icon-img" src="' . $iconDataUri . '" alt="">';
+    $iconHtml = '<img class="icon-img" src="' . $iconDataUri . '" alt="">';
 }
 
 // Resolve logo as base64 data URI
 $logoPath = __DIR__ . '/assets/logo-main-b.png';
 $logoHtml = '';
 if (file_exists($logoPath)) {
-    $logoData    = file_get_contents($logoPath);
+    $logoData = file_get_contents($logoPath);
     $logoDataUri = 'data:image/png;base64,' . base64_encode($logoData);
-    $logoHtml    = '<img src="' . $logoDataUri . '" class="logo-img" alt="Logo">';
+    $logoHtml = '<img src="' . $logoDataUri . '" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;">';
 }
 
 // Build HTML for PDF
@@ -80,43 +71,33 @@ $html = '
     }
     .header {
         border-bottom: 2px solid #005a9c;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-        position: relative;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
     }
     .brand {
-        display: block;
-        font-size: 16px;
+        font-size: 14px;
         color: #005a9c;
         font-weight: 700;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
-    }
-    .logo-img {
-        width: 24px;
-        height: 24px;
-        vertical-align: middle;
-        margin-right: 8px;
+        letter-spacing: 0.3px;
+        margin-bottom: 2px;
     }
     .brand-tagline {
-        font-size: 10px;
+        font-size: 9px;
         color: #6b7c93;
         margin-top: 2px;
-        font-weight: 400;
     }
     .title-row {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        padding: 10px 0;
+        margin-top: 18px;
+        margin-bottom: 18px;
     }
     .icon-img {
-        width: 42px;
-        height: 42px;
+        width: 36px;
+        height: 36px;
         vertical-align: middle;
-        margin-right: 15px;
+        margin-right: 10px;
     }
     .guideline-title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 700;
         color: #1a2332;
         vertical-align: middle;
@@ -124,29 +105,25 @@ $html = '
     .content {
         font-size: 13px;
         color: #3d4f5f;
-        line-height: 1.8;
+        line-height: 1.7;
     }
     .content ul, .content ol {
-        padding-left: 25px;
-        margin: 10px 0;
+        padding-left: 22px;
+        margin: 8px 0;
     }
     .content li {
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
     .content strong, .content b {
         color: #1a2332;
     }
     .content a {
         color: #005a9c;
-        text-decoration: none;
     }
     .footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding-top: 15px;
-        border-top: 1px solid #e5e7eb;
+        margin-top: 30px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8e5;
         font-size: 9px;
         color: #9ca3af;
         text-align: center;
@@ -156,7 +133,7 @@ $html = '
 <body>
     <div class="header">
         <div class="brand">' . $logoHtml . 'CampusCare</div>
-        <div class="brand-tagline">School Clinic &mdash; Official First Aid Guideline</div>
+        <div class="brand-tagline">School Clinic &mdash; First Aid Guideline</div>
     </div>
 
     <div class="title-row">
@@ -168,7 +145,7 @@ $html = '
     </div>
 
     <div class="footer">
-        Generated from CampusCare Patient Information System &middot; ' . date('F j, Y, g:i a') . '
+        Generated from CampusCare &middot; ' . date('F j, Y') . '
     </div>
 </body>
 </html>';
