@@ -254,7 +254,10 @@ $useLandscape = isset($_GET['landscape']) && $_GET['landscape'] == '1';
     </div>
 
     <div class="header">
-        <h1>CampusCare — Clinic Visits Report</h1>
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-b.png" alt="Logo" style="width: 28px; height: 28px; margin-right: 10px;">
+            <h1 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">CampusCare — Clinic Visits Report</h1>
+        </div>
         <p>Generated on <?php echo date('F d, Y h:i A'); ?> | Total Records: <?php echo $totalVisits; ?></p>
         <?php if ($hasFilters): ?>
         <div class="filters-badge">
