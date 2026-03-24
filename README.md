@@ -140,8 +140,8 @@ http://localhost/CampusCare
 | Admin | `admin` | `admin123` |
 | Nurse | `nurse_garcia` | `nurse123` |
 | Nurse | `nurse_santos` | `nurse123` |
-| Class Rep | `rep_delacruz` | `rep123` |
-| Class Rep | `rep_reyes` | `rep123` |
+| Class Rep | `rep_mercado_BSA_1A` | `rep123` |
+| Class Rep | `rep_bueno_BSA_3A` | `rep123` |
 
 ---
 
