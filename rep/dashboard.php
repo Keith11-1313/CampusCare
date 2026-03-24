@@ -192,7 +192,7 @@ endif; ?>
                 <a href="students.php?action=add" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
                     <i class="bi bi-person-plus me-2"></i>Add Student</a>
                 <a href="students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-people me-2"></i>View My Students</a>
+                    <i class="bi bi-people me-2"></i>View Students</a>
                 <a href="request_change.php" class="btn btn-outline-primary btn-sm w-100 text-start">
                     <i class="bi bi-inbox me-2"></i>Requests</a>
             </div>
