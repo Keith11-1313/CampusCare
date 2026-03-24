@@ -16,14 +16,18 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Session timeout check
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_LIFETIME)) {
+// Session timeout check — only for logged-in users
+if (isset($_SESSION['user_id']) && isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_LIFETIME)) {
     session_unset();
     session_destroy();
     session_start();
     $_SESSION['flash_error'] = 'Your session has expired. Please log in again.';
 }
-$_SESSION['last_activity'] = time();
+
+// Only track activity for logged-in users
+if (isset($_SESSION['user_id'])) {
+    $_SESSION['last_activity'] = time();
+}
 
 /**
  * Generate or retrieve CSRF token
