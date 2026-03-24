@@ -107,7 +107,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div>
                     <div class="stat-label">Today's Visits</div>
                     <div class="stat-value"><?php echo $todayVisits; ?></div>
-                    <div class="stat-comparison <?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'neutral'); ?>">
+                    <div class="stat-extra <?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'neutral'); ?>">
                         <i class="bi bi-arrow-<?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'right'); ?>"></i>
                         <?php echo abs($todayDiff); ?> vs yesterday
                     </div>
@@ -133,7 +133,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div>
                     <div class="stat-label">Referred Cases</div>
                     <div class="stat-value"><?php echo $referredMonth; ?></div>
-                    <div class="small mt-1 opacity-75">This month</div>
+                    <div class="stat-extra neutral"><i class="bi bi-calendar3"></i> This month</div>
                 </div>
                 <div class="stat-icon"><i class="bi bi-hospital-fill"></i></div>
             </div>
@@ -146,7 +146,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="stat-label">Pending Follow-ups</div>
                     <div class="stat-value"><?php echo $followUps; ?></div>
                     <?php if ($overdueCount > 0): ?>
-                    <div class="small mt-1 text-danger"><i class="bi bi-exclamation-circle me-1"></i><?php echo $overdueCount; ?> overdue</div>
+                    <div class="stat-extra danger"><i class="bi bi-exclamation-circle"></i><?php echo $overdueCount; ?> overdue</div>
                     <?php endif; ?>
                 </div>
                 <div class="stat-icon"><i class="bi bi-exclamation-circle-fill"></i></div>

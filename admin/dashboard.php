@@ -102,7 +102,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="stat-label">Visits This Month</div>
                     <div class="stat-value"><?php echo number_format($totalVisitsMonth); ?></div>
                     <?php if ($lastMonthVisits > 0): ?>
-                    <div class="stat-comparison <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
+                    <div class="stat-extra <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
                         <i class="bi bi-arrow-<?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'right'); ?>"></i>
                         <?php echo abs($momChange); ?>% vs last month
                     </div>
@@ -122,7 +122,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="stat-label">Pending Requests</div>
                     <div class="stat-value"><?php echo number_format($pendingRequests); ?></div>
                     <?php if ($pendingRequests > 0): ?>
-                    <div class="small mt-1 opacity-75"><i class="bi bi-arrow-right-circle me-1"></i>Review now</div>
+                    <div class="stat-extra danger"><i class="bi bi-arrow-right-circle"></i>Review now</div>
                     <?php endif; ?>
                 </div>
                 <div class="stat-icon"><i class="bi bi-inbox-fill"></i></div>

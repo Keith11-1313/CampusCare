@@ -537,6 +537,46 @@ a:hover {
     color: #922b21;
 }
 
+/* ---- Stat Card Extra Info Line ---- */
+/* Small line below the stat value for supplementary context
+   (e.g., "6 vs yesterday", "5 overdue", "This month", "Review now").
+   Consistent font size, weight, spacing, and opacity across all dashboards. */
+.stat-extra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    margin-top: 6px;
+    opacity: 0.80;
+    color: inherit;
+    letter-spacing: 0.1px;
+}
+
+/* Upward trend: green tint */
+.stat-extra.up {
+    color: #1a7a4a;
+    opacity: 1;
+}
+
+/* Downward trend: red tint */
+.stat-extra.down {
+    color: #c0392b;
+    opacity: 1;
+}
+
+/* Danger / alert emphasis (e.g., overdue) */
+.stat-extra.danger {
+    color: #c0392b;
+    opacity: 1;
+}
+
+/* Neutral / informational */
+.stat-extra.neutral {
+    opacity: 0.70;
+}
+
+
 /* ---- Tables ---- */
 /* Base table: slightly smaller font size for compact data display. */
 .table {
