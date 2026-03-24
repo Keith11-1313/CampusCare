@@ -39,8 +39,8 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
                 <div class="collapse navbar-collapse" id="publicNav">
                     <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                         <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                         <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
                         <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
                         <li class="nav-item ms-lg-2">
