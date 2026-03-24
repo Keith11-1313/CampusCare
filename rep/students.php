@@ -161,9 +161,40 @@ if ($section) {
     $params[] = $section;
 }
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
-    $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
+    // Check if search term is a month name (e.g. "jan", "january", "feb", "february")
+    $months = [
+        'jan' => '01', 'january' => '01', 'feb' => '02', 'february' => '02',
+        'mar' => '03', 'march' => '03', 'apr' => '04', 'april' => '04',
+        'may' => '05', 'jun' => '06', 'june' => '06',
+        'jul' => '07', 'july' => '07', 'aug' => '08', 'august' => '08',
+        'sep' => '09', 'sept' => '09', 'september' => '09',
+        'oct' => '10', 'october' => '10', 'nov' => '11', 'november' => '11',
+        'dec' => '12', 'december' => '12'
+    ];
+    $searchLower = strtolower(trim($search));
+    $monthNum = $months[$searchLower] ?? null;
+
+    if ($monthNum) {
+        // Month-only search: match any year with that month (e.g. "%-01-%")
+        $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
+        $sk = "%$search%";
+        $mk = "%-$monthNum-%";
+        $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $mk]);
+    } else {
+        // Try to parse human-friendly date formats (e.g. "oct 7 2008", "October 7, 2008")
+        $parsedDate = strtotime($search);
+        if ($parsedDate !== false) {
+            $dateFormatted = date('Y-m-d', $parsedDate);
+            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
+            $sk = "%$search%";
+            $dk = "%$dateFormatted%";
+            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $dk]);
+        } else {
+            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
+            $sk = "%$search%";
+            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
+        }
+    }
 }
 
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s $where", $params);
