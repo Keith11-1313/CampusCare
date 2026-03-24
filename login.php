@@ -143,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_role'] = $user['role'];
                 $_SESSION['user_data'] = null; // will be loaded on first access
+                $_SESSION['last_activity'] = time();
 
                 // Update last login
                 $db->query("UPDATE users SET last_login = NOW() WHERE id = ?", [$user['id']]);
