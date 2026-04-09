@@ -4,6 +4,7 @@ Generates bulk_seed_data.sql to be imported AFTER campuscare.sql + seed_data.sql
 """
 
 import random, os, textwrap
+from datetime import date, timedelta
 
 random.seed(42)
 
@@ -173,6 +174,44 @@ VISIT_COMPLAINTS = [
     ("Burns",               "Minor burn on finger from lab",           "First-degree burn",                     "Cool water applied. Burn ointment."),
 ]
 VISIT_STATUSES = ["Completed","Completed","Completed","Completed","Follow-up","Referred"]
+
+# -- Date ranges for visits (school year) --
+SY_START = date(2025, 8, 4)
+SY_CURRENT = date(2026, 4, 9)
+SY_TOTAL_DAYS = (SY_CURRENT - SY_START).days
+CURRENT_WEEK_START = date(2026, 4, 3)
+CURRENT_WEEK_END = date(2026, 4, 9)
+
+def make_visit_row(sid, vdate):
+    """Generate a single clinic visit SQL value tuple."""
+    sys_bp = random.randint(100, 135)
+    dia_bp = random.randint(60, 88)
+    temp = round(random.uniform(36.2, 38.0), 1)
+    hr = random.randint(60, 100)
+    rr = random.randint(14, 22)
+    wt = round(random.uniform(45.0, 85.0), 1)
+    ht = round(random.uniform(150.0, 185.0), 1)
+    nurse = random.choice([2, 3])
+    comp = random.choice(VISIT_COMPLAINTS)
+    status = random.choice(VISIT_STATUSES)
+    fu_date = "NULL"
+    fu_notes = "NULL"
+    if status == "Follow-up":
+        fu = vdate + timedelta(days=random.randint(7, 30))
+        fu_date = "'%s'" % fu.strftime("%Y-%m-%d")
+        fu_notes = "'Follow up for re-assessment'"
+    elif status == "Referred":
+        fu_notes = "'Referred to specialist'"
+    hour = random.randint(7, 16)
+    minute = random.choice(["00","15","30","45"])
+    return (
+        "(%d, %d, '%s %02d:%s:00', '%d/%d', %.1f, %d, %d, %.1f, %.1f, '%s', '%s', '%s', '%s', %s, %s, '%s')" % (
+            sid, nurse, vdate.strftime("%Y-%m-%d"), hour, minute,
+            sys_bp, dia_bp, temp, hr, rr, wt, ht,
+            esc(comp[0]), esc(comp[1]), esc(comp[2]), esc(comp[3]),
+            fu_notes, fu_date, status
+        )
+    )
 
 # -- Helpers --
 def slug(s):
@@ -351,46 +390,29 @@ for s in students_list:
                 )
             )
 
-    # Clinic visits (~15%)
+    # Clinic visits (~15%) - spread across the school year
     if random.random() < 0.15:
-        for _ in range(random.randint(1, 2)):
-            vm = random.randint(1, 3)
-            vd = random.randint(1, 28)
-            sys_bp = random.randint(100, 135)
-            dia_bp = random.randint(60, 88)
-            temp = round(random.uniform(36.2, 38.0), 1)
-            hr = random.randint(60, 100)
-            rr = random.randint(14, 22)
-            wt = round(random.uniform(45.0, 85.0), 1)
-            ht = round(random.uniform(150.0, 185.0), 1)
-            nurse = random.choice([2, 3])
-            comp = random.choice(VISIT_COMPLAINTS)
-            status = random.choice(VISIT_STATUSES)
-            fu_date = "NULL"
-            fu_notes = "NULL"
-            if status == "Follow-up":
-                fu_date = "'2026-%02d-%02d'" % (min(vm+1,12), vd)
-                fu_notes = "'Follow up for re-assessment'"
-            elif status == "Referred":
-                fu_notes = "'Referred to specialist'"
-
-            hour = random.randint(7, 16)
-            minute = random.choice(["00","15","30","45"])
-            visit_rows.append(
-                "(%d, %d, '2026-%02d-%02d %02d:%s:00', '%d/%d', %.1f, %d, %d, %.1f, %.1f, '%s', '%s', '%s', '%s', %s, %s, '%s')" % (
-                    sid, nurse, vm, vd, hour, minute,
-                    sys_bp, dia_bp, temp, hr, rr, wt, ht,
-                    esc(comp[0]), esc(comp[1]), esc(comp[2]), esc(comp[3]),
-                    fu_notes, fu_date, status
-                )
-            )
+        for _ in range(random.randint(1, 3)):
+            vdate = SY_START + timedelta(days=random.randint(0, SY_TOTAL_DAYS))
+            visit_rows.append(make_visit_row(sid, vdate))
 
 print("  -> %d allergies" % len(allergy_rows))
 print("  -> %d chronic conditions" % len(condition_rows))
 print("  -> %d medications" % len(med_rows))
 print("  -> %d immunizations" % len(immun_rows))
 print("  -> %d emergency contacts" % len(contact_rows))
-print("  -> %d visits" % len(visit_rows))
+print("  -> %d visits (school year)" % len(visit_rows))
+
+# -- Current-week visit boost (ensures dashboard has fresh data) --
+print("Generating current-week visits ...")
+cw_count = min(80, len(students_list))
+cw_students = random.sample(students_list, cw_count)
+for s in cw_students:
+    sid = s["id"]
+    vdate = CURRENT_WEEK_START + timedelta(days=random.randint(0, (CURRENT_WEEK_END - CURRENT_WEEK_START).days))
+    visit_rows.append(make_visit_row(sid, vdate))
+print("  -> %d current-week visits added" % cw_count)
+print("  -> %d total visits" % len(visit_rows))
 
 # -- Write SQL --
 print("\nWriting %s ..." % out_path)
