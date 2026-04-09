@@ -20,7 +20,7 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <meta name="description" content="CampusCare - School Clinic Patient Information & Medicine Record System. View announcements, FAQs, first-aid guidelines, and emergency contacts.">
     <title><?php echo APP_NAME; ?> - <?php echo APP_TAGLINE; ?></title>
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/style.css">
@@ -39,8 +39,8 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
                 <div class="collapse navbar-collapse" id="publicNav">
                     <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item"><a class="nav-link" href="#announcements">Announcements</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                         <li class="nav-item"><a class="nav-link" href="#firstaid">First Aid</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
                         <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
                         <li class="nav-item"><a class="nav-link" href="#hours">Hours</a></li>
                         <li class="nav-item ms-lg-2">
@@ -107,6 +107,14 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
                                     <img src="<?php echo BASE_URL; ?>/assets/clinic4.jpg" alt="Campus Clinic" class="hero-image">
                                 </div>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#heroClinicCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#heroClinicCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -345,7 +353,7 @@ endif; ?>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Smooth scroll for nav links -->
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
