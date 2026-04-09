@@ -1,0 +1,11 @@
+student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address
+2024-0020,Isabella,Ramos,Cruz,Female,2005-03-18,A+,09271234567,isabella.cruz@email.com,112 Katipunan Ave Quezon City
+2024-0021,Carlos,Mendoza,Torres,Male,2004-09-02,O+,09281234567,carlos.torres@email.com,225 Magsaysay Blvd Sta Mesa Manila
+2024-0022,Patricia,Lim,Bautista,Female,2006-05-27,B+,09291234567,patricia.bautista@email.com,338 España Blvd Sampaloc Manila
+2024-0023,Gabriel,Santos,Dela Cruz,Male,2003-12-08,AB+,09301234567,gabriel.delacruz@email.com,441 Quezon Ave Quezon City
+2024-0024,Sofia,Reyes,Navarro,Female,2005-07-14,O-,09311234567,sofia.navarro@email.com,554 P. Tuazon Blvd Cubao Quezon City
+2024-0025,Andres,Aquino,Castillo,Male,2004-04-22,A-,09321234567,andres.castillo@email.com,667 Marcos Highway Marikina City
+2024-0026,Camille,Flores,Velasquez,Female,2006-11-03,B-,09331234567,camille.velasquez@email.com,780 C5 Road Taguig City
+2024-0027,Rafael,Gomez,Garcia,Male,2003-06-19,O+,09341234567,rafael.garcia@email.com,893 Ayala Ave Makati City
+2024-0028,Angela,Lopez,Perez,Female,2005-02-28,AB-,09351234567,angela.perez@email.com,106 Gil Puyat Ave Pasay City
+2024-0029,Marco,Villanueva,Gonzales,Male,2004-10-15,A+,09361234567,marco.gonzales@email.com,219 Chino Roces Ave Makati City
