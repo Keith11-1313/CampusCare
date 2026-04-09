@@ -213,12 +213,12 @@ document.addEventListener('DOMContentLoaded', function(){
             datasets: [{
                 data: genderData.map(d => d.count),
                 backgroundColor: genderData.map(d => genderColors[d.gender] || '#6b7c93'),
-                borderWidth: 2, borderColor: '#fff'
+                borderWidth: 2, borderColor: '#fff', borderRadius: 4
             }]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
             cutout: '55%'
         }
     });

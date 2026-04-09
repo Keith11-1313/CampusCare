@@ -153,7 +153,6 @@ function statusBadge($status)
         'Moderate' => '<span class="badge bg-warning text-dark">Moderate</span>',
         'Severe' => '<span class="badge bg-danger">Severe</span>',
         'Active' => '<span class="badge bg-danger">Active</span>',
-        'Managed' => '<span class="badge bg-info">Managed</span>',
         'Resolved' => '<span class="badge bg-success">Resolved</span>',
     ];
     return $badges[$status] ?? '<span class="badge bg-secondary">' . e($status) . '</span>';

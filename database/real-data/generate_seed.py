@@ -112,14 +112,14 @@ ALLERGENS_DATA = [
     ("Ibuprofen",   "Stomach pain",                  "Mild"),
 ]
 CHRONIC_DATA = [
-    ("Asthma",                  "Managed", "Uses inhaler as needed"),
+    ("Asthma",                  "Active",   "Uses inhaler as needed"),
     ("Hypertension (Stage 1)",  "Active",  "On daily medication, needs BP monitoring"),
     ("Type 1 Diabetes",         "Active",  "Insulin-dependent, carries glucose monitor"),
     ("Migraine",                "Active",  "Triggered by stress and bright lights"),
-    ("Scoliosis",               "Managed", "Mild curvature, annual monitoring"),
-    ("Epilepsy",                "Managed", "Controlled with medication"),
+    ("Scoliosis",               "Resolved", "Mild curvature, annual monitoring"),
+    ("Epilepsy",                "Resolved", "Controlled with medication"),
     ("Allergic Rhinitis",       "Active",  "Seasonal flare-ups"),
-    ("GERD",                    "Managed", "Diet-controlled"),
+    ("GERD",                    "Resolved", "Diet-controlled"),
     ("Anemia",                  "Active",  "Iron supplements prescribed"),
 ]
 MEDICATIONS_MAP = {

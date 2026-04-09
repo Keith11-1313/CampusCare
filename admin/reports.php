@@ -297,8 +297,8 @@ document.addEventListener('DOMContentLoaded', function(){
     new Chart(document.getElementById('programChart'), {
         type:'doughnut', data:{
             labels: progData.map(d=>d.code||'Unknown'),
-            datasets:[{data:progData.map(d=>d.count),backgroundColor:colors.slice(0,progData.length)}]
-        }, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+            datasets:[{data:progData.map(d=>d.count),backgroundColor:colors.slice(0,progData.length),borderWidth:2,borderColor:'#fff',borderRadius:4}]
+        }, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},usePointStyle:true,pointStyle:'rectRounded'}}}}
     });
 
     // Top complaints — podium layout
@@ -388,12 +388,12 @@ document.addEventListener('DOMContentLoaded', function(){
             datasets: [{
                 data: statusData.map(d => d.count),
                 backgroundColor: statusData.map(d => statusColors[d.status] || '#6b7c93'),
-                borderWidth: 2, borderColor: '#fff'
+                borderWidth: 2, borderColor: '#fff', borderRadius: 4
             }]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
             cutout: '55%'
         }
     });

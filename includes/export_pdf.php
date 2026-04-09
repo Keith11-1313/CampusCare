@@ -125,8 +125,8 @@ $topVaccines = $db->fetchAll(
 
 // Top chronic conditions
 $topConditions = $db->fetchAll(
-    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
-     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
+    "SELECT condition_name, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name ORDER BY count DESC LIMIT 4"
 );
 
 // Summary stats
@@ -209,7 +209,6 @@ $useLandscape = isset($_GET['landscape']) && $_GET['landscape'] == '1';
         .chart-box.full { width: 97%; }
         .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 600; color: #fff; }
         .status-badge.active { background: #c0392b; }
-        .status-badge.managed { background: #f39c12; }
         .status-badge.resolved { background: #27ae60; }
         .status-badge.other { background: #6b7c93; }
         .chart-box h3 { font-size: 12px; color: #003d6b; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
@@ -414,20 +413,12 @@ endif; ?>
         <h2>Top Chronic Conditions</h2>
         <?php if (!empty($topConditions)): ?>
         <table>
-            <thead><tr><th>#</th><th>Condition</th><th>Status</th><th>Students</th></tr></thead>
+            <thead><tr><th>#</th><th>Condition</th><th>Students</th></tr></thead>
             <tbody>
-            <?php foreach ($topConditions as $i => $tc):
-                $badgeClass = match($tc['status']) {
-                    'Active' => 'active',
-                    'Managed' => 'managed',
-                    'Resolved' => 'resolved',
-                    default => 'other'
-                };
-            ?>
+            <?php foreach ($topConditions as $i => $tc): ?>
             <tr>
                 <td><?php echo $i + 1; ?></td>
                 <td><?php echo e($tc['condition_name']); ?></td>
-                <td><span class="status-badge <?php echo $badgeClass; ?>"><?php echo e($tc['status']); ?></span></td>
                 <td><?php echo $tc['count']; ?></td>
             </tr>
             <?php endforeach; ?>

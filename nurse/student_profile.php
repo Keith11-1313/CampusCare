@@ -639,7 +639,6 @@ endforeach; ?>
                         <label class="form-label">Status</label>
                         <select class="form-select" name="data[status]">
                             <option value="Active">Active</option>
-                            <option value="Managed">Managed</option>
                             <option value="Resolved">Resolved</option>
                         </select>
                     </div>
