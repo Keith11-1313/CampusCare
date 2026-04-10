@@ -134,31 +134,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<!-- Quick Actions (below stats for easy access) -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
-            <div class="card-body py-2">
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="<?php echo BASE_URL; ?>/admin/users.php" class="btn btn-outline-primary btn-sm text-start">
-                        <i class="bi bi-people me-2"></i>Manage Users
-                    </a>
-                    <a href="<?php echo BASE_URL; ?>/admin/reports.php" class="btn btn-outline-primary btn-sm text-start">
-                        <i class="bi bi-graph-up me-2"></i>View Reports
-                    </a>
-                    <a href="<?php echo BASE_URL; ?>/admin/access_logs.php" class="btn btn-outline-primary btn-sm text-start">
-                        <i class="bi bi-shield-check me-2"></i>Access Logs
-                    </a>
-                    <a href="<?php echo BASE_URL; ?>/admin/archive.php" class="btn btn-outline-primary btn-sm text-start">
-                        <i class="bi bi-archive me-2"></i>Archived Records
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Charts Row -->
 <div class="row g-4 mb-4">
     <!-- Visits Per Day (Last 7 Days) -->
@@ -170,9 +145,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
-    <!-- Complaint Categories Doughnut -->
     <div class="col-lg-4">
+        <!-- Quick Actions -->
         <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
+            <div class="card-body">
+                <a href="<?php echo BASE_URL; ?>/admin/users.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-people me-2"></i>Manage Users
+                </a>
+                <a href="<?php echo BASE_URL; ?>/admin/reports.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-graph-up me-2"></i>View Reports
+                </a>
+                <a href="<?php echo BASE_URL; ?>/admin/access_logs.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-shield-check me-2"></i>Access Logs
+                </a>
+                <a href="<?php echo BASE_URL; ?>/admin/archive.php" class="btn btn-outline-primary btn-sm w-100 text-start">
+                    <i class="bi bi-archive me-2"></i>Archived Records
+                </a>
+            </div>
+        </div>
+        <!-- Top Complaints This Month -->
+        <div class="card mt-3">
             <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Top Complaints This Month</div>
             <div class="card-body">
                 <?php if (empty($topComplaints)): ?>
