@@ -205,7 +205,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <textarea class="form-control" name="complaint_description" rows="3" placeholder="Provide additional details about the complaint..."></textarea>
     </div>
     <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
-    <div class="mb-3"><label class="form-label">Treatment Provided</label><textarea class="form-control" name="treatment" rows="3" placeholder="Treatment given or recommended..."></textarea></div>
+    <div class="mb-3">
+        <label class="form-label">Treatment Provided</label>
+        <div id="treatmentSuggestions" class="treatment-suggestions" style="display:none;"></div>
+        <textarea class="form-control" name="treatment" id="treatmentTextarea" rows="3" placeholder="Treatment given or recommended..."></textarea>
+    </div>
 </div>
 
 <!-- Step 4: Follow-up -->
@@ -237,6 +241,55 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div></div></div></div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<style>
+.treatment-suggestions {
+    margin-bottom: 0.75rem;
+    min-height: 38px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+.treatment-suggestion-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin-right: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.treatment-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    background: #f0f7ff;
+    color: var(--cc-primary);
+    border: 1px solid #d0e3ff;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+.treatment-chip:hover {
+    background: var(--cc-primary);
+    color: white;
+    border-color: var(--cc-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 90, 156, 0.2);
+}
+.treatment-chip i {
+    font-size: 0.9rem;
+    margin-right: 0.35rem;
+}
+.treatment-chip.added {
+    background: #e8f5ee;
+    color: #27ae60;
+    border-color: #c3e6cb;
+}
+</style>
 
 <script>
 let currentVisitStep = 1;
@@ -429,6 +482,68 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
             input.focus();
         }
     });
+
+    // ── Suggested Treatments Logic ──
+    const complaintCategorySelect = document.getElementById('complaintCategory');
+    const treatmentTextarea = document.getElementById('treatmentTextarea');
+    const suggestionsContainer = document.getElementById('treatmentSuggestions');
+
+    const treatmentMap = {
+        'Diarrhea': ['Medicine', 'Oral Rehydration (ORS)', 'Hydration', 'Rest'],
+        'Headache - Minor': ['Paracetamol (500mg)', 'Rest', 'Hydration'],
+        'Headache - Severe': ['Paracetamol (500mg)', 'Cold Compress', 'Monitoring', 'Rest'],
+        'Headache - Migraine': ['Rest in Dark Room', 'Hydration', 'Monitoring'],
+        'Fever': ['Paracetamol (500mg)', 'Sponge Bath', 'Monitoring', 'Hydration'],
+        'Cough': ['Cough Syrup', 'Vitamin C', 'Warm Water / Saline Gargle'],
+        'Cold / Flu': ['Decongestant', 'Vitamin C', 'Hydration', 'Rest'],
+        'Sore Throat': ['Lozenges', 'Warm Saline Gargle', 'Hydration'],
+        'Difficulty Breathing': ['Nebulization (if available)', 'Oxygen Support', 'Emergency Referral'],
+        'Asthma Attack': ['Inhaler / Nebulization', 'Oxygen Support', 'Monitoring'],
+        'Stomach Pain': ['Antacid', 'Rest', 'Heating Pad'],
+        'Nausea / Vomiting': ['Antiemetic', 'Hydration', 'Rest'],
+        'Wound / Cut': ['Cleaning', 'Dressing', 'Antiseptic', 'Tetanus Status Check'],
+        'Sprain / Strain': ['RICE Method', 'Compression Bandage', 'Rest', 'Cold Compress'],
+        'Muscle Cramp': ['Stretching', 'Massage', 'Hydration'],
+        'Menstrual Cramps': ['Mefenamic Acid (500mg)', 'Hot Compress', 'Rest'],
+        'Bruise / Contusion': ['Cold Compress', 'Rest'],
+        'Burns': ['Cool Running Water', 'Burn Ointment', 'Sterile Dressing'],
+        'Eye Problem': ['Artificial Tears', 'Eye Rest', 'Cold Compress'],
+        'Toothache': ['Pain Reliever', 'Warm Saltwater Rinse', 'Dental Referral'],
+        'Anxiety / Panic Attack': ['Breathing Exercises', 'Counseling', 'Monitoring'],
+        'Fatigue / Weakness': ['Rest', 'Hydration', 'Glucose / Snacks']
+    };
+
+    complaintCategorySelect.addEventListener('change', function() {
+        const category = this.value;
+        const suggestions = treatmentMap[category] || [];
+        
+        if (suggestions.length > 0) {
+            suggestionsContainer.innerHTML = '<span class="treatment-suggestion-label">Suggestions:</span>' + 
+                suggestions.map(s => `<div class="treatment-chip" onclick="addTreatment('${s.replace(/'/g, "\\'")}')"><i class="bi bi-plus-circle"></i>${s}</div>`).join('');
+            suggestionsContainer.style.display = 'flex';
+        } else {
+            suggestionsContainer.style.display = 'none';
+            suggestionsContainer.innerHTML = '';
+        }
+    });
+
+    window.addTreatment = function(text) {
+        const currentVal = treatmentTextarea.value.trim();
+        if (currentVal === '') {
+            treatmentTextarea.value = text;
+        } else if (!currentVal.includes(text)) {
+            treatmentTextarea.value = currentVal + ', ' + text;
+        }
+        
+        // Visual feedback
+        const chip = Array.from(document.querySelectorAll('.treatment-chip')).find(c => c.textContent.trim() === text);
+        if (chip) {
+            chip.classList.add('added');
+            setTimeout(() => chip.classList.remove('added'), 500);
+        }
+        
+        treatmentTextarea.focus();
+    };
 })();
 </script>
 
