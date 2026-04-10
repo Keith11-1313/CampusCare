@@ -8,7 +8,7 @@ $db = Database::getInstance();
 // Fetch public data
 $announcements = $db->fetchAll("SELECT * FROM announcements WHERE status = 'published' ORDER BY created_at DESC LIMIT 6");
 $faqs = $db->fetchAll("SELECT * FROM faqs WHERE status = 'active' ORDER BY id ASC");
-$firstAidGuidelines = $db->fetchAll("SELECT * FROM first_aid_guidelines WHERE status = 'active' ORDER BY sort_order ASC");
+$firstAidGuidelines = $db->fetchAll("SELECT * FROM first_aid_guidelines WHERE status = 'active' ORDER BY id ASC");
 $emergencyContacts = $db->fetchAll("SELECT * FROM clinic_emergency_contacts WHERE status = 'active' ORDER BY sort_order ASC");
 $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')");
 ?>

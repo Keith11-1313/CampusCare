@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if (empty($title) || empty($content))
                 jsonResponse(['success' => false, 'message' => 'Title and content required.']);
             if ($id > 0)
-                $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=?, sort_order=? WHERE id=?", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0), $id]);
+                $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=? WHERE id=?", [$title, $icon, $content, $id]);
             else
-                $db->query("INSERT INTO first_aid_guidelines (title,icon,content,sort_order) VALUES (?,?,?,?)", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0)]);
+                $db->query("INSERT INTO first_aid_guidelines (title,icon,content) VALUES (?,?,?)", [$title, $icon, $content]);
             jsonResponse(['success' => true, 'message' => 'Guideline saved.']);
         }
         if ($action === 'delete') {
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Fetch data
 $announcements = $db->fetchAll("SELECT a.*, u.first_name, u.last_name FROM announcements a LEFT JOIN users u ON a.posted_by=u.id ORDER BY a.created_at DESC");
 $faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY id ASC");
-$firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY sort_order");
+$firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY id ASC");
 $emergency = $db->fetchAll("SELECT * FROM clinic_emergency_contacts ORDER BY sort_order");
 $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')");
 
@@ -174,7 +174,6 @@ endforeach; ?>
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Order</th>
                             <th>Icon</th>
                             <th>Title</th>
                             <th>Content Preview</th>
@@ -184,7 +183,6 @@ endforeach; ?>
                     <tbody>
                         <?php foreach ($firstAid as $f): ?>
                         <tr>
-                            <td><?php echo $f['sort_order']; ?></td>
                             <td><img src="<?php echo BASE_URL; ?>/assets/first-aid-icons/<?php echo e($f['icon'] ?? 'general-first-aid'); ?>.png" alt="" style="width:28px;height:28px;object-fit:contain;"></td>
                             <td class="fw-semibold"><?php echo e($f['title']); ?></td>
                             <td><small><?php echo truncate(strip_tags($f['content']), 50); ?></small></td>
@@ -413,7 +411,7 @@ endforeach; ?>
                         <input type="hidden" name="content" id="faContentHidden">
                         <div id="faContentEditor" style="height:200px;background:#fff;border-radius:0 0 6px 6px;"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
+
                 </div>  
                 <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
             </form>
@@ -536,7 +534,7 @@ function showFirstAidForm(item){
     document.getElementById('firstAidModalTitle').textContent = item ? 'Edit Guideline' : 'Add Guideline';
     document.getElementById('faId').value = item ? item.id : 0;
     document.getElementById('faTitle').value = item ? (item.title||'') : '';
-    document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
+
     const icon = item ? (item.icon || 'general-first-aid') : 'general-first-aid';
     selectIcon(icon);
     document.getElementById('faIconDropdown').classList.remove('show');
