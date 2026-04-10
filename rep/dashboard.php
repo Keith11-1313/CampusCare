@@ -176,7 +176,7 @@ endif; ?>
         <div class="card mt-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-inbox me-2"></i>My Requests</span>
-                <a href="request_change.php" class="btn btn-sm btn-outline-secondary">View All</a>
+                <a href="request_change.php?tab=my_requests" class="btn btn-sm btn-outline-secondary">View All</a>
             </div>
             <div class="card-body">
                 <?php if (empty($myRequests)): ?>
