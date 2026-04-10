@@ -30,8 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $errors[] = 'Username is required.';
         if (empty($firstName))
             $errors[] = 'First name is required.';
+        elseif (!preg_match("/^[a-zA-Z\s'\-]+$/", $firstName))
+            $errors[] = 'First name should only contain letters, spaces, hyphens, or apostrophes.';
         if (empty($lastName))
             $errors[] = 'Last name is required.';
+        elseif (!preg_match("/^[a-zA-Z\s'\-]+$/", $lastName))
+            $errors[] = 'Last name should only contain letters, spaces, hyphens, or apostrophes.';
         if (!in_array($role, ['admin', 'nurse', 'rep']))
             $errors[] = 'Invalid role.';
         if ($role === 'rep' && !empty($assignedSection) && !in_array($assignedSection, ['A', 'B', 'C']))
@@ -46,22 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => implode(' ', $errors)]);
         }
 
-        // Security question fields
-        $securityQuestion = trim($_POST['security_question'] ?? '');
-        $securityAnswer = trim($_POST['security_answer'] ?? '');
-        $hashedSecurityAnswer = !empty($securityAnswer) ? password_hash(strtolower($securityAnswer), PASSWORD_DEFAULT) : null;
-
         if ($action === 'create') {
             $password = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
             if (empty($password) || strlen($password) < 6) {
                 jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+            }
+            if ($password !== $confirmPassword) {
+                jsonResponse(['success' => false, 'message' => 'Passwords do not match.']);
             }
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $db->query(
-                "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question, security_answer) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null, $securityQuestion ?: null, $hashedSecurityAnswer]
+                "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null]
             );
             logAccess($_SESSION['user_id'], 'create_user', 'Created user: ' . $username);
 
@@ -99,18 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 if (strlen($_POST['password']) < 6) {
                     jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
                 }
+                $confirmPassword = $_POST['confirm_password'] ?? '';
+                if ($_POST['password'] !== $confirmPassword) {
+                    jsonResponse(['success' => false, 'message' => 'Passwords do not match.']);
+                }
                 $updateFields = "password = ?, " . $updateFields;
                 array_unshift($params, password_hash($_POST['password'], PASSWORD_DEFAULT));
-            }
-
-            // Update security question/answer if provided
-            if (!empty($securityQuestion)) {
-                $updateFields .= ", security_question = ?";
-                $params[] = $securityQuestion;
-                if (!empty($securityAnswer)) {
-                    $updateFields .= ", security_answer = ?";
-                    $params[] = $hashedSecurityAnswer;
-                }
             }
 
             $params[] = $id;
@@ -154,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($action === 'get') {
         $id = intval($_POST['id'] ?? 0);
-        $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question FROM users WHERE id = ?", [$id]);
+        $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section FROM users WHERE id = ?", [$id]);
         jsonResponse(['success' => true, 'user' => $userData]);
     }
 }
@@ -379,11 +376,13 @@ endif; ?>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">First Name <span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" name="first_name" id="firstName" required>
+                                <input type="text" class="form-control" name="first_name" id="firstName" required pattern="[a-zA-Z\s'\-]+" title="Letters, spaces, hyphens, and apostrophes only">
+                                <div class="invalid-feedback">Please enter a valid first name (letters only).</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" name="last_name" id="lastName" required>
+                                <input type="text" class="form-control" name="last_name" id="lastName" required pattern="[a-zA-Z\s'\-]+" title="Letters, spaces, hyphens, and apostrophes only">
+                                <div class="invalid-feedback">Please enter a valid last name (letters only).</div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Email</label>
@@ -409,6 +408,16 @@ endif; ?>
                                 </div>
                                 <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
                             </div>
+                            <div class="col-12" id="confirmPasswordGroup">
+                                <label class="form-label">Confirm Password <span class="required-asterisk" id="confirmPwdRequired">*</span></label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" name="confirm_password" id="confirmPassword" minlength="6" style="padding-right: 45px;">
+                                    <button class="btn btn-link position-absolute text-muted p-0" type="button" id="toggleConfirmPasswordBtn" tabindex="-1" style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="confirmPwdFeedback">Passwords do not match.</div>
+                            </div>
                             <div class="col-12">
                                 <label class="form-label">Role <span class="required-asterisk">*</span></label>
                                 <select class="form-select" name="role" id="role" required onchange="toggleRepFields()">
@@ -417,22 +426,6 @@ endif; ?>
                                     <option value="nurse">School Nurse/Staff</option>
                                     <option value="rep">Class Representative</option>
                                 </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Security Question</label>
-                                <select class="form-select" name="security_question" id="securityQuestion">
-                                    <option value="">No security question</option>
-                                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                                    <option value="What is the name of your first pet?">What is the name of your first pet?</option>
-                                    <option value="What is your favorite food?">What is your favorite food?</option>
-                                    <option value="What city were you born in?">What city were you born in?</option>
-                                    <option value="What is the name of your best friend?">What is the name of your best friend?</option>
-                                    <option value="What is your favorite color?">What is your favorite color?</option>
-                                </select>
-                            </div>
-                            <div class="col-12" id="securityAnswerGroup" style="display:none;">
-                                <label class="form-label">Security Answer <span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" name="security_answer" id="securityAnswerInput" placeholder="Enter the answer to the security question">
                             </div>
                         </div>
                     </div>
@@ -555,6 +548,49 @@ document.getElementById('togglePasswordBtn').addEventListener('click', function(
     }
 });
 
+document.getElementById('toggleConfirmPasswordBtn').addEventListener('click', function() {
+    const pwd = document.getElementById('confirmPassword');
+    const icon = this.querySelector('i');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        pwd.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+});
+
+// Client-side name validation — block non-letter characters
+['firstName', 'lastName'].forEach(function(fieldId) {
+    const field = document.getElementById(fieldId);
+    field.addEventListener('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z\s'\-]/g, '');
+        if (this.value && !this.value.match(/^[a-zA-Z\s'\-]+$/)) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+});
+
+// Confirm password live validation
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const pwd = document.getElementById('password').value;
+    if (this.value && this.value !== pwd) {
+        this.classList.add('is-invalid');
+    } else {
+        this.classList.remove('is-invalid');
+    }
+});
+document.getElementById('password').addEventListener('input', function() {
+    const confirmPwd = document.getElementById('confirmPassword');
+    if (confirmPwd.value && confirmPwd.value !== this.value) {
+        confirmPwd.classList.add('is-invalid');
+    } else {
+        confirmPwd.classList.remove('is-invalid');
+    }
+});
+
 function goToUserStep(step) {
     currentUserStep = step;
     // Update stepper indicators
@@ -629,11 +665,7 @@ function toggleRepFields() {
     document.getElementById('noRepMessage').style.display = isRep ? 'none' : 'block';
 }
 
-// Security question toggle
-document.getElementById('securityQuestion').addEventListener('change', function() {
-    document.getElementById('securityAnswerGroup').style.display = this.value ? 'block' : 'none';
-    if (!this.value) document.getElementById('securityAnswerInput').value = '';
-});
+
 
 function openUserModal() {
     document.getElementById('userModalTitle').textContent = 'Add User';
@@ -641,12 +673,13 @@ function openUserModal() {
     document.getElementById('userId').value = 0;
     document.getElementById('userForm').reset();
     document.getElementById('password').required = true;
+    document.getElementById('confirmPassword').required = true;
     document.getElementById('pwdRequired').style.display = 'inline';
+    document.getElementById('confirmPwdRequired').style.display = 'inline';
     document.getElementById('pwdHint').textContent = 'Minimum 6 characters.';
+    document.getElementById('confirmPasswordGroup').style.display = '';
     document.getElementById('repFields').style.display = 'none';
     document.getElementById('noRepMessage').style.display = 'block';
-    document.getElementById('securityQuestion').value = '';
-    document.getElementById('securityAnswerGroup').style.display = 'none';
     document.getElementById('userForm').classList.remove('was-validated');
     goToUserStep(1);
     userModal.show();
@@ -672,15 +705,16 @@ function editUser(id) {
                 document.getElementById('email').value = u.email || '';
                 document.getElementById('role').value = u.role;
                 document.getElementById('password').value = '';
+                document.getElementById('confirmPassword').value = '';
                 document.getElementById('password').required = false;
+                document.getElementById('confirmPassword').required = false;
                 document.getElementById('pwdRequired').style.display = 'none';
+                document.getElementById('confirmPwdRequired').style.display = 'none';
                 document.getElementById('pwdHint').textContent = 'Leave blank to keep current password.';
+                document.getElementById('confirmPasswordGroup').style.display = '';
                 document.getElementById('assignedProgram').value = u.assigned_program_id || '';
                 document.getElementById('assignedYearLevel').value = u.assigned_year_level_id || '';
                 document.getElementById('assignedSection').value = u.assigned_section || '';
-                document.getElementById('securityQuestion').value = u.security_question || '';
-                document.getElementById('securityAnswerGroup').style.display = u.security_question ? 'block' : 'none';
-                document.getElementById('securityAnswerInput').value = '';
                 toggleRepFields();
                 document.getElementById('userForm').classList.remove('was-validated');
                 goToUserStep(1);
@@ -774,6 +808,17 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
     
     if (!this.checkValidity()) {
         this.classList.add('was-validated');
+        return;
+    }
+
+    // Client-side confirm password check
+    const pwd = document.getElementById('password').value;
+    const confirmPwd = document.getElementById('confirmPassword').value;
+    const isCreate = document.getElementById('formAction').value === 'create';
+    if (pwd && pwd !== confirmPwd) {
+        document.getElementById('confirmPassword').classList.add('is-invalid');
+        // Navigate to step 2 to show the error
+        goToUserStep(2);
         return;
     }
     
