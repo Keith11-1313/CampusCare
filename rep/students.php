@@ -31,6 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($studentIdNum) || empty($firstName) || empty($lastName) || empty($gender) || empty($dob))
             jsonResponse(['success' => false, 'message' => 'Student ID, name, gender, and DOB are required.']);
 
+        // Validate name fields — letters, spaces, hyphens, periods, and apostrophes only
+        $namePattern = '/^[a-zA-Z\s\-\.\'ñÑ]+$/';
+        if (!preg_match($namePattern, $firstName))
+            jsonResponse(['success' => false, 'message' => 'First name must contain only letters.']);
+        if (!preg_match($namePattern, $lastName))
+            jsonResponse(['success' => false, 'message' => 'Last name must contain only letters.']);
+        if (!empty($middleName) && !preg_match($namePattern, $middleName))
+            jsonResponse(['success' => false, 'message' => 'Middle name must contain only letters.']);
+
+        // Validate contact number — digits, +, -, spaces, and parentheses only
+        if (!empty($contactNumber) && !preg_match('/^[0-9\+\-\s\(\)]+$/', $contactNumber))
+            jsonResponse(['success' => false, 'message' => 'Contact number must contain only digits and valid phone characters (+, -, spaces).']);
+
         // Uniqueness check
         $existing = $db->fetch("SELECT id FROM students WHERE student_id=? AND id!=?", [$studentIdNum, $id]);
         if ($existing)
@@ -111,6 +124,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             if (empty($sid) || empty($fn) || empty($ln) || empty($gender) || empty($dob)) {
                 $errors[] = "Row $rowNum: missing required fields";
+                $skipped++;
+                continue;
+            }
+
+            // Validate name fields — no numbers allowed
+            $namePattern = '/^[a-zA-Z\s\-\.\'\x{00f1}\x{00d1}]+$/u';
+            if (!preg_match($namePattern, $fn) || !preg_match($namePattern, $ln) || (!empty($mn) && !preg_match($namePattern, $mn))) {
+                $errors[] = "Row $rowNum: name fields must contain only letters";
+                $skipped++;
+                continue;
+            }
+
+            // Validate contact number — no letters allowed
+            if (!empty($contact) && !preg_match('/^[0-9\+\-\s\(\)]+$/', $contact)) {
+                $errors[] = "Row $rowNum: contact number must contain only digits and phone characters";
                 $skipped++;
                 continue;
             }
@@ -268,13 +296,13 @@ endif; ?>
 <input type="hidden" name="id" id="studentDbId" value="0">
 <div class="row g-3">
 <div class="col-md-4"><label class="form-label">Student ID <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="student_id_num" id="studentIdNum" required></div>
-<div class="col-md-4"><label class="form-label">First Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="first_name" id="sFirstName" required></div>
-<div class="col-md-4"><label class="form-label">Last Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="last_name" id="sLastName" required></div>
-<div class="col-md-4"><label class="form-label">Middle Name</label><input type="text" class="form-control" name="middle_name" id="sMiddleName"></div>
+<div class="col-md-4"><label class="form-label">First Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="first_name" id="sFirstName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters only" oninput="this.value=this.value.replace(/[0-9]/g,'')"></div>
+<div class="col-md-4"><label class="form-label">Last Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="last_name" id="sLastName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters only" oninput="this.value=this.value.replace(/[0-9]/g,'')"></div>
+<div class="col-md-4"><label class="form-label">Middle Name</label><input type="text" class="form-control" name="middle_name" id="sMiddleName" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']*" title="Letters only" oninput="this.value=this.value.replace(/[0-9]/g,'')"></div>
 <div class="col-md-4"><label class="form-label">Gender <span class="required-asterisk">*</span></label><select class="form-select" name="gender" id="sGender" required><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
 <div class="col-md-4"><label class="form-label">Date of Birth <span class="required-asterisk">*</span></label><input type="date" class="form-control" name="date_of_birth" id="sDob" required></div>
 <div class="col-md-3"><label class="form-label">Blood Type</label><select class="form-select" name="blood_type" id="sBloodType"><option value="">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-<div class="col-md-4"><label class="form-label">Contact Number</label><input type="text" class="form-control" name="contact_number" id="sContact"></div>
+<div class="col-md-4"><label class="form-label">Contact Number</label><input type="tel" class="form-control" name="contact_number" id="sContact" pattern="[0-9\+\-\s\(\)]*" title="Digits and phone characters only (+, -, spaces)" oninput="this.value=this.value.replace(/[a-zA-Z]/g,'')"></div>
 <div class="col-md-5"><label class="form-label">Email</label><input type="email" class="form-control" name="email" id="sEmail"></div>
 <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" id="sAddress" rows="2"></textarea></div>
 </div></div>
