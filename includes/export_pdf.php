@@ -134,7 +134,7 @@ $totalStudentsWithVisits = $db->fetchColumn(
     "SELECT COUNT(DISTINCT v.student_id) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
 );
 $avgVisitsPerDay = $db->fetchColumn(
-    "SELECT ROUND(COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1),1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
+    "SELECT ROUND((COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1)) * 100, 1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
 );
 
 logAccess($_SESSION['user_id'], 'export_pdf', 'Generated PDF visits report with charts');
@@ -275,7 +275,7 @@ $hasPreviousSection = false;
     <div class="stats <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="stat-box"><div class="value"><?php echo number_format($totalVisits); ?></div><div class="label">Total Visits</div></div>
         <div class="stat-box"><div class="value"><?php echo number_format($totalStudentsWithVisits); ?></div><div class="label">Unique Patients</div></div>
-        <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?></div><div class="label">Avg Visits/Day</div></div>
+        <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?>%</div><div class="label">Avg Visits/Day</div></div>
     </div>
     <?php $hasPreviousSection = true;
 endif; ?>

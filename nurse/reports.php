@@ -116,7 +116,7 @@ $totalStudentsWithVisits = $db->fetchColumn(
     $params
 );
 $avgVisitsPerDay = $db->fetchColumn(
-    "SELECT ROUND(COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1),1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where",
+    "SELECT ROUND((COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1)) * 100, 1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where",
     $params
 );
 
@@ -344,7 +344,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <div class="d-flex justify-content-between">
                 <div>
                     <div class="stat-label">Avg Visits/Day</div>
-                    <div class="stat-value"><?php echo $avgVisitsPerDay; ?></div>
+                    <div class="stat-value"><?php echo $avgVisitsPerDay; ?>%</div>
                 </div>
                 <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
             </div>
