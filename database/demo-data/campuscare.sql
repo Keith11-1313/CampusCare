@@ -312,7 +312,7 @@ CREATE TABLE IF NOT EXISTS `access_logs` (
 CREATE TABLE IF NOT EXISTS `current_requests` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `rep_user_id` INT(11) NOT NULL,
-  `request_type` ENUM('replacement','password_reset') NOT NULL DEFAULT 'replacement',
+  `request_type` ENUM('replacement','password_reset','student_deletion') NOT NULL DEFAULT 'replacement',
   `nominee_student_id` INT(11) DEFAULT NULL,
   `reason` TEXT NOT NULL,
   `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',

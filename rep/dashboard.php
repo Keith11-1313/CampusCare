@@ -185,7 +185,7 @@ endif; ?>
 else: ?>
                 <?php foreach ($myRequests as $r):
         $badgeClass = $r['status'] === 'pending' ? 'bg-warning text-dark' : ($r['status'] === 'approved' ? 'bg-success' : 'bg-danger');
-        $typeLabel = $r['request_type'] === 'password_reset' ? 'Password Reset' : 'Replacement';
+        $typeLabel = $r['request_type'] === 'password_reset' ? 'Password Reset' : ($r['request_type'] === 'student_deletion' ? 'Student Deletion' : 'Replacement');
 ?>
                 <div class="request-status-item">
                     <div>

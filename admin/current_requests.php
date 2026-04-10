@@ -57,6 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         $message = 'Password has been reset successfully for ' . $request['user_fname'] . ' ' . $request['user_lname'] . '.';
                     }
                 }
+                elseif ($request['request_type'] === 'student_deletion') {
+                    // Student deletion — archive the student
+                    if ($request['nominee_student_id']) {
+                        $db->query("UPDATE students SET status = 'archived' WHERE id = ?", [$request['nominee_student_id']]);
+                        $db->query("UPDATE current_requests SET status = 'approved', admin_notes = 'Student has been archived.' WHERE id = ?", [$requestId]);
+                        $studentName = $request['first_name'] . ' ' . $request['last_name'] . ' (' . $request['nominee_student_id'] . ')';
+                        logAccess($_SESSION['user_id'], 'approve_student_deletion', "Approved student deletion request ID $requestId. Student: $studentName. Requested by: " . $request['old_rep_username']);
+                        $message = 'Student ' . $request['first_name'] . ' ' . $request['last_name'] . ' has been archived successfully.';
+                    } else {
+                        $error = 'Student not found for this deletion request.';
+                    }
+                }
             }
             else {
                 $error = 'Invalid request or already processed.';
@@ -73,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 "UPDATE current_requests SET status = 'rejected', admin_notes = ? WHERE id = ?",
             [$notes, $requestId]
             );
-            $typeLabel = ($reqInfo['request_type'] ?? 'replacement') === 'password_reset' ? 'password reset' : 'replacement';
+            $rt = $reqInfo['request_type'] ?? 'replacement';
+            $typeLabel = $rt === 'password_reset' ? 'password reset' : ($rt === 'student_deletion' ? 'student deletion' : 'replacement');
             logAccess($_SESSION['user_id'], 'reject_request', "Rejected $typeLabel request ID $requestId. User: " . ($reqInfo['username'] ?? 'unknown'));
             $message = 'Request has been rejected.';
         }
@@ -149,6 +162,8 @@ else: ?>
                                 <td class="align-middle">
                                     <?php if ($r['request_type'] === 'password_reset'): ?>
                                         <span class="badge bg-info text-dark"><i class="bi bi-key me-1"></i>Password Reset</span>
+                                    <?php elseif ($r['request_type'] === 'student_deletion'): ?>
+                                        <span class="badge bg-danger"><i class="bi bi-person-dash me-1"></i>Student Deletion</span>
                                     <?php else: ?>
                                         <span class="badge bg-secondary"><i class="bi bi-person-x me-1"></i>Replacement</span>
                                     <?php endif; ?>
@@ -197,6 +212,15 @@ else: ?>
                                                 <button type="button" class="btn btn-sm btn-success" onclick="openPasswordResetModal(<?php echo $r['id']; ?>, '<?php echo e($r['user_fname'] . ' ' . $r['user_lname']); ?>')">
                                                     <i class="bi bi-check-lg me-1"></i>Reset
                                                 </button>
+                                            <?php elseif ($r['request_type'] === 'student_deletion'): ?>
+                                                <form method="POST" id="approveForm<?php echo $r['id']; ?>">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+                                                    <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="confirmStudentDeletion(<?php echo $r['id']; ?>, '<?php echo e($r['nominee_fname'] . ' ' . $r['nominee_lname']); ?>')">
+                                                        <i class="bi bi-check-lg me-1"></i>Approve
+                                                    </button>
+                                                </form>
                                             <?php else: ?>
                                                 <form method="POST" id="approveForm<?php echo $r['id']; ?>">
                                                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
@@ -297,6 +321,19 @@ function confirmApprove(id) {
         'The current class representative will be <strong>deactivated</strong> and you will be redirected to create a new account for the nominee.',
         'Yes, approve',
         'question'
+    ).then(result => {
+        if (result.isConfirmed) {
+            document.getElementById('approveForm' + id).submit();
+        }
+    });
+}
+
+function confirmStudentDeletion(id, studentName) {
+    showConfirm(
+        'Archive this student?',
+        'The student <strong>' + studentName + '</strong> will be <strong>archived</strong> and removed from the active student list. This action can be reversed by the admin.',
+        'Yes, archive',
+        'warning'
     ).then(result => {
         if (result.isConfirmed) {
             document.getElementById('approveForm' + id).submit();
