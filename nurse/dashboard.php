@@ -158,6 +158,31 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
+<!-- Quick Actions (below stats for easy access) -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
+            <div class="card-body py-2">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php"
+                        class="btn btn-outline-primary btn-sm text-start">
+                        <i class="bi bi-plus-circle me-2"></i>Record New Visit</a>
+                    <a href="<?php echo BASE_URL; ?>/nurse/students.php"
+                        class="btn btn-outline-primary btn-sm text-start">
+                        <i class="bi bi-search me-2"></i>Search Students</a>
+                    <a href="<?php echo BASE_URL; ?>/nurse/visits.php"
+                        class="btn btn-outline-primary btn-sm text-start">
+                        <i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
+                    <a href="<?php echo BASE_URL; ?>/nurse/reports.php"
+                        class="btn btn-outline-primary btn-sm text-start">
+                        <i class="bi bi-graph-up me-2"></i>Reports &amp; Analytics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Charts Row -->
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
@@ -346,24 +371,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         <?php endif; ?>
 
-        <!-- Quick Actions -->
-        <div class="card mt-3">
-            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
-            <div class="card-body">
-                <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-plus-circle me-2"></i>Record New Visit</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/students.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-search me-2"></i>Search Students</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/visits.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/reports.php"
-                    class="btn btn-outline-primary btn-sm w-100 text-start">
-                    <i class="bi bi-graph-up me-2"></i>Reports & Analytics</a>
-            </div>
-        </div>
     </div>
 </div>
 
