@@ -115,6 +115,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($section === 'clinic_hours') {
         if ($action === 'save_all') {
             $hours = $_POST['hours'] ?? [];
+            // Validate each day's hours before saving
+            foreach ($hours as $h) {
+                $isClosed = isset($h['is_closed']) ? 1 : 0;
+                $openTime = trim($h['opening_time'] ?? '');
+                $closeTime = trim($h['closing_time'] ?? '');
+                if (!$isClosed) {
+                    if (empty($openTime) || empty($closeTime))
+                        jsonResponse(['success' => false, 'message' => 'Both opening and closing times are required when the clinic is not closed.']);
+                    if ($openTime >= $closeTime)
+                        jsonResponse(['success' => false, 'message' => 'Opening time must be earlier than closing time.']);
+                }
+            }
             foreach ($hours as $h) {
                 $db->query("UPDATE clinic_hours SET opening_time=?, closing_time=?, is_closed=?, notes=? WHERE id=?",
                 [$h['opening_time'] ?: null, $h['closing_time'] ?: null, isset($h['is_closed']) ? 1 : 0, $h['notes'] ?? '', $h['id']]);
@@ -287,8 +299,8 @@ endforeach; ?>
                         <thead>
                             <tr>
                                 <th>Day</th>
-                                <th>Opens</th>
-                                <th>Closes</th>
+                                <th>Opening</th>
+                                <th>Closing</th>
                                 <th>Closed?</th>
                                 <th>Notes</th>
                             </tr>
@@ -298,9 +310,9 @@ endforeach; ?>
                             <tr>
                                 <td class="fw-semibold"><?php echo e($h['day_of_week']); ?></td>
                                 <input type="hidden" name="hours[<?php echo $i; ?>][id]" value="<?php echo $h['id']; ?>">
-                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>"></td>
-                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>"></td>
-                                <td><input type="checkbox" class="form-check-input" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
+                                <td><input type="time" class="form-control form-control-sm hours-time" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>" <?php echo $h['is_closed'] ? 'disabled' : ''; ?>></td>
+                                <td><input type="time" class="form-control form-control-sm hours-time" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>" <?php echo $h['is_closed'] ? 'disabled' : ''; ?>></td>
+                                <td><input type="checkbox" class="form-check-input hours-closed-cb" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
                                 <td><input type="text" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][notes]" value="<?php echo e($h['notes'] ?? ''); ?>"></td>
                             </tr>
                             <?php
@@ -637,9 +649,54 @@ window.quillEditor = new Quill('#faContentEditor', {
 
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
+    // Client-side validation: opening time must be before closing time
+    const rows = this.querySelectorAll('tbody tr');
+    let valid = true;
+    rows.forEach(row => {
+        const dayName = row.querySelector('td.fw-semibold')?.textContent?.trim() || 'A day';
+        const isClosed = row.querySelector('input[type="checkbox"]')?.checked;
+        const openInput = row.querySelector('input[type="time"][name*="opening_time"]');
+        const closeInput = row.querySelector('input[type="time"][name*="closing_time"]');
+        // Remove previous validation styling
+        if (openInput) openInput.classList.remove('is-invalid');
+        if (closeInput) closeInput.classList.remove('is-invalid');
+        if (!isClosed) {
+            const openVal = openInput?.value || '';
+            const closeVal = closeInput?.value || '';
+            if (!openVal || !closeVal) {
+                if (!openVal && openInput) openInput.classList.add('is-invalid');
+                if (!closeVal && closeInput) closeInput.classList.add('is-invalid');
+                if (valid) showToast('error', 'Both opening and closing times are required when the clinic is not closed.');
+                valid = false;
+            } else if (openVal >= closeVal) {
+                if (openInput) openInput.classList.add('is-invalid');
+                if (closeInput) closeInput.classList.add('is-invalid');
+                if (valid) showToast('error', 'Opening time must be earlier than closing time.');
+                valid = false;
+            }
+        }
+    });
+    if (!valid) return;
     postAction(new FormData(this)).then(d=>{
         if(d.success){ scheduleToast('success', d.message); }
         else showAlert('error','Error',d.message);
+    });
+});
+
+// Toggle time inputs when Closed? checkbox changes
+document.querySelectorAll('.hours-closed-cb').forEach(cb => {
+    cb.addEventListener('change', function() {
+        const row = this.closest('tr');
+        const timeInputs = row.querySelectorAll('.hours-time');
+        timeInputs.forEach(input => {
+            if (this.checked) {
+                input.disabled = true;
+                input.value = '';
+                input.classList.remove('is-invalid');
+            } else {
+                input.disabled = false;
+            }
+        });
     });
 });
 </script>
