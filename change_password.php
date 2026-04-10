@@ -82,20 +82,35 @@ endif; ?>
                     
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Current Password <span class="required-asterisk">*</span></label>
-                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control login-input-pwd" id="current_password" name="current_password" required>
+                            <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" data-target="current_password" tabindex="-1" title="Toggle visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="invalid-feedback">Please enter your current password.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="new_password" class="form-label">New Password <span class="required-asterisk">*</span></label>
-                        <input type="password" class="form-control" id="new_password" name="new_password" minlength="6" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control login-input-pwd" id="new_password" name="new_password" minlength="6" required>
+                            <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" data-target="new_password" tabindex="-1" title="Toggle visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="form-text">Minimum 6 characters.</div>
                         <div class="invalid-feedback">Please enter a new password (min 6 characters).</div>
                     </div>
 
                     <div class="mb-4">
                         <label for="confirm_password" class="form-label">Confirm New Password <span class="required-asterisk">*</span></label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control login-input-pwd" id="confirm_password" name="confirm_password" required>
+                            <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" data-target="confirm_password" tabindex="-1" title="Toggle visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="invalid-feedback">Please confirm your new password.</div>
                     </div>
 
@@ -107,5 +122,21 @@ endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('.login-pwd-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var input = document.getElementById(this.getAttribute('data-target'));
+        var icon = this.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bi bi-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'bi bi-eye';
+        }
+    });
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
