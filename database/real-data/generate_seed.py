@@ -302,7 +302,7 @@ for prog_idx, prog_code in enumerate(PROGRAM_CODES):
                 dob = "%d-%02d-%02d" % (by, bm, bd)
 
                 prefix = year["prefix"]
-                sid_str = "%s-%06d" % (prefix, seq[prefix])
+                sid_str = "%s-%06d-N" % (prefix, seq[prefix])
                 seq[prefix] += 1  # pyre-ignore
 
                 s_phone = phone()
