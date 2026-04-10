@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 // Fetch data
 $announcements = $db->fetchAll("SELECT a.*, u.first_name, u.last_name FROM announcements a LEFT JOIN users u ON a.posted_by=u.id ORDER BY a.created_at DESC");
-$faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY sort_order");
+$faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY id ASC");
 $firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY sort_order");
 $emergency = $db->fetchAll("SELECT * FROM clinic_emergency_contacts ORDER BY sort_order");
 $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')");
@@ -211,7 +211,6 @@ endforeach; ?>
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Order</th>
                             <th>Question</th>
                             <th>Answer</th>
                             <th class="text-center">Actions</th>
@@ -220,7 +219,6 @@ endforeach; ?>
                     <tbody>
                         <?php foreach ($faqs as $f): ?>
                         <tr>
-                            <td><?php echo $f['sort_order']; ?></td>
                             <td class="fw-semibold"><?php echo truncate($f['question'], 40); ?></td>
                             <td><small><?php echo truncate($f['answer'], 50); ?></small></td>
                             <td class="text-center table-action-btns">
@@ -352,7 +350,6 @@ endforeach; ?>
                     <input type="hidden" name="id" id="faqId" value="0">
                     <div class="mb-3"><label class="form-label">Question <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="question" id="faqQuestion" required placeholder="Enter question"></div>
                     <div class="mb-3"><label class="form-label">Answer <span class="required-asterisk">*</span></label><textarea class="form-control" name="answer" id="faqAnswer" rows="4" required placeholder="Enter answer"></textarea></div>
-                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
             </form>
@@ -531,7 +528,6 @@ function showFaqForm(item){
     document.getElementById('faqId').value = item ? item.id : 0;
     document.getElementById('faqQuestion').value = item ? (item.question||'') : '';
     document.getElementById('faqAnswer').value = item ? (item.answer||'') : '';
-    document.getElementById('faqSortOrder').value = item ? (item.sort_order||'0') : '0';
     faqModal.show();
 }
 
