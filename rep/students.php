@@ -40,9 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (!empty($middleName) && !preg_match($namePattern, $middleName))
             jsonResponse(['success' => false, 'message' => 'Middle name must contain only letters.']);
 
-        // Validate contact number — digits, +, -, spaces, and parentheses only
-        if (!empty($contactNumber) && !preg_match('/^[0-9\+\-\s\(\)]+$/', $contactNumber))
-            jsonResponse(['success' => false, 'message' => 'Contact number must contain only digits and valid phone characters (+, -, spaces).']);
+        // Validate contact number — must be exactly 11 digits (09XXXXXXXXX) for PH mobile
+        if (!empty($contactNumber)) {
+            $digitsOnly = preg_replace('/[^0-9]/', '', $contactNumber);
+            if (strlen($digitsOnly) !== 11)
+                jsonResponse(['success' => false, 'message' => 'Contact number must be exactly 11 digits (e.g. 09171234567).']);
+            if (substr($digitsOnly, 0, 2) !== '09')
+                jsonResponse(['success' => false, 'message' => 'Contact number must start with 09.']);
+        }
 
         // Uniqueness check
         $existing = $db->fetch("SELECT id FROM students WHERE student_id=? AND id!=?", [$studentIdNum, $id]);
@@ -136,11 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 continue;
             }
 
-            // Validate contact number — no letters allowed
-            if (!empty($contact) && !preg_match('/^[0-9\+\-\s\(\)]+$/', $contact)) {
-                $errors[] = "Row $rowNum: contact number must contain only digits and phone characters";
-                $skipped++;
-                continue;
+            // Validate contact number — must be exactly 11 digits starting with 09
+            if (!empty($contact)) {
+                $digitsOnly = preg_replace('/[^0-9]/', '', $contact);
+                if (strlen($digitsOnly) !== 11 || substr($digitsOnly, 0, 2) !== '09') {
+                    $errors[] = "Row $rowNum: contact number must be exactly 11 digits starting with 09";
+                    $skipped++;
+                    continue;
+                }
             }
 
             // Skip if student_id already exists
@@ -302,7 +310,7 @@ endif; ?>
 <div class="col-md-4"><label class="form-label">Gender <span class="required-asterisk">*</span></label><select class="form-select" name="gender" id="sGender" required><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
 <div class="col-md-4"><label class="form-label">Date of Birth <span class="required-asterisk">*</span></label><input type="date" class="form-control" name="date_of_birth" id="sDob" required></div>
 <div class="col-md-3"><label class="form-label">Blood Type</label><select class="form-select" name="blood_type" id="sBloodType"><option value="">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-<div class="col-md-4"><label class="form-label">Contact Number</label><input type="tel" class="form-control" name="contact_number" id="sContact" pattern="[0-9\+\-\s\(\)]*" title="Digits and phone characters only (+, -, spaces)" oninput="this.value=this.value.replace(/[a-zA-Z]/g,'')"></div>
+<div class="col-md-4"><label class="form-label">Contact Number</label><input type="tel" class="form-control" name="contact_number" id="sContact" placeholder="09XXXXXXXXX" maxlength="11" pattern="09[0-9]{9}" title="Must be 11 digits starting with 09 (e.g. 09171234567)" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
 <div class="col-md-5"><label class="form-label">Email</label><input type="email" class="form-control" name="email" id="sEmail"></div>
 <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" id="sAddress" rows="2"></textarea></div>
 </div></div>
