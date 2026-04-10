@@ -124,17 +124,16 @@ endif; ?>
         </div>
     </div>
     <div class="col-lg-4">
-        <!-- Gender Distribution Doughnut -->
+        <!-- Quick Actions -->
         <div class="card">
-            <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Gender Distribution</div>
+            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
             <div class="card-body">
-                <?php if (empty($genderDist)): ?>
-                <div class="empty-state py-3"><i class="bi bi-pie-chart"></i><p class="small">No data.</p></div>
-                <?php
-else: ?>
-                <div class="chart-container-sm"><canvas id="genderChart"></canvas></div>
-                <?php
-endif; ?>
+                <a href="students.php?action=add" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-person-plus me-2"></i>Add Student</a>
+                <a href="students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-people me-2"></i>View Students</a>
+                <a href="request_change.php" class="btn btn-outline-primary btn-sm w-100 text-start">
+                    <i class="bi bi-inbox me-2"></i>Requests</a>
             </div>
         </div>
     </div>
@@ -156,8 +155,19 @@ endif; ?>
 
     <!-- Right Column -->
     <div class="col-lg-4">
-        <!-- My Requests -->
+        <!-- Gender Distribution -->
         <div class="card">
+            <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Gender Distribution</div>
+            <div class="card-body">
+                <?php if (empty($genderDist)): ?>
+                <div class="empty-state py-3"><i class="bi bi-pie-chart"></i><p class="small">No data.</p></div>
+                <?php else: ?>
+                <div class="chart-container-sm"><canvas id="genderChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <!-- My Requests -->
+        <div class="card mt-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-inbox me-2"></i>My Requests</span>
                 <a href="request_change.php" class="btn btn-sm btn-outline-secondary">View All</a>
@@ -182,19 +192,6 @@ else: ?>
     endforeach; ?>
                 <?php
 endif; ?>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="card mt-3">
-            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
-            <div class="card-body">
-                <a href="students.php?action=add" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-person-plus me-2"></i>Add Student</a>
-                <a href="students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-people me-2"></i>View Students</a>
-                <a href="request_change.php" class="btn btn-outline-primary btn-sm w-100 text-start">
-                    <i class="bi bi-inbox me-2"></i>Requests</a>
             </div>
         </div>
     </div>
