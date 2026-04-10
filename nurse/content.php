@@ -87,13 +87,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($section === 'emergency') {
         if ($action === 'save') {
             $name = trim($_POST['name'] ?? '');
+            $role = trim($_POST['role'] ?? '');
             $phone = trim($_POST['phone_number'] ?? '');
             if (empty($name) || empty($phone))
                 jsonResponse(['success' => false, 'message' => 'Name and phone required.']);
+            $namePattern = "/^[a-zA-Z\s\-'.]+$/";
+            if (!preg_match($namePattern, $name))
+                jsonResponse(['success' => false, 'message' => 'Name may only contain letters, spaces, hyphens, apostrophes, and periods.']);
+            if (!empty($role) && !preg_match($namePattern, $role))
+                jsonResponse(['success' => false, 'message' => 'Role may only contain letters, spaces, hyphens, apostrophes, and periods.']);
             if ($id > 0)
-                $db->query("UPDATE clinic_emergency_contacts SET name=?, role=?, phone_number=?, sort_order=? WHERE id=?", [$name, trim($_POST['role'] ?? ''), $phone, intval($_POST['sort_order'] ?? 0), $id]);
+                $db->query("UPDATE clinic_emergency_contacts SET name=?, role=?, phone_number=?, sort_order=? WHERE id=?", [$name, $role, $phone, intval($_POST['sort_order'] ?? 0), $id]);
             else
-                $db->query("INSERT INTO clinic_emergency_contacts (name,role,phone_number,sort_order) VALUES (?,?,?,?)", [$name, trim($_POST['role'] ?? ''), $phone, intval($_POST['sort_order'] ?? 0)]);
+                $db->query("INSERT INTO clinic_emergency_contacts (name,role,phone_number,sort_order) VALUES (?,?,?,?)", [$name, $role, $phone, intval($_POST['sort_order'] ?? 0)]);
             jsonResponse(['success' => true, 'message' => 'Contact saved.']);
         }
         if ($action === 'delete') {
@@ -433,14 +439,11 @@ endforeach; ?>
                     <input type="hidden" name="action" value="save">
                     <input type="hidden" name="section" value="emergency">
                     <input type="hidden" name="id" id="emId" value="0">
-                    <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
-                    <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
+                    <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name" pattern="[a-zA-Z\s\-'.]+" title="Name may only contain letters, spaces, hyphens, apostrophes, and periods" oninput="this.value = this.value.replace(/[^a-zA-Z\s\-'.]/g, '');"></div>
+                    <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role" pattern="[a-zA-Z\s\-'.]+" title="Role may only contain letters, spaces, hyphens, apostrophes, and periods" oninput="this.value = this.value.replace(/[^a-zA-Z\s\-'.]/g, '');"></div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text">+63</span>
-                            <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="09xxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                        </div>
+                        <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="e.g. 911, (02) 8888-8888, 09xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9\s\-()#+]/g, '');">
                     </div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button></div>
