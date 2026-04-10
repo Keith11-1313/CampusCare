@@ -100,9 +100,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 
 <!-- Stat Cards -->
+<style>
+.stat-card-link { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+.stat-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12) !important; }
+</style>
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card stat-card-primary animate-fade-in">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none">
+        <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
                     <div class="stat-label">Today's Visits</div>
@@ -117,9 +122,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none">
+        <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
                     <div class="stat-label">Monthly Visits</div>
@@ -128,9 +135,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card stat-card-accent animate-fade-in animate-delay-2">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Referred" class="text-decoration-none">
+        <div class="stat-card stat-card-accent animate-fade-in animate-delay-2 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
                     <div class="stat-label">Referred Cases</div>
@@ -140,9 +149,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-hospital-fill"></i></div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card stat-card-danger animate-fade-in animate-delay-3">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Follow-up" class="text-decoration-none">
+        <div class="stat-card stat-card-danger animate-fade-in animate-delay-3 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
                     <div class="stat-label">Pending Follow-ups</div>
@@ -155,6 +166,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-exclamation-circle-fill"></i></div>
             </div>
         </div>
+        </a>
     </div>
 </div>
 
