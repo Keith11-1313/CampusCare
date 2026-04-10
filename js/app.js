@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
         showToast(icon, title);
     }
 
+    // Format all date inputs to display mm/dd/yyyy
+    initDateFormatOverride();
+
     // Auto-dismiss alerts after page load
     initFormValidation();
 });
@@ -166,6 +169,52 @@ function initFormValidation() {
             form.classList.add('was-validated');
         }, false);
     });
+}
+
+// ============================================================
+// Date Input Format Override (mm/dd/yyyy)
+// ============================================================
+
+/**
+ * Format all input[type="date"] elements to display mm/dd/yyyy.
+ * Uses CSS to hide native text and overlays formatted text via data-display.
+ * Also observes the DOM for dynamically added date inputs.
+ */
+function initDateFormatOverride() {
+    function formatDateInput(input) {
+        if (input.classList.contains('date-formatted')) return;
+        input.classList.add('date-formatted');
+        updateDateDisplay(input);
+        input.addEventListener('change', function () {
+            updateDateDisplay(this);
+        });
+    }
+
+    function updateDateDisplay(input) {
+        if (input.value) {
+            const [y, m, d] = input.value.split('-');
+            input.setAttribute('data-display', m + '/' + d + '/' + y);
+        } else {
+            input.setAttribute('data-display', '');
+        }
+    }
+
+    // Format all existing date inputs
+    document.querySelectorAll('input[type="date"]').forEach(formatDateInput);
+
+    // Watch for dynamically added date inputs (e.g. inside modals)
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType !== 1) return;
+                if (node.matches && node.matches('input[type="date"]')) formatDateInput(node);
+                if (node.querySelectorAll) {
+                    node.querySelectorAll('input[type="date"]').forEach(formatDateInput);
+                }
+            });
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // ============================================================

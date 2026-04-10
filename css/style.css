@@ -722,6 +722,33 @@ a:hover {
     font-size: 0.78rem;
 }
 
+/* ---- Date Input Format Override (mm/dd/yyyy) ---- */
+/* Forces all date inputs to display in mm/dd/yyyy format regardless
+   of the browser's locale, using a transparent native text layer
+   overlaid with a formatted ::before pseudo-element. */
+input[type="date"].date-formatted {
+    position: relative;
+    color: transparent;
+}
+
+/* Overlay showing the formatted date text from the data-display attribute. */
+input[type="date"].date-formatted::before {
+    content: attr(data-display);
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2c3e50;
+    pointer-events: none;
+}
+
+/* Show placeholder text when the date input is empty. */
+input[type="date"].date-formatted:not([data-display])::before,
+input[type="date"].date-formatted[data-display=""]::before {
+    content: "mm/dd/yyyy";
+    color: #9aadbd;
+}
+
 /* Red asterisk appended to required field labels. */
 .required-asterisk {
     color: var(--cc-danger);
