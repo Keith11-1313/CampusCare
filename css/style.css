@@ -436,7 +436,16 @@ a:hover {
     overflow: hidden;
     transition: var(--cc-transition);
     border: none;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
+
+/* Ensures the internal d-flex row in stat cards stretches to fill the height */
+.stat-card > .d-flex {
+    flex: 1;
+}
+
 
 /* Stat card lifts up and gains a stronger shadow on hover. */
 .stat-card:hover {

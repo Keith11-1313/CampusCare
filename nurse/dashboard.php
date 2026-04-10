@@ -106,7 +106,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </style>
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
@@ -125,7 +125,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
@@ -138,7 +138,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Referred" class="text-decoration-none">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Referred" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-accent animate-fade-in animate-delay-2 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
@@ -152,7 +152,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Follow-up" class="text-decoration-none">
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Follow-up" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-danger animate-fade-in animate-delay-3 stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>

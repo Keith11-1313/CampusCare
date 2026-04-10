@@ -79,7 +79,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </style>
 <div class="row g-3 mb-4">
     <div class="col-sm-12 col-xl-12">
-        <a href="<?php echo BASE_URL; ?>/rep/students.php" class="text-decoration-none">
+        <a href="<?php echo BASE_URL; ?>/rep/students.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
             <div class="d-flex justify-content-between">
                 <div>
