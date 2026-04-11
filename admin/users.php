@@ -696,6 +696,40 @@ endif; ?>
                 currentSection.style.animation = 'shake 0.4s ease';
                 return;
             }
+
+            // Additional validation for Step 2: password strength & confirmation
+            if (currentUserStep === 2) {
+                const pwd = document.getElementById('password').value;
+                const confirmPwd = document.getElementById('confirmPassword').value;
+                const isCreate = document.getElementById('formAction').value === 'create';
+
+                if (pwd || isCreate) {
+                    const hasLength = pwd.length >= 8;
+                    const hasUpper = /[A-Z]/.test(pwd);
+                    const hasLower = /[a-z]/.test(pwd);
+                    const hasNumber = /[0-9]/.test(pwd);
+                    const hasSpecial = /[^a-zA-Z0-9]/.test(pwd);
+
+                    if (!hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+                        updatePwdRequirements(pwd);
+                        document.getElementById('password').classList.add('is-invalid');
+                        currentSection.style.animation = 'none';
+                        currentSection.offsetHeight;
+                        currentSection.style.animation = 'shake 0.4s ease';
+                        showToast('error', 'Password does not meet all requirements.');
+                        return;
+                    }
+
+                    if (pwd !== confirmPwd) {
+                        document.getElementById('confirmPassword').classList.add('is-invalid');
+                        currentSection.style.animation = 'none';
+                        currentSection.offsetHeight;
+                        currentSection.style.animation = 'shake 0.4s ease';
+                        showToast('error', 'Passwords do not match.');
+                        return;
+                    }
+                }
+            }
         }
 
         goToUserStep(next);
