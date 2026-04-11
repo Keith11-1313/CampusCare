@@ -217,3 +217,25 @@ function jsonResponse($data, $statusCode = 200)
     echo json_encode($data);
     exit;
 }
+
+/**
+ * Validate password strength.
+ * Requirements: min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.
+ * @param string $password The password to validate
+ * @return array Array of error messages (empty array = valid)
+ */
+function validatePasswordStrength($password)
+{
+    $errors = [];
+    if (strlen($password) < 8)
+        $errors[] = 'Password must be at least 8 characters.';
+    if (!preg_match('/[A-Z]/', $password))
+        $errors[] = 'Password must contain at least one uppercase letter.';
+    if (!preg_match('/[a-z]/', $password))
+        $errors[] = 'Password must contain at least one lowercase letter.';
+    if (!preg_match('/[0-9]/', $password))
+        $errors[] = 'Password must contain at least one number.';
+    if (!preg_match('/[^a-zA-Z0-9]/', $password))
+        $errors[] = 'Password must contain at least one special character.';
+    return $errors;
+}

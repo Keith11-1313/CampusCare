@@ -22,8 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Current password is required.';
         if (empty($newPassword))
             $errors[] = 'New password is required.';
-        if (strlen($newPassword) < 6)
-            $errors[] = 'New password must be at least 6 characters.';
+        else {
+            $pwdErrors = validatePasswordStrength($newPassword);
+            $errors = array_merge($errors, $pwdErrors);
+        }
         if ($newPassword !== $confirmPassword)
             $errors[] = 'New passwords do not match.';
 
@@ -94,13 +96,19 @@ endif; ?>
                     <div class="mb-3">
                         <label for="new_password" class="form-label">New Password <span class="required-asterisk">*</span></label>
                         <div class="position-relative">
-                            <input type="password" class="form-control login-input-pwd" id="new_password" name="new_password" minlength="6" required>
+                            <input type="password" class="form-control login-input-pwd" id="new_password" name="new_password" minlength="8" required>
                             <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" data-target="new_password" tabindex="-1" title="Toggle visibility">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
-                        <div class="form-text">Minimum 6 characters.</div>
-                        <div class="invalid-feedback">Please enter a new password (min 6 characters).</div>
+                        <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="pwdRequirements" style="font-size:0.78rem;">
+                            <li id="req-length"><i class="bi bi-x-circle text-muted me-1"></i>At least 8 characters</li>
+                            <li id="req-upper"><i class="bi bi-x-circle text-muted me-1"></i>One uppercase letter</li>
+                            <li id="req-lower"><i class="bi bi-x-circle text-muted me-1"></i>One lowercase letter</li>
+                            <li id="req-number"><i class="bi bi-x-circle text-muted me-1"></i>One number</li>
+                            <li id="req-special"><i class="bi bi-x-circle text-muted me-1"></i>One special character</li>
+                        </ul>
+                        <div class="invalid-feedback">Please enter a valid new password.</div>
                     </div>
 
                     <div class="mb-4">
@@ -134,6 +142,31 @@ document.querySelectorAll('.login-pwd-toggle').forEach(function(btn) {
         } else {
             input.type = 'password';
             icon.className = 'bi bi-eye';
+        }
+    });
+});
+</script>
+
+<script>
+// Live password requirements check
+document.getElementById('new_password').addEventListener('input', function() {
+    const pwd = this.value;
+    const rules = [
+        { id: 'req-length', test: pwd.length >= 8 },
+        { id: 'req-upper', test: /[A-Z]/.test(pwd) },
+        { id: 'req-lower', test: /[a-z]/.test(pwd) },
+        { id: 'req-number', test: /[0-9]/.test(pwd) },
+        { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) }
+    ];
+    rules.forEach(function(rule) {
+        const el = document.getElementById(rule.id);
+        const icon = el.querySelector('i');
+        if (pwd.length === 0) {
+            icon.className = 'bi bi-x-circle text-muted me-1';
+        } else if (rule.test) {
+            icon.className = 'bi bi-check-circle-fill text-success me-1';
+        } else {
+            icon.className = 'bi bi-x-circle-fill text-danger me-1';
         }
     });
 });

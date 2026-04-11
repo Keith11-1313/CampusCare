@@ -90,8 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
             echo json_encode(['success' => false, 'message' => 'Invalid or expired reset session. Please start over.']);
             exit;
         }
-        if (empty($newPassword) || strlen($newPassword) < 6) {
-            echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+        if (empty($newPassword)) {
+            echo json_encode(['success' => false, 'message' => 'Password is required.']);
+            exit;
+        }
+        $pwdErrors = validatePasswordStrength($newPassword);
+        if (!empty($pwdErrors)) {
+            echo json_encode(['success' => false, 'message' => implode(' ', $pwdErrors)]);
             exit;
         }
         if ($newPassword !== $confirmPassword) {
@@ -457,12 +462,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 <label for="new_password" class="form-label fw-semibold forgot-form-label">New Password</label>
                                 <div class="position-relative">
                                     <input type="password" class="form-control login-input-pwd" id="new_password" 
-                                           placeholder="Minimum 6 characters" minlength="6">
+                                           placeholder="Min 8 chars, uppercase, number, special" minlength="8">
                                     <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" onclick="toggleNewPwd(this)">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                                <div class="form-text forgot-form-hint">Minimum 6 characters.</div>
+                                <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="pwdRequirements" style="font-size:0.78rem;">
+                                    <li id="req-length"><i class="bi bi-x-circle text-muted me-1"></i>At least 8 characters</li>
+                                    <li id="req-upper"><i class="bi bi-x-circle text-muted me-1"></i>One uppercase letter</li>
+                                    <li id="req-lower"><i class="bi bi-x-circle text-muted me-1"></i>One lowercase letter</li>
+                                    <li id="req-number"><i class="bi bi-x-circle text-muted me-1"></i>One number</li>
+                                    <li id="req-special"><i class="bi bi-x-circle text-muted me-1"></i>One special character</li>
+                                </ul>
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label fw-semibold forgot-form-label">Confirm Password</label>
@@ -679,8 +690,15 @@ endif; ?>
             const newPwd = document.getElementById('new_password').value;
             const confirmPwd = document.getElementById('confirm_password').value;
             
-            if (!newPwd || newPwd.length < 6) {
-                showSecurityError('securityResetError', 'Password must be at least 6 characters.');
+            const hasLength = newPwd.length >= 8;
+            const hasUpper = /[A-Z]/.test(newPwd);
+            const hasLower = /[a-z]/.test(newPwd);
+            const hasNumber = /[0-9]/.test(newPwd);
+            const hasSpecial = /[^a-zA-Z0-9]/.test(newPwd);
+
+            if (!newPwd || !hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+                updateResetPwdRequirements(newPwd);
+                showSecurityError('securityResetError', 'Password does not meet all requirements.');
                 return;
             }
             if (newPwd !== confirmPwd) {
@@ -754,6 +772,33 @@ endif; ?>
         document.getElementById('security_answer').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') { e.preventDefault(); verifySecurityAnswer(); }
         });
+
+        // Live password requirements check for reset form
+        document.getElementById('new_password').addEventListener('input', function() {
+            updateResetPwdRequirements(this.value);
+        });
+
+        function updateResetPwdRequirements(pwd) {
+            const rules = [
+                { id: 'req-length', test: pwd.length >= 8 },
+                { id: 'req-upper', test: /[A-Z]/.test(pwd) },
+                { id: 'req-lower', test: /[a-z]/.test(pwd) },
+                { id: 'req-number', test: /[0-9]/.test(pwd) },
+                { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) }
+            ];
+            rules.forEach(function(rule) {
+                const el = document.getElementById(rule.id);
+                if (!el) return;
+                const icon = el.querySelector('i');
+                if (pwd.length === 0) {
+                    icon.className = 'bi bi-x-circle text-muted me-1';
+                } else if (rule.test) {
+                    icon.className = 'bi bi-check-circle-fill text-success me-1';
+                } else {
+                    icon.className = 'bi bi-x-circle-fill text-danger me-1';
+                }
+            });
+        }
     </script>
 </body>
 </html>

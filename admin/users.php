@@ -53,8 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($action === 'create') {
             $password = $_POST['password'] ?? '';
             $confirmPassword = $_POST['confirm_password'] ?? '';
-            if (empty($password) || strlen($password) < 6) {
-                jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+            $pwdErrors = validatePasswordStrength($password);
+            if (!empty($pwdErrors)) {
+                jsonResponse(['success' => false, 'message' => implode(' ', $pwdErrors)]);
             }
             if ($password !== $confirmPassword) {
                 jsonResponse(['success' => false, 'message' => 'Passwords do not match.']);
@@ -99,8 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update password if provided
             if (!empty($_POST['password'])) {
-                if (strlen($_POST['password']) < 6) {
-                    jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+                $pwdErrors = validatePasswordStrength($_POST['password']);
+                if (!empty($pwdErrors)) {
+                    jsonResponse(['success' => false, 'message' => implode(' ', $pwdErrors)]);
                 }
                 $confirmPassword = $_POST['confirm_password'] ?? '';
                 if ($_POST['password'] !== $confirmPassword) {
@@ -401,17 +403,24 @@ endif; ?>
                             <div class="col-12">
                                 <label class="form-label">Password <span class="required-asterisk" id="pwdRequired">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="form-control" name="password" id="password" minlength="6" style="padding-right: 45px;">
+                                    <input type="password" class="form-control" name="password" id="password" minlength="8" style="padding-right: 45px;">
                                     <button class="btn btn-link position-absolute text-muted p-0" type="button" id="togglePasswordBtn" tabindex="-1" style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                                <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
+                                <div class="form-text" id="pwdHint">Must meet all requirements below.</div>
+                                <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="pwdRequirements" style="font-size:0.78rem;">
+                                    <li id="req-length"><i class="bi bi-x-circle text-muted me-1"></i>At least 8 characters</li>
+                                    <li id="req-upper"><i class="bi bi-x-circle text-muted me-1"></i>One uppercase letter</li>
+                                    <li id="req-lower"><i class="bi bi-x-circle text-muted me-1"></i>One lowercase letter</li>
+                                    <li id="req-number"><i class="bi bi-x-circle text-muted me-1"></i>One number</li>
+                                    <li id="req-special"><i class="bi bi-x-circle text-muted me-1"></i>One special character</li>
+                                </ul>
                             </div>
                             <div class="col-12" id="confirmPasswordGroup">
                                 <label class="form-label">Confirm Password <span class="required-asterisk" id="confirmPwdRequired">*</span></label>
                                 <div class="position-relative">
-                                    <input type="password" class="form-control" name="confirm_password" id="confirmPassword" minlength="6" style="padding-right: 45px;">
+                                    <input type="password" class="form-control" name="confirm_password" id="confirmPassword" minlength="8" style="padding-right: 45px;">
                                     <button class="btn btn-link position-absolute text-muted p-0" type="button" id="toggleConfirmPasswordBtn" tabindex="-1" style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
                                         <i class="bi bi-eye"></i>
                                     </button>
@@ -589,7 +598,30 @@ document.getElementById('password').addEventListener('input', function() {
     } else {
         confirmPwd.classList.remove('is-invalid');
     }
+    // Live password requirements check
+    updatePwdRequirements(this.value);
 });
+
+function updatePwdRequirements(pwd) {
+    const rules = [
+        { id: 'req-length', test: pwd.length >= 8 },
+        { id: 'req-upper', test: /[A-Z]/.test(pwd) },
+        { id: 'req-lower', test: /[a-z]/.test(pwd) },
+        { id: 'req-number', test: /[0-9]/.test(pwd) },
+        { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) }
+    ];
+    rules.forEach(function(rule) {
+        const el = document.getElementById(rule.id);
+        const icon = el.querySelector('i');
+        if (pwd.length === 0) {
+            icon.className = 'bi bi-x-circle text-muted me-1';
+        } else if (rule.test) {
+            icon.className = 'bi bi-check-circle-fill text-success me-1';
+        } else {
+            icon.className = 'bi bi-x-circle-fill text-danger me-1';
+        }
+    });
+}
 
 function goToUserStep(step) {
     currentUserStep = step;
@@ -676,7 +708,8 @@ function openUserModal() {
     document.getElementById('confirmPassword').required = true;
     document.getElementById('pwdRequired').style.display = 'inline';
     document.getElementById('confirmPwdRequired').style.display = 'inline';
-    document.getElementById('pwdHint').textContent = 'Minimum 6 characters.';
+    document.getElementById('pwdHint').textContent = 'Must meet all requirements below.';
+    updatePwdRequirements('');
     document.getElementById('confirmPasswordGroup').style.display = '';
     document.getElementById('repFields').style.display = 'none';
     document.getElementById('noRepMessage').style.display = 'block';
@@ -711,6 +744,7 @@ function editUser(id) {
                 document.getElementById('pwdRequired').style.display = 'none';
                 document.getElementById('confirmPwdRequired').style.display = 'none';
                 document.getElementById('pwdHint').textContent = 'Leave blank to keep current password.';
+                updatePwdRequirements('');
                 document.getElementById('confirmPasswordGroup').style.display = '';
                 document.getElementById('assignedProgram').value = u.assigned_program_id || '';
                 document.getElementById('assignedYearLevel').value = u.assigned_year_level_id || '';
@@ -811,15 +845,28 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
         return;
     }
 
-    // Client-side confirm password check
+    // Client-side password strength + confirm check
     const pwd = document.getElementById('password').value;
     const confirmPwd = document.getElementById('confirmPassword').value;
     const isCreate = document.getElementById('formAction').value === 'create';
-    if (pwd && pwd !== confirmPwd) {
-        document.getElementById('confirmPassword').classList.add('is-invalid');
-        // Navigate to step 2 to show the error
-        goToUserStep(2);
-        return;
+    if (pwd) {
+        // Validate password strength client-side
+        const hasLength = pwd.length >= 8;
+        const hasUpper = /[A-Z]/.test(pwd);
+        const hasLower = /[a-z]/.test(pwd);
+        const hasNumber = /[0-9]/.test(pwd);
+        const hasSpecial = /[^a-zA-Z0-9]/.test(pwd);
+        if (!hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+            updatePwdRequirements(pwd);
+            goToUserStep(2);
+            showToast('error', 'Password does not meet all requirements.');
+            return;
+        }
+        if (pwd !== confirmPwd) {
+            document.getElementById('confirmPassword').classList.add('is-invalid');
+            goToUserStep(2);
+            return;
+        }
     }
     
     const formData = new FormData(this);
