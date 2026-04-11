@@ -760,7 +760,19 @@ endforeach; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Relationship <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="emContactRelationship" name="data[relationship]" required placeholder="e.g. Parent, Guardian">
+                        <select class="form-select" id="emContactRelationship" name="data[relationship]" required onchange="toggleOtherRelationship(this)">
+                            <option value="" disabled selected>Select relationship</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Father">Father</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Guardian">Guardian</option>
+                            <option value="Sibling">Sibling</option>
+                            <option value="Spouse">Spouse</option>
+                            <option value="Grandparent">Grandparent</option>
+                            <option value="Aunt/Uncle">Aunt/Uncle</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" class="form-control mt-2" id="emContactRelationshipOther" placeholder="Please specify" style="display:none;" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
@@ -820,8 +832,27 @@ function showAddForm(table) {
             document.getElementById('emContactAction').value = 'add';
             document.getElementById('emContactRecordId').value = '';
             document.getElementById('emContactModalTitle').textContent = 'Add Emergency Contact';
+            document.getElementById('emContactRelationshipOther').style.display = 'none';
+            document.getElementById('emContactRelationshipOther').required = false;
+            document.getElementById('emContactRelationshipOther').value = '';
+            document.getElementById('emContactRelationship').name = 'data[relationship]';
+            const hidden = document.getElementById('emContactRelationshipHidden');
+            if (hidden) hidden.remove();
         }
         modals[table].show();
+    }
+}
+
+function toggleOtherRelationship(select) {
+    const otherInput = document.getElementById('emContactRelationshipOther');
+    if (select.value === 'Other') {
+        otherInput.style.display = '';
+        otherInput.required = true;
+        otherInput.focus();
+    } else {
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
     }
 }
 
@@ -830,11 +861,53 @@ function editContact(btn) {
     document.getElementById('emContactAction').value = 'update';
     document.getElementById('emContactRecordId').value = btn.dataset.id;
     document.getElementById('emContactName').value = btn.dataset.name;
-    document.getElementById('emContactRelationship').value = btn.dataset.relationship;
     document.getElementById('emContactPhone').value = btn.dataset.phone;
     document.getElementById('emContactModalTitle').textContent = 'Edit Emergency Contact';
+
+    // Set relationship — check if value matches a preset option
+    const select = document.getElementById('emContactRelationship');
+    const otherInput = document.getElementById('emContactRelationshipOther');
+    const rel = btn.dataset.relationship || '';
+    const presetValues = [...select.options].map(o => o.value);
+
+    if (presetValues.includes(rel)) {
+        select.value = rel;
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
+    } else {
+        select.value = 'Other';
+        otherInput.style.display = '';
+        otherInput.required = true;
+        otherInput.value = rel;
+    }
+
     modals.emergency_contacts.show();
 }
+
+// Before submit, if "Other" is selected, swap the custom value into the relationship field
+document.getElementById('emContactForm').addEventListener('submit', function(e) {
+    const select = document.getElementById('emContactRelationship');
+    const otherInput = document.getElementById('emContactRelationshipOther');
+    if (select.value === 'Other' && otherInput.value.trim()) {
+        // Create a hidden input with the custom value to override the select
+        let hidden = document.getElementById('emContactRelationshipHidden');
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.id = 'emContactRelationshipHidden';
+            hidden.name = 'data[relationship]';
+            this.appendChild(hidden);
+        }
+        hidden.value = otherInput.value.trim();
+        select.removeAttribute('name');
+    } else {
+        // Ensure select has the name attribute
+        select.name = 'data[relationship]';
+        const hidden = document.getElementById('emContactRelationshipHidden');
+        if (hidden) hidden.remove();
+    }
+}, true);
 
 // Attach submit handlers to all modal forms
 Object.entries(formIds).forEach(([table, formId]) => {
