@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $phone = trim($_POST['phone_number'] ?? '');
             if (empty($name) || empty($phone))
                 jsonResponse(['success' => false, 'message' => 'Name and phone required.']);
-            $namePattern = "/^[a-zA-Z\s\-'.]+$/";
+            $namePattern = "/^[a-zA-Z\s\-\.\x{00f1}\x{00d1}']+$/u";
             if (!preg_match($namePattern, $name))
                 jsonResponse(['success' => false, 'message' => 'Name may only contain letters, spaces, hyphens, apostrophes, and periods.']);
             if (!empty($role) && !preg_match($namePattern, $role))
@@ -451,8 +451,8 @@ endforeach; ?>
                     <input type="hidden" name="action" value="save">
                     <input type="hidden" name="section" value="emergency">
                     <input type="hidden" name="id" id="emId" value="0">
-                    <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name" pattern="[a-zA-Z\s\-'.]+" title="Name may only contain letters, spaces, hyphens, apostrophes, and periods" oninput="this.value = this.value.replace(/[^a-zA-Z\s\-'.]/g, '');"></div>
-                    <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role" pattern="[a-zA-Z\s\-'.]+" title="Role may only contain letters, spaces, hyphens, apostrophes, and periods" oninput="this.value = this.value.replace(/[^a-zA-Z\s\-'.]/g, '');"></div>
+                    <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"></div>
+                    <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"></div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="e.g. 911, (02) 8888-8888, 09xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9\s\-()#+]/g, '');">
