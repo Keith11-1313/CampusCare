@@ -477,8 +477,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label fw-semibold forgot-form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirm_password" 
-                                       placeholder="Re-enter your new password">
+                                <div class="position-relative">
+                                    <input type="password" class="form-control login-input-pwd" id="confirm_password" 
+                                           placeholder="Re-enter your new password">
+                                    <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" onclick="toggleConfirmPwd(this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div id="securityResetError" class="alert alert-danger py-2 px-3 mb-3 forgot-error-alert">
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -748,6 +753,19 @@ endif; ?>
         // Toggle new password visibility
         function toggleNewPwd(btn) {
             const pwd = document.getElementById('new_password');
+            const icon = btn.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                pwd.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        // Toggle confirm password visibility
+        function toggleConfirmPwd(btn) {
+            const pwd = document.getElementById('confirm_password');
             const icon = btn.querySelector('i');
             if (pwd.type === 'password') {
                 pwd.type = 'text';
