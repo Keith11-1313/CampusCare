@@ -675,11 +675,40 @@ endforeach; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Dosage</label>
-                        <input type="text" class="form-control" name="data[dosage]" placeholder="e.g. 200mg">
+                        <input type="hidden" name="data[dosage]" id="medDosageHidden">
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="medDosageAmount" placeholder="e.g. 200" min="0" step="any">
+                            <select class="form-select" id="medDosageUnit" style="max-width:120px;">
+                                <option value="mg">mg</option>
+                                <option value="ml">ml</option>
+                                <option value="mcg">mcg</option>
+                                <option value="g">g</option>
+                                <option value="IU">IU</option>
+                                <option value="tablet(s)">tablet(s)</option>
+                                <option value="capsule(s)">capsule(s)</option>
+                                <option value="drop(s)">drop(s)</option>
+                                <option value="puff(s)">puff(s)</option>
+                                <option value="tsp">tsp</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Frequency</label>
-                        <input type="text" class="form-control" name="data[frequency]" placeholder="e.g. Twice daily">
+                        <select class="form-select" name="data[frequency]" id="medFrequency" onchange="toggleOtherFrequency(this)">
+                            <option value="" selected>Select frequency</option>
+                            <option value="Once daily">Once daily</option>
+                            <option value="Twice daily">Twice daily</option>
+                            <option value="Three times daily">Three times daily</option>
+                            <option value="Four times daily">Four times daily</option>
+                            <option value="Every 4 hours">Every 4 hours</option>
+                            <option value="Every 6 hours">Every 6 hours</option>
+                            <option value="Every 8 hours">Every 8 hours</option>
+                            <option value="Every 12 hours">Every 12 hours</option>
+                            <option value="Once a week">Once a week</option>
+                            <option value="As needed (PRN)">As needed (PRN)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" class="form-control mt-2" id="medFrequencyOther" placeholder="Please specify" style="display:none;">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Prescribing Doctor</label>
@@ -724,7 +753,7 @@ endforeach; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Dose Number</label>
-                        <input type="text" class="form-control" name="data[dose_number]" placeholder="e.g. 1st dose">
+                        <input type="number" class="form-control" name="data[dose_number]" placeholder="e.g. 1" min="1" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Administered By</label>
@@ -905,6 +934,49 @@ document.getElementById('emContactForm').addEventListener('submit', function(e) 
         // Ensure select has the name attribute
         select.name = 'data[relationship]';
         const hidden = document.getElementById('emContactRelationshipHidden');
+        if (hidden) hidden.remove();
+    }
+}, true);
+
+// --- Medication: Dosage & Frequency helpers ---
+
+function toggleOtherFrequency(select) {
+    const otherInput = document.getElementById('medFrequencyOther');
+    if (select.value === 'Other') {
+        otherInput.style.display = '';
+        otherInput.required = true;
+        otherInput.focus();
+    } else {
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
+    }
+}
+
+// Before medication submit: combine dosage amount+unit and handle frequency Other
+document.getElementById('medicationForm').addEventListener('submit', function(e) {
+    // Combine dosage
+    const amount = document.getElementById('medDosageAmount').value.trim();
+    const unit = document.getElementById('medDosageUnit').value;
+    document.getElementById('medDosageHidden').value = amount ? (amount + ' ' + unit) : '';
+
+    // Handle frequency "Other"
+    const freqSelect = document.getElementById('medFrequency');
+    const freqOther = document.getElementById('medFrequencyOther');
+    if (freqSelect.value === 'Other' && freqOther.value.trim()) {
+        let hidden = document.getElementById('medFrequencyHidden');
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.id = 'medFrequencyHidden';
+            hidden.name = 'data[frequency]';
+            this.appendChild(hidden);
+        }
+        hidden.value = freqOther.value.trim();
+        freqSelect.removeAttribute('name');
+    } else {
+        freqSelect.name = 'data[frequency]';
+        const hidden = document.getElementById('medFrequencyHidden');
         if (hidden) hidden.remove();
     }
 }, true);
