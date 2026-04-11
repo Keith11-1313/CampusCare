@@ -40,6 +40,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         logAccess($_SESSION['user_id'], 'activate_program', "Reactivated program ID $id from archive");
         jsonResponse(['success' => true, 'message' => 'Program reactivated.']);
     }
+
+    // Delete actions
+    if ($_POST['action'] === 'delete_student') {
+        $db->query("DELETE FROM students WHERE id=? AND status='archived'", [$id]);
+        logAccess($_SESSION['user_id'], 'delete_student', "Permanently deleted student ID $id");
+        jsonResponse(['success' => true, 'message' => 'Student permanently deleted.']);
+    }
+    if ($_POST['action'] === 'delete_user') {
+        $db->query("DELETE FROM users WHERE id=? AND status='inactive'", [$id]);
+        logAccess($_SESSION['user_id'], 'delete_user', "Permanently deleted user ID $id");
+        jsonResponse(['success' => true, 'message' => 'User permanently deleted.']);
+    }
+    if ($_POST['action'] === 'delete_program') {
+        $db->query("DELETE FROM programs WHERE id=? AND status='inactive'", [$id]);
+        logAccess($_SESSION['user_id'], 'delete_program', "Permanently deleted program ID $id");
+        jsonResponse(['success' => true, 'message' => 'Program permanently deleted.']);
+    }
 }
 
 // ── Students Tab Data ──
@@ -235,9 +252,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     <td class="fw-semibold"><?php echo e($s['first_name'] . ' ' . $s['last_name']); ?></td>
                                     <td><?php echo e($s['program_code'] ?? 'N/A'); ?></td>
                                     <td><?php echo e(($s['year_level_name'] ?? '') . ' ' . ($s['section'] ?? '')); ?></td>
-                                    <td class="text-center"><button class="btn btn-sm btn-outline-success"
-                                            onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>','<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')"><i
-                                                class="bi bi-arrow-counterclockwise"></i></button></td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-success" title="Restore"
+                                            onclick="restoreStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>','<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Delete Permanently"
+                                            onclick="deleteStudent(<?php echo $s['id']; ?>,'<?php echo e($s['student_id']); ?>','<?php echo e($s['first_name'] . ' ' . $s['last_name']); ?>')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <?php
                             endforeach;
@@ -324,6 +348,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                                 title="Reactivate">
                                                 <i class="bi bi-person-check"></i>
                                             </button>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteUser(<?php echo $u['id']; ?>, '<?php echo e($u['username']); ?>', '<?php echo e($u['first_name'] . ' ' . $u['last_name']); ?>')"
+                                                title="Delete Permanently">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -374,6 +403,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                             onclick="activateProgram(<?php echo $p['id']; ?>, '<?php echo e($p['code']); ?>', '<?php echo e($p['name']); ?>')"
                                             title="Reactivate">
                                             <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteProgram(<?php echo $p['id']; ?>, '<?php echo e($p['code']); ?>', '<?php echo e($p['name']); ?>')"
+                                            title="Delete Permanently">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -457,6 +491,66 @@ require_once __DIR__ . '/../includes/sidebar.php';
             if (r.isConfirmed) {
                 const fd = new FormData();
                 fd.append('action', 'activate_program');
+                fd.append('id', id);
+                fd.append('csrf_token', CSRF_TOKEN);
+                fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
+                    if (d.success) scheduleToast('success', d.message);
+                    else showToast('error', d.message);
+                });
+            }
+        });
+    }
+
+    function deleteStudent(id, sid, name) {
+        showConfirm(
+            'Permanently Delete Student?',
+            'Are you sure you want to permanently delete <strong>' + name + '</strong> (' + sid + ')? <br><br><span class="text-danger fw-bold">This action cannot be undone.</span>',
+            'Yes, Delete',
+            'warning'
+        ).then(r => {
+            if (r.isConfirmed) {
+                const fd = new FormData();
+                fd.append('action', 'delete_student');
+                fd.append('id', id);
+                fd.append('csrf_token', CSRF_TOKEN);
+                fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
+                    if (d.success) scheduleToast('success', d.message);
+                    else showToast('error', d.message);
+                });
+            }
+        });
+    }
+
+    function deleteUser(id, username, name) {
+        showConfirm(
+            'Permanently Delete User?',
+            'Are you sure you want to permanently delete <strong>' + name + '</strong> (<code>' + username + '</code>)? <br><br><span class="text-danger fw-bold">This action cannot be undone.</span>',
+            'Yes, Delete',
+            'warning'
+        ).then(r => {
+            if (r.isConfirmed) {
+                const fd = new FormData();
+                fd.append('action', 'delete_user');
+                fd.append('id', id);
+                fd.append('csrf_token', CSRF_TOKEN);
+                fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
+                    if (d.success) scheduleToast('success', d.message);
+                    else showToast('error', d.message);
+                });
+            }
+        });
+    }
+
+    function deleteProgram(id, code, name) {
+        showConfirm(
+            'Permanently Delete Program?',
+            'Are you sure you want to permanently delete <strong>' + code + ' — ' + name + '</strong>? <br><br><span class="text-danger fw-bold">This action cannot be undone.</span>',
+            'Yes, Delete',
+            'warning'
+        ).then(r => {
+            if (r.isConfirmed) {
+                const fd = new FormData();
+                fd.append('action', 'delete_program');
                 fd.append('id', id);
                 fd.append('csrf_token', CSRF_TOKEN);
                 fetch('archive.php', { method: 'POST', body: fd }).then(r => r.json()).then(d => {
