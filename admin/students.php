@@ -19,9 +19,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE s.status='active'";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ? OR s.gender LIKE ? OR s.blood_type LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ? OR s.gender LIKE ? OR s.blood_type LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
 }
 if (!empty($programFilter)) {
     $where .= " AND s.program_id = ?";

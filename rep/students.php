@@ -212,23 +212,23 @@ if (!empty($search)) {
 
     if ($monthNum) {
         // Month-only search: match any year with that month (e.g. "%-01-%")
-        $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
+        $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
         $sk = "%$search%";
         $mk = "%-$monthNum-%";
-        $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $mk]);
+        $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $mk]);
     } else {
         // Try to parse human-friendly date formats (e.g. "oct 7 2008", "October 7, 2008")
         $parsedDate = strtotime($search);
         if ($parsedDate !== false) {
             $dateFormatted = date('Y-m-d', $parsedDate);
-            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
+            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ? OR s.date_of_birth LIKE ?)";
             $sk = "%$search%";
             $dk = "%$dateFormatted%";
-            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $dk]);
+            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $dk]);
         } else {
-            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
+            $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
             $sk = "%$search%";
-            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
+            $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
         }
     }
 }

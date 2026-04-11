@@ -170,9 +170,9 @@ $where = "WHERE status='active'";
 $params = [];
 
 if (!empty($search)) {
-    $where .= " AND (username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR role LIKE ?)";
+    $where .= " AND (username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR email LIKE ? OR role LIKE ?)";
     $searchParam = "%$search%";
-    $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
+    $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
 }
 if (!empty($roleFilter)) {
     $where .= " AND role = ?";

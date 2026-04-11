@@ -16,9 +16,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE 1=1";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR al.description LIKE ?)";
+    $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ? OR al.description LIKE ?)";
     $s = "%$search%";
-    $params = array_merge($params, [$s, $s, $s, $s]);
+    $params = array_merge($params, [$s, $s, $s, $s, $s]);
 }
 if (!empty($actionFilter)) {
     $where .= " AND al.action = ?";

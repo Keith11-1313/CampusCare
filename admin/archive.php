@@ -57,9 +57,9 @@ $order = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])) ? 
 $where = "WHERE s.status='archived'";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
     $sk = "%$search%";
-    $params = [$sk, $sk, $sk, $sk, $sk, $sk];
+    $params = [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk];
 }
 if (!empty($programFilter)) {
     $where .= " AND s.program_id = ?";
@@ -96,9 +96,9 @@ $userOrder = (isset($_GET['order']) && in_array($_GET['order'], ['asc', 'desc'])
 $userWhere = "WHERE status='inactive'";
 $userParams = [];
 if (!empty($userSearch)) {
-    $userWhere .= " AND (username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)";
+    $userWhere .= " AND (username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR email LIKE ?)";
     $usk = "%$userSearch%";
-    $userParams = [$usk, $usk, $usk, $usk];
+    $userParams = [$usk, $usk, $usk, $usk, $usk];
 }
 if (!empty($userRoleFilter)) {
     $userWhere .= " AND role = ?";

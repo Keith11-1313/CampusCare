@@ -18,9 +18,9 @@ $offset = ($page - 1) * $perPage;
 $where = "WHERE 1=1";
 $params = [];
 if (!empty($search)) {
-    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR v.complaint_category LIKE ? OR v.complaint LIKE ?)";
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR v.complaint_category LIKE ? OR v.complaint LIKE ?)";
     $sk = "%$search%";
-    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk]);
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
 }
 if (!empty($statusFilter)) {
     $where .= " AND v.status = ?";

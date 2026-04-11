@@ -14,7 +14,7 @@ if ($preSelectId) {
 // Handle student search AJAX
 if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
     $q = '%' . trim($_GET['search_student']) . '%';
-    $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ?) LIMIT 10", [$q, $q, $q]);
+    $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', LEFT(middle_name, 1), '. ', last_name) LIKE ?) LIMIT 10", [$q, $q, $q, $q, $q, $q]);
     jsonResponse(['results' => $results]);
 }
 
