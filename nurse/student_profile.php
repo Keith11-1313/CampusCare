@@ -756,7 +756,7 @@ endforeach; ?>
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <div class="mb-3">
                         <label class="form-label">Contact Name <span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="emContactName" name="data[contact_name]" required placeholder="Full name">
+                        <input type="text" class="form-control" id="emContactName" name="data[contact_name]" required placeholder="Full name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Relationship <span class="required-asterisk">*</span></label>
@@ -764,10 +764,7 @@ endforeach; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text">+63</span>
-                            <input type="text" class="form-control" id="emContactPhone" name="data[phone_number]" required placeholder="9xxxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                        </div>
+                        <input type="tel" class="form-control" id="emContactPhone" name="data[phone_number]" required placeholder="09XXXXXXXXX" maxlength="11" pattern="09[0-9]{9}" title="Must be 11 digits starting with 09 (e.g. 09171234567)" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                 </div>
                 <div class="modal-footer">
