@@ -683,7 +683,7 @@ endforeach; ?>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Prescribing Doctor</label>
-                        <input type="text" class="form-control" name="data[prescribing_doctor]" placeholder="Doctor name">
+                        <input type="text" class="form-control" name="data[prescribing_doctor]" placeholder="Doctor name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                     </div>
                 </div>
                 <div class="modal-footer">
