@@ -113,7 +113,7 @@ $topVaccines = $db->fetchAll(
 // Top chronic conditions
 $topConditions = $db->fetchAll(
     "SELECT condition_name, COUNT(*) as count FROM chronic_conditions
-     GROUP BY condition_name ORDER BY count DESC LIMIT 5"
+     GROUP BY condition_name ORDER BY count DESC LIMIT 8"
 );
 
 // Summary stats
@@ -415,9 +415,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <div class="card-header"><i class="bi bi-layers me-2"></i>Students by Year Level</div>
             <div class="card-body">
                 <?php if (empty($studentsByYearLevel)): ?>
-                <div class="empty-state py-3"><i class="bi bi-layers"></i><p class="small">No year level data.</p></div>
+                    <div class="empty-state py-3"><i class="bi bi-layers"></i>
+                        <p class="small">No year level data.</p>
+                    </div>
                 <?php else: ?>
-                <div class="chart-container"><canvas id="yearLevelChart"></canvas></div>
+                    <div class="chart-container"><canvas id="yearLevelChart"></canvas></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -438,7 +440,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </div>
     </div>
     <!-- Top Vaccines -->
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
             <div class="card-body">
@@ -453,7 +455,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </div>
     </div>
     <!-- Top Conditions -->
-    <div class="col-12">
+    <div class="col-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Chronic Conditions</div>
             <div class="card-body">
@@ -648,31 +650,31 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
         // --- Students by Year Level Bar Chart ---
         <?php if (!empty($studentsByYearLevel)): ?>
-        const ylData = <?php echo json_encode($studentsByYearLevel); ?>;
-        const ylColors = ['#005a9c','#0ea5e9','#27ae60','#f39c12','#c0392b','#8e44ad','#e67e22','#2c3e50'];
-        new Chart(document.getElementById('yearLevelChart'), {
-            type: 'bar',
-            data: {
-                labels: ylData.map(d => d.name),
-                datasets: [{
-                    label: 'Students',
-                    data: ylData.map(d => parseInt(d.student_count)),
-                    backgroundColor: ylData.map((_, i) => ylColors[i % ylColors.length]),
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, ticks: { stepSize: 1 } },
-                    y: { grid: { display: false } }
+            const ylData = <?php echo json_encode($studentsByYearLevel); ?>;
+            const ylColors = ['#005a9c', '#0ea5e9', '#27ae60', '#f39c12', '#c0392b', '#8e44ad', '#e67e22', '#2c3e50'];
+            new Chart(document.getElementById('yearLevelChart'), {
+                type: 'bar',
+                data: {
+                    labels: ylData.map(d => d.name),
+                    datasets: [{
+                        label: 'Students',
+                        data: ylData.map(d => parseInt(d.student_count)),
+                        backgroundColor: ylData.map((_, i) => ylColors[i % ylColors.length]),
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        y: { grid: { display: false } }
+                    }
                 }
-            }
-        });
+            });
         <?php endif; ?>
     });
 </script>
