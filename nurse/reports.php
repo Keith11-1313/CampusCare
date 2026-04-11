@@ -88,6 +88,16 @@ $visitStatuses = $db->fetchAll(
     $params
 );
 
+// Students by year level
+$studentsByYearLevel = $db->fetchAll(
+    "SELECT yl.name, COUNT(s.id) as student_count 
+     FROM year_levels yl 
+     LEFT JOIN students s ON s.year_level_id = yl.id AND s.status = 'active' 
+     WHERE yl.status = 'active' 
+     GROUP BY yl.id, yl.name 
+     ORDER BY yl.order_num"
+);
+
 // Top 5 allergens across all students
 $topAllergens = $db->fetchAll(
     "SELECT allergen, COUNT(*) as count FROM allergies
@@ -399,6 +409,19 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
+    <!-- Students by Year Level -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-layers me-2"></i>Students by Year Level</div>
+            <div class="card-body">
+                <?php if (empty($studentsByYearLevel)): ?>
+                <div class="empty-state py-3"><i class="bi bi-layers"></i><p class="small">No year level data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="yearLevelChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
     <!-- Top Allergens -->
     <div class="col-lg-4">
         <div class="card h-100">
@@ -621,6 +644,35 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
+        <?php endif; ?>
+
+        // --- Students by Year Level Bar Chart ---
+        <?php if (!empty($studentsByYearLevel)): ?>
+        const ylData = <?php echo json_encode($studentsByYearLevel); ?>;
+        const ylColors = ['#005a9c','#0ea5e9','#27ae60','#f39c12','#c0392b','#8e44ad','#e67e22','#2c3e50'];
+        new Chart(document.getElementById('yearLevelChart'), {
+            type: 'bar',
+            data: {
+                labels: ylData.map(d => d.name),
+                datasets: [{
+                    label: 'Students',
+                    data: ylData.map(d => parseInt(d.student_count)),
+                    backgroundColor: ylData.map((_, i) => ylColors[i % ylColors.length]),
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { stepSize: 1 } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
         <?php endif; ?>
     });
 </script>

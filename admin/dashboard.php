@@ -52,6 +52,16 @@ $visitStatuses = $db->fetchAll(
      GROUP BY status ORDER BY count DESC"
 );
 
+// Students by year level (for bar chart)
+$studentsByYearLevel = $db->fetchAll(
+    "SELECT yl.name, COUNT(s.id) as student_count 
+     FROM year_levels yl 
+     LEFT JOIN students s ON s.year_level_id = yl.id AND s.status = 'active' 
+     WHERE yl.status = 'active' 
+     GROUP BY yl.id, yl.name 
+     ORDER BY yl.order_num"
+);
+
 // Recent activity feed (last 5 access logs)
 $activityFeed = $db->fetchAll(
     "SELECT al.*, u.first_name, u.last_name, u.username 
@@ -140,20 +150,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<!-- Charts Row -->
+<!-- Charts Row 1 -->
 <div class="row g-4 mb-4">
     <!-- Visits Per Day (Last 7 Days) -->
-    <div class="col-lg-8">
-        <div class="card">
+    <div class="col-lg-8 d-flex">
+        <div class="card flex-fill">
             <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits — Last 7 Days</div>
             <div class="card-body">
                 <div class="chart-container"><canvas id="dailyVisitsChart"></canvas></div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-4 d-flex">
         <!-- Quick Actions -->
-        <div class="card">
+        <div class="card flex-fill">
             <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
             <div class="card-body">
                 <a href="<?php echo BASE_URL; ?>/admin/users.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
@@ -170,8 +180,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </a>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="row g-4 mb-4">
+    <!-- Students by Year Level -->
+    <div class="col-lg-8 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header"><i class="bi bi-layers me-2"></i>Students by Year Level</div>
+            <div class="card-body">
+                <?php if (empty($studentsByYearLevel)): ?>
+                <div class="empty-state py-3"><i class="bi bi-layers"></i><p class="small">No year level data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="yearLevelChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 d-flex">
         <!-- Top Complaints This Month -->
-        <div class="card mt-3">
+        <div class="card flex-fill">
             <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Top Complaints This Month</div>
             <div class="card-body">
                 <?php if (empty($topComplaints)): ?>
@@ -355,6 +384,35 @@ document.addEventListener('DOMContentLoaded', function(){
             responsive: true, maintainAspectRatio: false,
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
             cutout: '55%'
+        }
+    });
+    <?php endif; ?>
+
+    // --- Students by Year Level Bar Chart ---
+    <?php if (!empty($studentsByYearLevel)): ?>
+    const ylData = <?php echo json_encode($studentsByYearLevel); ?>;
+    const ylColors = ['#005a9c','#0ea5e9','#27ae60','#f39c12','#c0392b','#8e44ad','#e67e22','#2c3e50'];
+    new Chart(document.getElementById('yearLevelChart'), {
+        type: 'bar',
+        data: {
+            labels: ylData.map(d => d.name),
+            datasets: [{
+                label: 'Students',
+                data: ylData.map(d => parseInt(d.student_count)),
+                backgroundColor: ylData.map((_, i) => ylColors[i % ylColors.length]),
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, ticks: { stepSize: 1 } },
+                y: { grid: { display: false } }
+            }
         }
     });
     <?php endif; ?>
