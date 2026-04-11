@@ -409,6 +409,7 @@ endif; ?>
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
+                                <!-- I did not add the same password as old as the admin does not know the previous password -->
                                 <div class="form-text" id="pwdHint">Must meet all requirements below.</div>
                                 <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="pwdRequirements"
                                     style="font-size:0.78rem;">
