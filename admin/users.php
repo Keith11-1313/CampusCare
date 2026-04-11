@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $errors[] = 'Username is required.';
         if (empty($firstName))
             $errors[] = 'First name is required.';
-        elseif (!preg_match("/^[a-zA-Z\s'\-]+$/", $firstName))
-            $errors[] = 'First name should only contain letters, spaces, hyphens, or apostrophes.';
+        elseif (!preg_match("/^[a-zA-Z\s'\-\.\x{00f1}\x{00d1}]+$/u", $firstName))
+            $errors[] = 'First name should only contain letters, spaces, hyphens, periods, or apostrophes.';
         if (empty($lastName))
             $errors[] = 'Last name is required.';
-        elseif (!preg_match("/^[a-zA-Z\s'\-]+$/", $lastName))
-            $errors[] = 'Last name should only contain letters, spaces, hyphens, or apostrophes.';
+        elseif (!preg_match("/^[a-zA-Z\s'\-\.\x{00f1}\x{00d1}]+$/u", $lastName))
+            $errors[] = 'Last name should only contain letters, spaces, hyphens, periods, or apostrophes.';
         if (!in_array($role, ['admin', 'nurse', 'rep']))
             $errors[] = 'Invalid role.';
         if ($role === 'rep' && !empty($assignedSection) && !in_array($assignedSection, ['A', 'B', 'C']))
@@ -376,12 +376,12 @@ endif; ?>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">First Name <span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" name="first_name" id="firstName" required pattern="[a-zA-Z\s'\-]+" title="Letters, spaces, hyphens, and apostrophes only">
+                                <input type="text" class="form-control" name="first_name" id="firstName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                                 <div class="invalid-feedback">Please enter a valid first name (letters only).</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" name="last_name" id="lastName" required pattern="[a-zA-Z\s'\-]+" title="Letters, spaces, hyphens, and apostrophes only">
+                                <input type="text" class="form-control" name="last_name" id="lastName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                                 <div class="invalid-feedback">Please enter a valid last name (letters only).</div>
                             </div>
                             <div class="col-12">
@@ -564,8 +564,8 @@ document.getElementById('toggleConfirmPasswordBtn').addEventListener('click', fu
 ['firstName', 'lastName'].forEach(function(fieldId) {
     const field = document.getElementById(fieldId);
     field.addEventListener('input', function() {
-        this.value = this.value.replace(/[^a-zA-Z\s'\-]/g, '');
-        if (this.value && !this.value.match(/^[a-zA-Z\s'\-]+$/)) {
+        this.value = this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g, '');
+        if (this.value && !this.value.match(/^[a-zA-Z\s\-\.'\u00f1\u00d1]+$/)) {
             this.classList.add('is-invalid');
         } else {
             this.classList.remove('is-invalid');
