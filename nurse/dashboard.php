@@ -31,7 +31,7 @@ $overdueCount = count($overdueFollowUps);
 $recentVisits = $db->fetchAll(
     "SELECT v.*, s.student_id as sid, s.first_name, s.last_name 
      FROM visits v JOIN students s ON v.student_id=s.id 
-     WHERE DATE(v.visit_date)=CURDATE() ORDER BY v.visit_date DESC LIMIT 10"
+     WHERE DATE(v.visit_date)=CURDATE() ORDER BY v.visit_date DESC LIMIT 2"
 );
 
 // Upcoming follow-ups
@@ -101,194 +101,87 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <!-- Stat Cards -->
 <style>
-.stat-card-link { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
-.stat-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12) !important; }
+    .stat-card-link {
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .stat-card-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .12) !important;
+    }
 </style>
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-3">
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none h-100 d-flex flex-column">
-        <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class="stat-label">Today's Visits</div>
-                    <div class="stat-value"><?php echo $todayVisits; ?></div>
-                    <div
-                        class="stat-extra <?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'neutral'); ?>">
-                        <i
-                            class="bi bi-arrow-<?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'right'); ?>"></i>
-                        <?php echo abs($todayDiff); ?> vs yesterday
+            <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-label">Today's Visits</div>
+                        <div class="stat-value"><?php echo $todayVisits; ?></div>
+                        <div
+                            class="stat-extra <?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'neutral'); ?>">
+                            <i
+                                class="bi bi-arrow-<?php echo $todayDiff > 0 ? 'up' : ($todayDiff < 0 ? 'down' : 'right'); ?>"></i>
+                            <?php echo abs($todayDiff); ?> vs yesterday
+                        </div>
                     </div>
+                    <div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
                 </div>
-                <div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
             </div>
-        </div>
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/nurse/visits.php" class="text-decoration-none h-100 d-flex flex-column">
-        <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1 stat-card-link">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class="stat-label">Monthly Visits</div>
-                    <div class="stat-value"><?php echo $monthVisits; ?></div>
+            <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1 stat-card-link">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-label">Monthly Visits</div>
+                        <div class="stat-value"><?php echo $monthVisits; ?></div>
+                    </div>
+                    <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
                 </div>
-                <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
             </div>
-        </div>
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Referred" class="text-decoration-none h-100 d-flex flex-column">
-        <div class="stat-card stat-card-accent animate-fade-in animate-delay-2 stat-card-link">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class="stat-label">Referred Cases</div>
-                    <div class="stat-value"><?php echo $referredMonth; ?></div>
-                    <div class="stat-extra neutral"><i class="bi bi-calendar3"></i> This month</div>
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Referred"
+            class="text-decoration-none h-100 d-flex flex-column">
+            <div class="stat-card stat-card-accent animate-fade-in animate-delay-2 stat-card-link">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-label">Referred Cases</div>
+                        <div class="stat-value"><?php echo $referredMonth; ?></div>
+                        <div class="stat-extra neutral"><i class="bi bi-calendar3"></i> This month</div>
+                    </div>
+                    <div class="stat-icon"><i class="bi bi-hospital-fill"></i></div>
                 </div>
-                <div class="stat-icon"><i class="bi bi-hospital-fill"></i></div>
             </div>
-        </div>
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Follow-up" class="text-decoration-none h-100 d-flex flex-column">
-        <div class="stat-card stat-card-danger animate-fade-in animate-delay-3 stat-card-link">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class="stat-label">Pending Follow-ups</div>
-                    <div class="stat-value"><?php echo $followUps; ?></div>
-                    <?php if ($overdueCount > 0): ?>
-                        <div class="stat-extra danger"><i class="bi bi-exclamation-circle"></i><?php echo $overdueCount; ?>
-                            overdue</div>
-                    <?php endif; ?>
+        <a href="<?php echo BASE_URL; ?>/nurse/visits.php?status=Follow-up"
+            class="text-decoration-none h-100 d-flex flex-column">
+            <div class="stat-card stat-card-danger animate-fade-in animate-delay-3 stat-card-link">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="stat-label">Pending Follow-ups</div>
+                        <div class="stat-value"><?php echo $followUps; ?></div>
+                        <?php if ($overdueCount > 0): ?>
+                            <div class="stat-extra danger"><i
+                                    class="bi bi-exclamation-circle"></i><?php echo $overdueCount; ?>
+                                overdue</div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="stat-icon"><i class="bi bi-exclamation-circle-fill"></i></div>
                 </div>
-                <div class="stat-icon"><i class="bi bi-exclamation-circle-fill"></i></div>
             </div>
-        </div>
         </a>
     </div>
 </div>
 
 <!-- Charts Row -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits — This Week</div>
-            <div class="card-body">
-                <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
-            <div class="card-body">
-                <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-plus-circle me-2"></i>Record New Visit</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/students.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-search me-2"></i>Search Students</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/visits.php"
-                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
-                    <i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
-                <a href="<?php echo BASE_URL; ?>/nurse/reports.php"
-                    class="btn btn-outline-primary btn-sm w-100 text-start">
-                    <i class="bi bi-graph-up me-2"></i>Reports &amp; Analytics</a>
-            </div>
-        </div>
-        <!-- Complaints This Month -->
-        <div class="card mt-3">
-            <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Complaints This Month</div>
-            <div class="card-body">
-                <?php if (empty($monthComplaints)): ?>
-                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
-                        <p class="small">No data this month.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="chart-container"><canvas id="complaintsChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Health Records Overview Row -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header"><i class="bi bi-exclamation-triangle me-2"></i>Top Allergens</div>
-            <div class="card-body">
-                <?php if (empty($topAllergens)): ?>
-                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
-                        <p class="small">No allergy data.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="chart-container"><canvas id="allergensChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
-            <div class="card-body">
-                <?php if (empty($topVaccines)): ?>
-                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
-                        <p class="small">No immunization data.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="chart-container"><canvas id="vaccinesChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <div class="col-lg-4">
-        <div class="card h-100">
-            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status This Month</div>
-            <div class="card-body">
-                <?php if (empty($visitStatuses)): ?>
-                    <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
-                        <p class="small">No data.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="chart-container-sm"><canvas id="statusChart"></canvas></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-8">
-        <div class="card h-100">
-            <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Conditions</div>
-            <div class="card-body">
-                <?php if (empty($topConditions)): ?>
-                    <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
-                        <p class="small">No condition data.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="list-group list-group-flush">
-                        <?php foreach ($topConditions as $tc): ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <div class="fw-semibold small"><?php echo e($tc['condition_name']); ?></div>
-                                <span class="badge bg-primary rounded-pill"><?php echo $tc['count']; ?>
-                                    student<?php echo $tc['count'] > 1 ? 's' : ''; ?></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <!-- Today's Visits Table -->
+<div class="row g-3 mb-3">
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -332,20 +225,140 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
-
-    <!-- Right Column -->
     <div class="col-lg-4">
-        <!-- Upcoming Follow-ups -->
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
+            <div class="card-body">
+                <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php"
+                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-plus-circle me-2"></i>Record New Visit</a>
+                <a href="<?php echo BASE_URL; ?>/nurse/students.php"
+                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-search me-2"></i>Search Students</a>
+                <a href="<?php echo BASE_URL; ?>/nurse/visits.php"
+                    class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
+                    <i class="bi bi-clipboard2-pulse me-2"></i>Visit History</a>
+                <a href="<?php echo BASE_URL; ?>/nurse/reports.php"
+                    class="btn btn-outline-primary btn-sm w-100 text-start">
+                    <i class="bi bi-graph-up me-2"></i>Reports &amp; Analytics</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Today's Visits + Complaints Row -->
+<div class="row g-3 mb-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits — This Week</div>
+            <div class="card-body">
+                <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Complaints This Month</div>
+            <div class="card-body">
+                <?php if (empty($monthComplaints)): ?>
+                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
+                        <p class="small">No data this month.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="chart-container"><canvas id="complaintsChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Records Overview Row -->
+<div class="row g-3 mb-3">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-exclamation-triangle me-2"></i>Top Allergens</div>
+            <div class="card-body">
+                <?php if (empty($topAllergens)): ?>
+                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
+                        <p class="small">No allergy data.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="chart-container"><canvas id="allergensChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
+            <div class="card-body">
+                <?php if (empty($topVaccines)): ?>
+                    <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
+                        <p class="small">No immunization data.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="chart-container"><canvas id="vaccinesChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status This Month</div>
+            <div class="card-body">
+                <?php if (empty($visitStatuses)): ?>
+                    <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
+                        <p class="small">No data.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="chart-container-sm"><canvas id="statusChart"></canvas></div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Conditions</div>
+            <div class="card-body">
+                <?php if (empty($topConditions)): ?>
+                    <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
+                        <p class="small">No condition data.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="list-group list-group-flush">
+                        <?php foreach ($topConditions as $tc): ?>
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div class="fw-semibold small"><?php echo e($tc['condition_name']); ?></div>
+                                <span class="badge bg-primary rounded-pill"><?php echo $tc['count']; ?>
+                                    student<?php echo $tc['count'] > 1 ? 's' : ''; ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Follow-ups -->
+<div class="row g-3 mb-3">
+    <div class="col-12">
         <div class="card">
             <div class="card-header"><i class="bi bi-calendar-event me-2"></i>Upcoming Follow-ups</div>
-            <div class="card-body">
+            <div class="card-body py-2">
                 <?php if (empty($upcomingFollowUps)): ?>
                     <div class="empty-state py-3"><i class="bi bi-calendar-check"></i>
                         <p class="small">No upcoming follow-ups.</p>
                     </div>
                 <?php else:
                     foreach ($upcomingFollowUps as $f): ?>
-                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom">
                             <div>
                                 <div class="fw-semibold small"><?php echo e($f['first_name'] . ' ' . $f['last_name']); ?></div>
                                 <small class="text-muted"><?php echo truncate($f['complaint'], 25); ?></small>
@@ -357,14 +370,18 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 endif; ?>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Frequent Visitors -->
-        <?php if (!empty($frequentVisitors)): ?>
-            <div class="card mt-3">
+<!-- Frequent Visitors -->
+<?php if (!empty($frequentVisitors)): ?>
+    <div class="row g-3 mb-3">
+        <div class="col-12">
+            <div class="card">
                 <div class="card-header"><i class="bi bi-person-exclamation me-2"></i>Frequent Visitors This Month</div>
-                <div class="card-body">
+                <div class="card-body py-2">
                     <?php foreach ($frequentVisitors as $fv): ?>
-                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom">
                             <div>
                                 <div class="fw-semibold small"><?php echo e($fv['first_name'] . ' ' . $fv['last_name']); ?>
                                 </div>
@@ -375,10 +392,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <?php endforeach; ?>
                 </div>
             </div>
-        <?php endif; ?>
-
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
