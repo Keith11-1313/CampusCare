@@ -105,6 +105,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
         }
 
         $userId = $_SESSION['pw_reset_user_id'];
+
+        // Ensure new password is not the same as old password
+        $oldData = $db->fetch("SELECT password FROM users WHERE id = ?", [$userId]);
+        if ($oldData && password_verify($newPassword, $oldData['password'])) {
+            echo json_encode(['success' => false, 'message' => 'New password must be different from your current password.']);
+            exit;
+        }
+
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $db->query("UPDATE users SET password = ? WHERE id = ?", [$hashedPassword, $userId]);
 
@@ -473,6 +481,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                     <li id="req-lower"><i class="bi bi-x-circle text-muted me-1"></i>One lowercase letter</li>
                                     <li id="req-number"><i class="bi bi-x-circle text-muted me-1"></i>One number</li>
                                     <li id="req-special"><i class="bi bi-x-circle text-muted me-1"></i>One special character</li>
+                                    <li id="req-notold"><i class="bi bi-x-circle text-muted me-1"></i>Must not be the same as current password</li>
                                 </ul>
                             </div>
                             <div class="mb-3">
@@ -694,14 +703,16 @@ endif; ?>
         function resetPassword() {
             const newPwd = document.getElementById('new_password').value;
             const confirmPwd = document.getElementById('confirm_password').value;
+            const loginPwd = document.getElementById('password').value;
             
             const hasLength = newPwd.length >= 8;
             const hasUpper = /[A-Z]/.test(newPwd);
             const hasLower = /[a-z]/.test(newPwd);
             const hasNumber = /[0-9]/.test(newPwd);
             const hasSpecial = /[^a-zA-Z0-9]/.test(newPwd);
+            const notSameAsOld = loginPwd.length > 0 && newPwd !== loginPwd;
 
-            if (!newPwd || !hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+            if (!newPwd || !hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial || (loginPwd.length > 0 && !notSameAsOld)) {
                 updateResetPwdRequirements(newPwd);
                 showSecurityError('securityResetError', 'Password does not meet all requirements.');
                 return;
@@ -797,12 +808,15 @@ endif; ?>
         });
 
         function updateResetPwdRequirements(pwd) {
+            const loginPwd = document.getElementById('password').value;
+            const notSameAsOld = pwd.length > 0 && loginPwd.length > 0 && pwd !== loginPwd;
             const rules = [
                 { id: 'req-length', test: pwd.length >= 8 },
                 { id: 'req-upper', test: /[A-Z]/.test(pwd) },
                 { id: 'req-lower', test: /[a-z]/.test(pwd) },
                 { id: 'req-number', test: /[0-9]/.test(pwd) },
-                { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) }
+                { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) },
+                { id: 'req-notold', test: notSameAsOld }
             ];
             rules.forEach(function(rule) {
                 const el = document.getElementById(rule.id);
