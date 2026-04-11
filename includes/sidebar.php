@@ -41,7 +41,7 @@ $userRole = $_SESSION['user_role'] ?? '';
                 <i class="bi bi-mortarboard"></i><span>Programs</span>
             </a>
 
-            <div class="sidebar-section-title">Administrative Services</div>
+            <div class="sidebar-section-title">Clinic Records</div>
             <a href="<?php echo BASE_URL; ?>/admin/students.php"
                 class="sidebar-link <?php echo isActivePage('students.php'); ?>">
                 <i class="bi bi-person-badge"></i><span>Student Records</span>
