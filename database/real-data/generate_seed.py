@@ -180,7 +180,7 @@ SY_START = date(2025, 8, 4)
 SY_CURRENT = date(2026, 4, 9)
 SY_TOTAL_DAYS = (SY_CURRENT - SY_START).days
 CURRENT_WEEK_START = date(2026, 4, 3)
-CURRENT_WEEK_END = date(2026, 4, 9)
+CURRENT_WEEK_END = date(2026, 4, 16)
 
 def make_visit_row(sid, vdate):
     """Generate a single clinic visit SQL value tuple."""
