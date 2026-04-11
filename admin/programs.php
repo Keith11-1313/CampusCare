@@ -22,6 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Code and name are required.']);
         }
 
+        // Validate program code: letters, numbers, and hyphens only, must start with a letter
+        if (!preg_match('/^[A-Z][A-Z0-9\-]{1,19}$/', $code)) {
+            jsonResponse(['success' => false, 'message' => 'Program code must start with a letter and contain only letters, numbers, and hyphens (2-20 characters).']);
+        }
+
+        // Validate program name: letters, spaces, periods, and hyphens only
+        if (!preg_match("/^[a-zA-Z][a-zA-Z\s\.\-]{2,99}$/", $name)) {
+            jsonResponse(['success' => false, 'message' => 'Program name must start with a letter and contain only letters, spaces, periods, and hyphens (3-100 characters).']);
+        }
+
         // Check uniqueness for code
         $existingCode = $db->fetch("SELECT id FROM programs WHERE code = ? AND id != ?", [$code, $id]);
         if ($existingCode) {
@@ -140,12 +150,22 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="mb-3">
                         <label class="form-label">Program Code <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="code" id="programCode" required
-                            placeholder="e.g. BSIT" style="text-transform:uppercase;">
+                            placeholder="e.g. BSIT" style="text-transform:uppercase;"
+                            pattern="[A-Za-z][A-Za-z0-9\-]{1,19}"
+                            title="Letters, numbers, and hyphens only (must start with a letter)"
+                            maxlength="20"
+                            oninput="this.value=this.value.replace(/[^a-zA-Z0-9\-]/g,'')">
+                        <div class="invalid-feedback">Letters, numbers, and hyphens only (must start with a letter).</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Program Name <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="name" id="programName" required
-                            placeholder="e.g. Bachelor of Science in Information Technology">
+                            placeholder="e.g. Bachelor of Science in Information Technology"
+                            pattern="[a-zA-Z][a-zA-Z\s\.\-]{2,99}"
+                            title="Letters, spaces, periods, and hyphens only (must start with a letter)"
+                            maxlength="100"
+                            oninput="this.value=this.value.replace(/[^a-zA-Z\s\.\-]/g,'')">
+                        <div class="invalid-feedback">Letters, spaces, periods, and hyphens only (must start with a letter).</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -201,8 +221,34 @@ require_once __DIR__ . '/../includes/sidebar.php';
         });
     }
 
+    // Live validation feedback for program fields
+    ['programCode', 'programName'].forEach(function(fieldId) {
+        const field = document.getElementById(fieldId);
+        field.addEventListener('input', function() {
+            if (this.value && !this.checkValidity()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+
     document.getElementById('programForm').addEventListener('submit', function (e) {
         e.preventDefault();
+        // Check HTML5 validity before submitting
+        const code = document.getElementById('programCode');
+        const name = document.getElementById('programName');
+        let valid = true;
+        [code, name].forEach(function(field) {
+            if (!field.value.trim() || !field.checkValidity()) {
+                field.classList.add('is-invalid');
+                valid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        if (!valid) return;
+
         fetch('programs.php', { method: 'POST', body: new FormData(this) }).then(r => r.json()).then(d => {
             if (d.success) { programModal.hide(); scheduleToast('success', d.message); }
             else showToast('error', d.message);
