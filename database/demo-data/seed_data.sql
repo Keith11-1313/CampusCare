@@ -61,31 +61,32 @@ INSERT INTO `year_levels` (`name`, `order_num`) VALUES
 -- Seed: Users
 -- Passwords are hashed using password_hash('password', PASSWORD_DEFAULT)
 -- Default passwords listed in comments for testing
+-- Password policy: min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character
 -- ============================================================
 
--- Admin: username=admin, password=admin123
+-- Admin: username=admin, password=Admin@123
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('admin', '$2y$10$jveCvwI5ZK9yhTQhFGYdxODOrrSSWzUadQVCN4RIKMC811lkc1kh2', 'System', 'Administrator', 'admin@campuscare.edu', 'admin', 'active');
+('admin', '$2y$10$VAJFIi9PI6/rPDlzpEVAp.QVvXvLuEQFms3CXEU/Jp1SoldOOdN.W', 'System', 'Administrator', 'admin@campuscare.edu', 'admin', 'active');
 
--- Nurse: username=nurse.garcia, password=nurse123
+-- Nurse: username=nurse.garcia, password=Nurse@123
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_garcia', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Maria', 'Garcia', 'maria.garcia@campuscare.edu', 'nurse', 'active');
+('nurse_garcia', '$2y$10$YwzBdn7GJqJW5cWyGmDEUefUXTWAM2rWx5aoPVFdPfNf8irzQU.0W', 'Maria', 'Garcia', 'maria.garcia@campuscare.edu', 'nurse', 'active');
 
--- Nurse: username=nurse.santos, password=nurse123
+-- Nurse: username=nurse.santos, password=Nurse@123
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('nurse_santos', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Jose', 'Santos', 'jose.santos@campuscare.edu', 'nurse', 'active');
+('nurse_santos', '$2y$10$YwzBdn7GJqJW5cWyGmDEUefUXTWAM2rWx5aoPVFdPfNf8irzQU.0W', 'Jose', 'Santos', 'jose.santos@campuscare.edu', 'nurse', 'active');
 
--- Class Rep: username=rep.dela_cruz, password=rep123 (assigned to BSIT 2nd Year Section A)
+-- Class Rep: username=rep.dela_cruz, password=Rep@1234 (assigned to BSIT 2nd Year Section A)
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `assigned_program_id`, `assigned_year_level_id`, `assigned_section`, `status`) VALUES
-('rep_delacruz', '$2y$10$XWPlsJYECdHMmgMnTBF9S.h8.peWBr.ZX/5v4P0ibli/gfhowZB9G', 'Ana', 'Dela Cruz', 'ana.delacruz@student.edu', 'rep', 1, 2, 'A', 'active');
+('rep_delacruz', '$2y$10$BdI37HGzeGflcH1PxxaTv.RYEK7Eth/YJobXLY1TE3WR5JXzFQTK.', 'Ana', 'Dela Cruz', 'ana.delacruz@student.edu', 'rep', 1, 2, 'A', 'active');
 
--- Class Rep: username=rep.reyes, password=rep123 (assigned to BSN 1st Year Section B)
+-- Class Rep: username=rep.reyes, password=Rep@1234 (assigned to BSN 1st Year Section B)
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `assigned_program_id`, `assigned_year_level_id`, `assigned_section`, `status`) VALUES
-('rep_reyes', '$2y$10$XWPlsJYECdHMmgMnTBF9S.h8.peWBr.ZX/5v4P0ibli/gfhowZB9G', 'Carlos', 'Reyes', 'carlos.reyes@student.edu', 'rep', 3, 1, 'B', 'active');
+('rep_reyes', '$2y$10$BdI37HGzeGflcH1PxxaTv.RYEK7Eth/YJobXLY1TE3WR5JXzFQTK.', 'Carlos', 'Reyes', 'carlos.reyes@student.edu', 'rep', 3, 1, 'B', 'active');
 
 -- Inactive user for testing deactivation
 INSERT INTO `users` (`username`, `password`, `first_name`, `last_name`, `email`, `role`, `status`) VALUES
-('inactive_user', '$2y$10$uADeHOF3FgZjC5pqZy4cQ.HtweLn5h8qSqY.FvHPgV3DOwH.i9hdC', 'Deactivated', 'User', 'inactive@campuscare.edu', 'nurse', 'inactive');
+('inactive_user', '$2y$10$YwzBdn7GJqJW5cWyGmDEUefUXTWAM2rWx5aoPVFdPfNf8irzQU.0W', 'Deactivated', 'User', 'inactive@campuscare.edu', 'nurse', 'inactive');
 
 -- ============================================================
 -- Seed: Students (20 sample students)

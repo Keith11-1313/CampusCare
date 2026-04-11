@@ -12,7 +12,7 @@ random.seed(42)
 EMAIL_DOMAIN  = "student.edu.com"
 SECTIONS      = ["A", "B"]
 STU_PER_SEC   = (30, 40)
-PASSWORD_HASH = "$2y$10$XWPlsJYECdHMmgMnTBF9S.h8.peWBr.ZX/5v4P0ibli/gfhowZB9G"  # rep123
+PASSWORD_HASH = "$2y$10$BdI37HGzeGflcH1PxxaTv.RYEK7Eth/YJobXLY1TE3WR5JXzFQTK."  # Rep@1234
 CHUNK         = 200
 
 # Existing users in seed_data.sql: admin=1, nurse_garcia=2, nurse_santos=3
@@ -424,7 +424,7 @@ with open(out_path, "w", encoding="utf-8") as f:
     f.write("-- ============================================================\n\n")
     f.write("USE `campuscare`;\n\n")
 
-    f.write("-- Class Representatives (password: rep123)\n")
+    f.write("-- Class Representatives (password: Rep@1234)\n")
     write_inserts(f, "users",
         ["username","password","first_name","last_name","email",
          "role","assigned_program_id","assigned_year_level_id","assigned_section","status"],

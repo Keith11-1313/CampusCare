@@ -137,17 +137,17 @@ http://localhost/CampusCare
 
 | Role | Username | Password | Security Question | Answer |
 | ------ | ---------- | ---------- | ------------------- | -------- |
-| Admin | `admin` | `admin123` | What city were you born in? | `manila` |
-| Nurse | `nurse_garcia` | `nurse123` | What is the name of your first pet? | `brownie` |
-| Nurse | `nurse_santos` | `nurse123` | What is your favorite food? | `adobo` |
-| Nurse | `nurse_reyes` | `nurse123` | What city were you born in? | `quezon city` |
-| Nurse | `nurse_cruz` | `nurse123` | What is the name of your best friend? | `carlo` |
-| Nurse | `nurse_mendoza` | `nurse123` | What is your favorite color? | `blue` |
-| Nurse | `nurse_villanueva` | `nurse123` | What is your favorite food? | `sinigang` |
-| Nurse | `nurse_torres` | `nurse123` | What is the name of your first pet? | `bantay` |
-| Nurse | `nurse_bautista` | `nurse123` | What city were you born in? | `cebu` |
-| Class Rep | `rep_mercado_BSA_1A` | `rep123` | | |
-| Class Rep | `rep_bueno_BSA_3A` | `rep123` | | |
+| Admin | `admin` | `Admin@123` | What city were you born in? | `manila` |
+| Nurse | `nurse_garcia` | `Nurse@123` | What is the name of your first pet? | `brownie` |
+| Nurse | `nurse_santos` | `Nurse@123` | What is your favorite food? | `adobo` |
+| Nurse | `nurse_reyes` | `Nurse@123` | What city were you born in? | `quezon city` |
+| Nurse | `nurse_cruz` | `Nurse@123` | What is the name of your best friend? | `carlo` |
+| Nurse | `nurse_mendoza` | `Nurse@123` | What is your favorite color? | `blue` |
+| Nurse | `nurse_villanueva` | `Nurse@123` | What is your favorite food? | `sinigang` |
+| Nurse | `nurse_torres` | `Nurse@123` | What is the name of your first pet? | `bantay` |
+| Nurse | `nurse_bautista` | `Nurse@123` | What city were you born in? | `cebu` |
+| Class Rep | `rep_mercado_BSA_1A` | `Rep@1234` | | |
+| Class Rep | `rep_bueno_BSA_3A` | `Rep@1234` | | |
 
 > **Note:** Security answers are case-insensitive.
 
