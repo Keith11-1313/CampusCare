@@ -221,11 +221,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
         });
     }
 
-    // Live validation feedback for program fields
+    // Validation feedback for program fields (on blur)
     ['programCode', 'programName'].forEach(function(fieldId) {
         const field = document.getElementById(fieldId);
-        field.addEventListener('input', function() {
+        field.addEventListener('blur', function() {
             if (this.value && !this.checkValidity()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+
+        // Clear invalid state while typing, but check for leading hyphen immediately
+        field.addEventListener('input', function() {
+            if (this.id === 'programCode' && this.value.startsWith('-')) {
                 this.classList.add('is-invalid');
             } else {
                 this.classList.remove('is-invalid');
