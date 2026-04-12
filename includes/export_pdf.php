@@ -284,7 +284,7 @@ endif; ?>
     <?php if (in_array('visits_month', $sections)): ?>
     <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="chart-box half">
-            <h3>Visits by Month (Last 12 Months)</h3>
+            <h3>Visits by Month</h3>
             <canvas id="monthlyChart"></canvas>
             <img class="chart-img" id="monthlyChartImg" alt="Monthly visits chart">
         </div>
