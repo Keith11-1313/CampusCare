@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Code and name are required.']);
         }
 
-        // Validate program code: letters, numbers, and hyphens only, must start with a letter
-        if (!preg_match('/^[A-Z][A-Z0-9\-]{1,19}$/', $code)) {
-            jsonResponse(['success' => false, 'message' => 'Program code must start with a letter and contain only letters, numbers, and hyphens (2-20 characters).']);
+        // Validate program code: letters and hyphens only, must start with a letter
+        if (!preg_match('/^[A-Z][A-Z\-]{1,19}$/', $code)) {
+            jsonResponse(['success' => false, 'message' => 'Program code must start with a letter and contain only letters and hyphens (2-20 characters).']);
         }
 
         // Validate program name: letters, spaces, periods, and hyphens only
@@ -151,11 +151,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <label class="form-label">Program Code <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="code" id="programCode" required
                             placeholder="e.g. BSIT" style="text-transform:uppercase;"
-                            pattern="[A-Za-z][A-Za-z0-9\-]{1,19}"
-                            title="Letters, numbers, and hyphens only (must start with a letter)"
+                            pattern="[A-Za-z][A-Za-z\-]{1,19}"
+                            title="Letters and hyphens only (must start with a letter)"
                             maxlength="20"
-                            oninput="this.value=this.value.replace(/[^a-zA-Z0-9\-]/g,'')">
-                        <div class="invalid-feedback">Letters, numbers, and hyphens only (must start with a letter).</div>
+                            oninput="this.value=this.value.replace(/[^a-zA-Z\-]/g,'')">
+                        <div class="invalid-feedback">Letters and hyphens only (must start with a letter).</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Program Name <span class="required-asterisk">*</span></label>
