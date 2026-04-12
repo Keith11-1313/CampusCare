@@ -48,7 +48,7 @@ $userRole = $_SESSION['user_role'] ?? '';
             </a>
             <a href="<?php echo BASE_URL; ?>/admin/current_requests.php"
                 class="sidebar-link <?php echo isActivePage('current_requests.php'); ?>">
-                <i class="bi bi-inbox"></i><span>Current Requests</span>
+                <i class="bi bi-inbox"></i><span>Pending Requests</span>
             </a>
             <a href="<?php echo BASE_URL; ?>/admin/archive.php"
                 class="sidebar-link <?php echo isActivePage('archive.php'); ?>">
@@ -62,7 +62,7 @@ $userRole = $_SESSION['user_role'] ?? '';
             </a>
             <a href="<?php echo BASE_URL; ?>/admin/access_logs.php"
                 class="sidebar-link <?php echo isActivePage('access_logs.php'); ?>">
-                <i class="bi bi-shield-check"></i><span>Access Logs</span>
+                <i class="bi bi-shield-check"></i><span>Activity Logs</span>
             </a>
 
             <?php
@@ -91,7 +91,7 @@ $userRole = $_SESSION['user_role'] ?? '';
             <div class="sidebar-section-title">Analytics</div>
             <a href="<?php echo BASE_URL; ?>/nurse/reports.php"
                 class="sidebar-link <?php echo isActivePage('reports.php'); ?>">
-                <i class="bi bi-graph-up"></i><span>Reports & Analytics</span>
+                <i class="bi bi-graph-up"></i><span>Reports</span>
             </a>
 
             <div class="sidebar-section-title">Public Information</div>
