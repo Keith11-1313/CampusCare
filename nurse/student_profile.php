@@ -455,7 +455,7 @@ else:
                                 <td><?php echo formatDate($im['date_administered']); ?></td>
                                 <td><?php echo e($im['dose_number'] ?? '—'); ?></td>
                                 <td><small><?php echo e($im['administered_by'] ?? '—'); ?></small></td>
-                                <td><button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteRecord('immunizations',<?php echo $im['id']; ?>)"><i class="bi bi-trash"></i></button></td>
+                                <td><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editImmunization(this)" data-id="<?php echo $im['id']; ?>" data-vaccine="<?php echo e($im['vaccine_name']); ?>" data-date="<?php echo e($im['date_administered'] ?? ''); ?>" data-dose="<?php echo e($im['dose_number'] ?? ''); ?>" data-administered="<?php echo e($im['administered_by'] ?? ''); ?>"><i class="bi bi-pencil"></i></button></td>
                             </tr>
 <?php
     endforeach;
@@ -729,13 +729,14 @@ endforeach; ?>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Immunization</h5>
+                <h5 class="modal-title" id="immunizationModalTitle">Add Immunization</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="immunizationForm">
                 <div class="modal-body">
-                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="action" id="immunizationAction" value="add">
                     <input type="hidden" name="table" value="immunizations">
+                    <input type="hidden" name="record_id" id="immunizationRecordId" value="">
                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                     <div class="mb-3">
                         <label class="form-label">Vaccine Name <span class="required-asterisk">*</span></label>
@@ -857,6 +858,11 @@ function showAddForm(table) {
     const formId = formIds[table];
     if (formId) {
         document.getElementById(formId).reset();
+        if (table === 'immunizations') {
+            document.getElementById('immunizationAction').value = 'add';
+            document.getElementById('immunizationRecordId').value = '';
+            document.getElementById('immunizationModalTitle').textContent = 'Add Immunization';
+        }
         if (table === 'emergency_contacts') {
             document.getElementById('emContactAction').value = 'add';
             document.getElementById('emContactRecordId').value = '';
@@ -883,6 +889,31 @@ function toggleOtherRelationship(select) {
         otherInput.required = false;
         otherInput.value = '';
     }
+}
+
+function editImmunization(btn) {
+    document.getElementById('immunizationForm').reset();
+    document.getElementById('immunizationAction').value = 'update';
+    document.getElementById('immunizationRecordId').value = btn.dataset.id;
+    document.getElementById('immunizationModalTitle').textContent = 'Edit Immunization';
+
+    // Set vaccine select
+    const vaccineSelect = document.getElementById('vaccineSelect');
+    vaccineSelect.value = btn.dataset.vaccine || '';
+
+    // Set date
+    const dateInput = document.querySelector('#immunizationForm input[name="data[date_administered]"]');
+    if (dateInput && btn.dataset.date) dateInput.value = btn.dataset.date;
+
+    // Set dose number
+    const doseInput = document.querySelector('#immunizationForm input[name="data[dose_number]"]');
+    if (doseInput && btn.dataset.dose) doseInput.value = btn.dataset.dose;
+
+    // Set administered by
+    const adminInput = document.querySelector('#immunizationForm input[name="data[administered_by]"]');
+    if (adminInput && btn.dataset.administered) adminInput.value = btn.dataset.administered;
+
+    modals.immunizations.show();
 }
 
 function editContact(btn) {
