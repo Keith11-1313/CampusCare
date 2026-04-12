@@ -9,6 +9,24 @@ $programId = $user['assigned_program_id'] ?? null;
 $yearLevelId = $user['assigned_year_level_id'] ?? null;
 $section = $user['assigned_section'] ?? null;
 
+// Handle student search AJAX (scoped to rep's section)
+if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
+    $raw = trim($_GET['search_student']);
+    // Validate: only letters, numbers, spaces, dots, hyphens, and commas allowed
+    if (!preg_match('/^[a-zA-Z0-9\s.\-,]+$/', $raw)) {
+        jsonResponse(['results' => [], 'error' => 'Please enter a valid name or student ID (letters, numbers, spaces, dots, and hyphens only).']);
+    }
+    $q = '%' . $raw . '%';
+    $sectionParams = [];
+    $sectionFilter = '';
+    if ($programId) { $sectionFilter .= " AND program_id=?"; $sectionParams[] = $programId; }
+    if ($yearLevelId) { $sectionFilter .= " AND year_level_id=?"; $sectionParams[] = $yearLevelId; }
+    if ($section) { $sectionFilter .= " AND section=?"; $sectionParams[] = $section; }
+    $searchParams = array_merge($sectionParams, [$q, $q, $q, $q, $q, $q]);
+    $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' $sectionFilter AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', LEFT(middle_name, 1), '. ', last_name) LIKE ?) LIMIT 10", $searchParams);
+    jsonResponse(['results' => $results]);
+}
+
 // Handle form submission
 $message = '';
 $error = '';
@@ -103,15 +121,6 @@ $existingRequest = $db->fetch(
 $hasActiveRequest = !empty($existingRequest);
 
 
-
-// Get students from the same section
-$students = [];
-if ($programId && $yearLevelId && $section) {
-    $students = $db->fetchAll(
-        "SELECT id, student_id, first_name, last_name FROM students WHERE program_id = ? AND year_level_id = ? AND section = ? AND status = 'active' ORDER BY last_name, first_name",
-    [$programId, $yearLevelId, $section]
-    );
-}
 
 // Fetch all requests by this rep (My Requests)
 $myRequests = $db->fetchAll(
@@ -223,14 +232,17 @@ endif; ?>
 else: ?>
                             <form method="POST" action="">
                                 <div class="mb-3">
-                                    <label for="nominee_id" class="form-label fw-bold">Select New Representative Nominee</label>
-                                    <select name="nominee_id" id="nominee_id" class="form-select" required>
-                                        <option value="">-- Select a student --</option>
-                                        <?php foreach ($students as $s): ?>
-                                            <option value="<?php echo $s['id']; ?>"><?php echo e($s['student_id'] . ' - ' . $s['first_name'] . ' ' . $s['last_name']); ?></option>
-                                        <?php
-    endforeach; ?>
-                                    </select>
+                                    <label class="form-label fw-bold">Select New Representative Nominee</label>
+                                    <div class="student-autocomplete" id="nomineeAutocomplete">
+                                        <div class="student-ac-input-wrap search-box">
+                                            <i class="bi bi-search search-icon"></i>
+                                            <input type="text" class="form-control" id="nomineeSearchInput"
+                                                   placeholder="Search by name or student ID..." autocomplete="off">
+                                        </div>
+                                        <input type="hidden" name="nominee_id" id="nomineeIdHidden" required>
+                                        <div class="student-ac-dropdown" id="nomineeDropdown"></div>
+                                        <div class="invalid-feedback" style="display:none;" id="nomineeInvalidFeedback">Please select a student.</div>
+                                    </div>
                                     <div class="form-text mt-2 small">Choose the student who will take over your role.</div>
                                 </div>
 
@@ -267,13 +279,17 @@ endif; ?>
                     <div class="card-body p-4">
                         <form method="POST" action="">
                             <div class="mb-3">
-                                <label for="student_id" class="form-label fw-bold">Select Student to Remove</label>
-                                <select name="student_id" id="student_id" class="form-select" required>
-                                    <option value="">-- Select a student --</option>
-                                    <?php foreach ($students as $s): ?>
-                                        <option value="<?php echo $s['id']; ?>"><?php echo e($s['student_id'] . ' - ' . $s['first_name'] . ' ' . $s['last_name']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <label class="form-label fw-bold">Select Student to Remove</label>
+                                <div class="student-autocomplete" id="deletionAutocomplete">
+                                    <div class="student-ac-input-wrap search-box">
+                                        <i class="bi bi-search search-icon"></i>
+                                        <input type="text" class="form-control" id="deletionSearchInput"
+                                               placeholder="Search by name or student ID..." autocomplete="off">
+                                    </div>
+                                    <input type="hidden" name="student_id" id="deletionIdHidden" required>
+                                    <div class="student-ac-dropdown" id="deletionDropdown"></div>
+                                    <div class="invalid-feedback" style="display:none;" id="deletionInvalidFeedback">Please select a student.</div>
+                                </div>
                                 <div class="form-text mt-2 small">Choose the student you want to request deletion for.</div>
                             </div>
 
@@ -373,3 +389,161 @@ else: ?>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+// ── Student Autocomplete Factory ──
+function initStudentAutocomplete(config) {
+    const input    = document.getElementById(config.inputId);
+    const hidden   = document.getElementById(config.hiddenId);
+    const dropdown = document.getElementById(config.dropdownId);
+    const feedback = document.getElementById(config.feedbackId);
+    const form     = input.closest('form');
+    if (!input || !hidden || !dropdown) return;
+
+    let debounce  = null;
+    let activeIdx = -1;
+
+    // Only allow letters, numbers, spaces, dots, hyphens, commas
+    const validPattern = /^[a-zA-Z0-9\s.\-,]*$/;
+
+    input.addEventListener('input', function() {
+        const raw = this.value;
+        hidden.value = '';
+        if (feedback) feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+
+        // Silently strip invalid characters
+        if (!validPattern.test(raw)) {
+            this.value = raw.replace(/[^a-zA-Z0-9\s.\-,]/g, '');
+        }
+
+        const q = this.value.trim();
+        clearTimeout(debounce);
+        if (q.length < 1) { closeDropdown(); return; }
+
+        debounce = setTimeout(() => {
+            fetch('requests.php?search_student=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-exclamation-triangle me-2"></i>' + escHtml(data.error) + '</div>';
+                        dropdown.classList.add('show');
+                        return;
+                    }
+                    renderDropdown(data.results || []);
+                })
+                .catch(() => closeDropdown());
+        }, 250);
+    });
+
+    input.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.student-ac-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            highlightItem(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIdx = Math.max(activeIdx - 1, 0);
+            highlightItem(items);
+        } else if (e.key === 'Enter' && activeIdx >= 0) {
+            e.preventDefault();
+            items[activeIdx].click();
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function renderDropdown(results) {
+        activeIdx = -1;
+        if (!results.length) {
+            dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-info-circle me-2"></i>No students found</div>';
+            dropdown.classList.add('show');
+            return;
+        }
+        dropdown.innerHTML = results.map((s, i) =>
+            `<div class="student-ac-item" data-id="${s.id}" data-index="${i}">
+                <span class="student-ac-item-id">${escHtml(s.student_id)}</span><span> — </span>
+                <span class="student-ac-item-name">${escHtml(s.last_name)}, ${escHtml(s.first_name)}</span>
+            </div>`
+        ).join('');
+        dropdown.classList.add('show');
+
+        dropdown.querySelectorAll('.student-ac-item').forEach(item => {
+            item.addEventListener('click', function() {
+                selectStudent(this.dataset.id,
+                    this.querySelector('.student-ac-item-id').textContent,
+                    this.querySelector('.student-ac-item-name').textContent);
+            });
+        });
+    }
+
+    function selectStudent(id, sid, name) {
+        hidden.value = id;
+        input.value = sid + ' — ' + name;
+        if (feedback) feedback.style.display = 'none';
+        input.classList.remove('is-invalid');
+        closeDropdown();
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('show');
+        dropdown.innerHTML = '';
+        activeIdx = -1;
+    }
+
+    function highlightItem(items) {
+        items.forEach(i => i.classList.remove('active'));
+        if (items[activeIdx]) {
+            items[activeIdx].classList.add('active');
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function escHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#' + config.wrapperId)) closeDropdown();
+    });
+
+    // Validate before form submit
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!hidden.value) {
+                e.preventDefault();
+                e.stopPropagation();
+                input.classList.add('is-invalid');
+                if (feedback) {
+                    feedback.textContent = 'Please select a student from the dropdown.';
+                    feedback.style.display = 'block';
+                }
+                input.focus();
+            }
+        });
+    }
+}
+
+// Initialize both autocompletes
+initStudentAutocomplete({
+    wrapperId: 'nomineeAutocomplete',
+    inputId: 'nomineeSearchInput',
+    hiddenId: 'nomineeIdHidden',
+    dropdownId: 'nomineeDropdown',
+    feedbackId: 'nomineeInvalidFeedback'
+});
+
+initStudentAutocomplete({
+    wrapperId: 'deletionAutocomplete',
+    inputId: 'deletionSearchInput',
+    hiddenId: 'deletionIdHidden',
+    dropdownId: 'deletionDropdown',
+    feedbackId: 'deletionInvalidFeedback'
+});
+</script>

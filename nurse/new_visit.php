@@ -13,7 +13,12 @@ if ($preSelectId) {
 
 // Handle student search AJAX
 if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
-    $q = '%' . trim($_GET['search_student']) . '%';
+    $raw = trim($_GET['search_student']);
+    // Validate: only letters, numbers, spaces, dots, hyphens, and commas allowed
+    if (!preg_match('/^[a-zA-Z0-9\s.\-,]+$/', $raw)) {
+        jsonResponse(['results' => [], 'error' => 'Please enter a valid name or student ID (letters, numbers, spaces, dots, and hyphens only).']);
+    }
+    $q = '%' . $raw . '%';
     $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', LEFT(middle_name, 1), '. ', last_name) LIKE ?) LIMIT 10", [$q, $q, $q, $q, $q, $q]);
     jsonResponse(['results' => $results]);
 }
@@ -92,7 +97,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </div>
 
-<form method="POST" class="needs-validation" novalidate>
+<form method="POST" class="needs-validation" data-custom-validation novalidate>
 <?php csrfField(); ?>
 
 <!-- Step 1: Patient Info -->
@@ -337,7 +342,9 @@ function visitStepNav(dir) {
                     stepValid = false;
                     const searchInput = document.getElementById('studentSearchInput');
                     searchInput.classList.add('is-invalid');
-                    document.getElementById('studentInvalidFeedback').style.display = 'block';
+                    const fb = document.getElementById('studentInvalidFeedback');
+                    fb.textContent = 'Please select a student from the dropdown.';
+                    fb.style.display = 'block';
                 }
                 return;
             }
@@ -379,19 +386,35 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
     let debounce   = null;
     let activeIdx  = -1;
 
+    // Only allow letters, numbers, spaces, dots, hyphens, commas
+    const validPattern = /^[a-zA-Z0-9\s.\-,]*$/;
+
     input.addEventListener('input', function() {
-        const q = this.value.trim();
+        const raw = this.value;
         hidden.value = '';
         feedback.style.display = 'none';
         input.classList.remove('is-invalid');
 
+        // Silently strip invalid characters
+        if (!validPattern.test(raw)) {
+            this.value = raw.replace(/[^a-zA-Z0-9\s.\-,]/g, '');
+        }
+
+        const q = this.value.trim();
         clearTimeout(debounce);
         if (q.length < 1) { closeDropdown(); return; }
 
         debounce = setTimeout(() => {
             fetch('new_visit.php?search_student=' + encodeURIComponent(q))
                 .then(r => r.json())
-                .then(data => renderDropdown(data.results || []))
+                .then(data => {
+                    if (data.error) {
+                        dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-exclamation-triangle me-2"></i>' + escHtml(data.error) + '</div>';
+                        dropdown.classList.add('show');
+                        return;
+                    }
+                    renderDropdown(data.results || []);
+                })
                 .catch(() => closeDropdown());
         }, 250);
     });
@@ -479,6 +502,7 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
             e.preventDefault();
             e.stopPropagation();
             input.classList.add('is-invalid');
+            feedback.textContent = 'Please select a student from the dropdown.';
             feedback.style.display = 'block';
             goToVisitStep(1);
             input.focus();
