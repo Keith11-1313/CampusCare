@@ -310,6 +310,326 @@ The system uses **14 tables** across four functional domains:
 
 ---
 
+## Function Reference
+
+A complete reference of all PHP and JavaScript functions used throughout the application, organized by source file.
+
+---
+
+<details>
+<summary><strong>config/database.php</strong> — Database Singleton & Query Helpers</summary>
+
+<br>
+
+> **Class:** `Database` (Singleton pattern via PDO)
+
+| Method | Signature | Returns | Description |
+| ------ | --------- | ------- | ----------- |
+| `getInstance()` | `static getInstance()` | `Database` | Returns the singleton database instance. Creates the PDO connection on first call. |
+| `getConnection()` | `getConnection()` | `PDO` | Returns the raw PDO connection object for advanced use cases. |
+| `query()` | `query(string $sql, array $params = [])` | `PDOStatement` | Executes a prepared SQL statement with optional bound parameters and returns the statement. |
+| `fetchAll()` | `fetchAll(string $sql, array $params = [])` | `array` | Executes a query and returns all matching rows as an associative array. |
+| `fetch()` | `fetch(string $sql, array $params = [])` | `array\|false` | Executes a query and returns a single row as an associative array, or `false` if none found. |
+| `fetchColumn()` | `fetchColumn(string $sql, array $params = [])` | `mixed` | Executes a query and returns the value of the first column of the first row. |
+| `lastInsertId()` | `lastInsertId()` | `string` | Returns the ID of the last inserted row. |
+| `beginTransaction()` | `beginTransaction()` | `bool` | Starts a database transaction. |
+| `commit()` | `commit()` | `bool` | Commits the current transaction. |
+| `rollback()` | `rollback()` | `bool` | Rolls back the current transaction. |
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/session.php</strong> — Session, CSRF & Flash Messages</summary>
+
+<br>
+
+> Handles session initialization (secure cookies, timeout), CSRF token management, and one-time flash messages.
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `getCSRFToken()` | `getCSRFToken()` | `string` | Generates a new CSRF token (64-char hex) or returns the existing one stored in the session. |
+| `validateCSRFToken()` | `validateCSRFToken(string $token)` | `bool` | Validates a submitted CSRF token against the session token using timing-safe comparison (`hash_equals`). |
+| `csrfField()` | `csrfField()` | `void` | Outputs a hidden `<input>` element containing the CSRF token, ready to embed in any HTML form. |
+| `setFlashMessage()` | `setFlashMessage(string $type, string $message)` | `void` | Stores a flash message in the session. Supported types: `success`, `error`, `info`, `warning`. |
+| `getFlashMessage()` | `getFlashMessage(string $type)` | `string\|null` | Retrieves and clears a flash message of the given type. Returns `null` if none exists. |
+| `hasFlashMessage()` | `hasFlashMessage(string $type)` | `bool` | Checks whether a flash message of the given type exists in the session. |
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/auth.php</strong> — Authentication & Role-Based Access Control</summary>
+
+<br>
+
+> Provides authentication guards, role enforcement, user data caching, and audit logging.
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `isLoggedIn()` | `isLoggedIn()` | `bool` | Checks if a user is currently logged in by verifying `$_SESSION['user_id']`. |
+| `requireLogin()` | `requireLogin()` | `void` | Middleware guard — redirects to the login page if the user is not authenticated. Terminates execution via `exit`. |
+| `requireRole()` | `requireRole(string\|array $roles)` | `void` | Middleware guard — checks that the logged-in user has one of the specified roles. Redirects to the user's dashboard if unauthorized. |
+| `getCurrentUser()` | `getCurrentUser()` | `array\|null` | Returns the full user record (with joined program/year-level data) for the logged-in user. Caches in session to avoid repeated DB queries. |
+| `getDashboardUrl()` | `getDashboardUrl(string $role)` | `string` | Returns the dashboard URL for a given role (`admin`, `nurse`, `rep`). Falls back to the login page. |
+| `logAccess()` | `logAccess(int $userId, string $action, string $description = '')` | `void` | Inserts an entry into the `access_logs` table with the user ID, action name, description, and client IP address. |
+| `getUserDisplayName()` | `getUserDisplayName()` | `string` | Returns the current user's full name (`first_name + last_name`) or `'Guest'` if not logged in. |
+| `getRoleDisplayName()` | `getRoleDisplayName(string $role)` | `string` | Converts a role key (`admin`, `nurse`, `rep`) to its human-readable label (e.g., `'School Nurse/Staff'`). |
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/functions.php</strong> — Utility & Helper Functions</summary>
+
+<br>
+
+> Shared utility functions for sanitization, formatting, pagination, and UI rendering used across all modules.
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `e()` | `e(string $string)` | `string` | Escapes a string for safe HTML output using `htmlspecialchars` with `ENT_QUOTES` and `UTF-8` encoding. Primary XSS prevention function. |
+| `sanitize()` | `sanitize(string\|array $input)` | `string\|array` | Sanitizes input by trimming whitespace, stripping HTML tags, and encoding special characters. Recursively handles arrays. |
+| `formatDate()` | `formatDate(string $date, string $format = 'M d, Y')` | `string` | Formats a date string for display. Returns `'N/A'` if the input is empty. |
+| `formatDateTime()` | `formatDateTime(string $datetime, string $format = 'M d, Y h:i A')` | `string` | Formats a datetime string for display with date and time. Returns `'N/A'` if empty. |
+| `formatTime()` | `formatTime(string $time, string $format = 'h:i A')` | `string` | Formats a time string for display (e.g., `'02:30 PM'`). Returns `'N/A'` if empty. |
+| `calculateAge()` | `calculateAge(string $dob)` | `int\|string` | Calculates age in years from a date of birth string. Returns `'N/A'` if the date is empty. |
+| `generatePagination()` | `generatePagination(int $currentPage, int $totalPages, string $baseUrl)` | `string` | Generates Bootstrap-styled pagination HTML with ellipsis, previous/next buttons, and active page highlighting. |
+| `sortableHeader()` | `sortableHeader(string $label, string $column, string $currentSort, string $currentOrder, string $extraClass = '')` | `string` | Generates a clickable `<th>` element for sortable table columns with ascending/descending sort icons. Preserves all existing query parameters. |
+| `statusBadge()` | `statusBadge(string $status)` | `string` | Returns a Bootstrap `<span class="badge">` for a given status string (e.g., `'active'`, `'Completed'`, `'Severe'`). Color-coded by severity/meaning. |
+| `truncate()` | `truncate(string $text, int $length = 100)` | `string` | Truncates text to the specified length, appending an ellipsis (`…`) if truncated. Output is HTML-escaped. |
+| `isActivePage()` | `isActivePage(string\|array $page)` | `string` | Returns `'active'` if the current page basename matches the given page(s). Used for sidebar navigation highlighting. |
+| `ordinal()` | `ordinal(int $number)` | `string` | Returns the number with its ordinal suffix (e.g., `1st`, `2nd`, `3rd`, `4th`). Handles teen exceptions (11th, 12th, 13th). |
+| `redirect()` | `redirect(string $url, string $flashType = null, string $flashMessage = null)` | `void` | Performs an HTTP redirect. Optionally sets a flash message before redirecting. Terminates via `exit`. |
+| `jsonResponse()` | `jsonResponse(array $data, int $statusCode = 200)` | `void` | Sends a JSON response for AJAX endpoints. Clears any buffered output, sets the appropriate headers, and terminates. |
+| `validatePasswordStrength()` | `validatePasswordStrength(string $password)` | `array` | Validates a password against the security policy (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character). Returns an array of error messages (empty = valid). |
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/header.php</strong> — Page Header & Navbar Template</summary>
+
+<br>
+
+> Not a function file — this is an includable template that outputs the HTML `<head>`, CSS imports (Bootstrap, Bootstrap Icons, Google Fonts, custom styles), and the top navigation bar for authenticated users. The navbar includes:
+>
+> - Sidebar toggle button (mobile)
+> - Brand logo and name
+> - User dropdown menu (avatar initials, full name, role label)
+> - Links to **Change Password**, **Security Question**, and **Logout**
+>
+> **Usage:** Set `$pageTitle` before including this file.
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/sidebar.php</strong> — Role-Aware Sidebar Navigation</summary>
+
+<br>
+
+> Not a function file — this is an includable template that renders the sidebar navigation based on the user's role. Each role sees a different set of menu items:
+>
+> | Role | Navigation Links |
+> | ---- | ---------------- |
+> | **Admin** | Dashboard, User Management, Programs, Student Records, Pending Requests, Archived Records, Reports, Activity Logs |
+> | **Nurse** | Dashboard, New Visit, Visit History, Student Records, Reports, Manage Content |
+> | **Class Rep** | Dashboard, Manage Students |
+>
+> Also renders the mobile overlay for responsive sidebar toggle behavior.
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/footer.php</strong> — Page Footer & Flash Message Display</summary>
+
+<br>
+
+> Not a function file — this is an includable template that closes the `<main>` content wrapper and loads JavaScript dependencies:
+>
+> - **Bootstrap JS Bundle** — interactive components (modals, dropdowns, tooltips)
+> - **SweetAlert2** — styled alerts and toast notifications
+> - **Chart.js** — data visualization charts
+> - **Custom JS** (`js/app.js`) — application utilities
+>
+> Also checks for flash messages (`success`, `error`, `info`, `warning`) and displays them as SweetAlert2 toast notifications.
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/export_pdf.php</strong> — PDF Report Generation (Chart.js + Print)</summary>
+
+<br>
+
+> Not a standalone function file — this is a full page that generates a printable/PDF clinic visits report. Requires `admin` or `nurse` role.
+>
+> **Features:**
+> - Dynamic filtering by date range, program, year level, and section
+> - Configurable sort order for visit records (12 options)
+> - Selectable report sections via `$_GET['sections']` array
+> - Optional page breaks and landscape orientation
+> - Chart.js visualizations converted to images for print
+>
+> **Report sections include:**
+>
+> | Section Key | Content |
+> | ----------- | ------- |
+> | `summary` | Total visits, unique patients, avg visits/day stat boxes |
+> | `visits_month` | Bar chart + data table of visits by month |
+> | `visits_program` | Doughnut chart + data table of visits by program |
+> | `top_complaints` | Podium-style bar chart + ranked table of top 10 health complaints |
+> | `visit_status` | Doughnut chart + table of status distribution (Completed/Follow-up/Referred) |
+> | `top_allergens` | Horizontal bar chart + table of top 5 allergens |
+> | `top_vaccines` | Horizontal bar chart + table of top 5 vaccines |
+> | `top_conditions` | Ranked table of top 4 chronic conditions |
+> | `visit_records` | Full visit records table with all columns |
+>
+> **Inline JavaScript functions:**
+>
+> | Function | Description |
+> | -------- | ----------- |
+> | `preparePrint()` | Converts all Chart.js canvases to static PNG images, then triggers `window.print()`. |
+> | `goBack()` | Navigates back to the reports page via `history.back()` or direct URL. |
+
+</details>
+
+---
+
+<details>
+<summary><strong>includes/export_students_csv.php</strong> — CSV Student Records Export</summary>
+
+<br>
+
+> Not a standalone function file — this is an endpoint that exports student records as a CSV file. Requires `rep` role.
+>
+> **Behavior:**
+> 1. Scopes query to the class rep's assigned program, year level, and section
+> 2. Supports optional search filtering (student ID, name, full name combinations)
+> 3. Outputs a downloadable CSV with 14 columns: Student ID, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Type, Contact Number, Email, Address, Program Code, Program Name, Year Level, Section
+> 4. Logs the export action to the audit trail
+>
+> **Output filename format:** `CampusCare_Students_YYYY-MM-DD.csv`
+
+</details>
+
+---
+
+<details>
+<summary><strong>export_firstaid_pdf.php</strong> — First Aid Guideline PDF Export (Dompdf)</summary>
+
+<br>
+
+> Public endpoint (no login required) that generates a styled PDF of a first-aid guideline using **Dompdf**.
+>
+> **Usage:** `export_firstaid_pdf.php?id=<guideline_id>`
+>
+> **Behavior:**
+> 1. Validates the guideline ID from the query string
+> 2. Fetches the guideline from the `first_aid_guidelines` table (only active records)
+> 3. Embeds the guideline icon and app logo as base64 data URIs for portability
+> 4. Renders a styled HTML document with header, title, content, and footer
+> 5. Generates an A4 portrait PDF and streams it as a download
+>
+> **Output filename format:** `FirstAid_<sanitized_title>.pdf`
+
+</details>
+
+---
+
+<details>
+<summary><strong>js/app.js</strong> — Client-Side Utilities & UI Helpers</summary>
+
+<br>
+
+> Main JavaScript file loaded on every authenticated page. Provides SweetAlert2 wrappers, form validation, search utilities, and UI helpers.
+
+#### SweetAlert2 Helpers
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `showAlert()` | `showAlert(icon, title, text)` | `Promise` | Displays a SweetAlert2 modal dialog with the given icon (`success`, `error`, `warning`, `info`), title, and body text. |
+| `showToast()` | `showToast(icon, title)` | `Promise` | Displays a toast notification in the top-right corner. Auto-dismisses after 3 seconds with a progress bar. Pauses on hover. |
+| `scheduleToast()` | `scheduleToast(icon, title)` | `void` | Saves toast data to `sessionStorage` and reloads the page. The toast is displayed after the reload (useful for post-action feedback). |
+| `showConfirm()` | `showConfirm(title, text, confirmText, icon)` | `Promise` | Displays a confirmation dialog with confirm/cancel buttons. Returns a Promise that resolves with the user's choice. |
+| `showDeleteConfirm()` | `showDeleteConfirm(itemName)` | `Promise` | Displays a delete-specific confirmation dialog with a red confirm button and trash icon. |
+
+#### Form & Validation
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `initFormValidation()` | `initFormValidation()` | `void` | Initializes Bootstrap's client-side validation on all forms with the `.needs-validation` class. Focuses the first invalid field and shows an error toast on submit. |
+
+#### Date Formatting
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `initDateFormatOverride()` | `initDateFormatOverride()` | `void` | Overrides all `<input type="date">` elements to display dates in `mm/dd/yyyy` format using CSS `data-display` attributes. Uses a `MutationObserver` to handle dynamically added inputs. |
+
+#### Search
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `debounce()` | `debounce(func, wait)` | `Function` | Returns a debounced version of the given function that delays invocation until `wait` milliseconds after the last call. |
+| `initLiveSearch()` | `initLiveSearch(inputSelector, targetUrl, resultContainerId)` | `void` | Attaches a debounced (300ms) live search handler to an input field. Sends AJAX requests to `targetUrl` and populates the result container with the HTML response. |
+
+#### AJAX Helpers
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `postForm()` | `postForm(url, formData)` | `Promise<Object>` | Sends a POST request with `FormData` body and returns the parsed JSON response. Includes the `X-Requested-With: XMLHttpRequest` header. |
+| `postJson()` | `postJson(url, data)` | `Promise<Object>` | Sends a POST request with a JSON body and returns the parsed JSON response. Sets `Content-Type: application/json`. |
+
+#### Utility Functions
+
+| Function | Signature | Returns | Description |
+| -------- | --------- | ------- | ----------- |
+| `formatNumber()` | `formatNumber(num)` | `string` | Formats a number with comma separators (e.g., `1000` → `'1,000'`). |
+| `copyToClipboard()` | `copyToClipboard(text)` | `void` | Copies the given text to the clipboard using the Clipboard API and shows a success toast. |
+| `printSection()` | `printSection(elementId)` | `void` | Opens a new window with the content of the specified element (by ID), includes Bootstrap styles, and triggers the browser print dialog. |
+
+</details>
+
+---
+
+<details>
+<summary><strong>config/config.php</strong> — Application Configuration Constants</summary>
+
+<br>
+
+> Defines all application-wide constants. No functions — constants only.
+
+| Constant | Default Value | Description |
+| -------- | ------------- | ----------- |
+| `DB_HOST` | `'localhost'` | Database server hostname |
+| `DB_NAME` | `'campuscare'` | Database name |
+| `DB_USER` | `'root'` | Database username |
+| `DB_PASS` | `''` | Database password |
+| `DB_CHARSET` | `'utf8mb4'` | Database character set |
+| `APP_NAME` | `'CampusCare'` | Application display name |
+| `APP_TAGLINE` | `'School Clinic Patient Information Record System'` | Application tagline |
+| `APP_VERSION` | `'1.0.0'` | Application version string |
+| `BASE_URL` | `'/CampusCare'` | Base URL path (adjust for deployment) |
+| `SESSION_LIFETIME` | `3600` | Session timeout in seconds (1 hour) |
+| `SESSION_NAME` | `'CAMPUSCARE_SESSION'` | PHP session cookie name |
+| `ROOT_PATH` | *(auto-detected)* | Absolute path to project root |
+| `INCLUDES_PATH` | *(auto-detected)* | Absolute path to `includes/` directory |
+| `CONFIG_PATH` | *(auto-detected)* | Absolute path to `config/` directory |
+| `LIBS_PATH` | *(auto-detected)* | Absolute path to `libs/` directory |
+
+</details>
+
+---
+
 ## License
 
 This project is for educational purposes.
