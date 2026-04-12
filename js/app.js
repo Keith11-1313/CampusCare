@@ -154,6 +154,9 @@ function showDeleteConfirm(itemName) {
 function initFormValidation() {
     const forms = document.querySelectorAll('.needs-validation');
     forms.forEach(function (form) {
+        // Skip forms with custom validation (e.g. stepper forms)
+        if (form.hasAttribute('data-custom-validation')) return;
+
         form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
                 event.preventDefault();

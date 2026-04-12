@@ -11,7 +11,12 @@ $section = $user['assigned_section'] ?? null;
 
 // Handle student search AJAX (scoped to rep's section)
 if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
-    $q = '%' . trim($_GET['search_student']) . '%';
+    $raw = trim($_GET['search_student']);
+    // Validate: only letters, numbers, spaces, dots, hyphens, and commas allowed
+    if (!preg_match('/^[a-zA-Z0-9\s.\-,]+$/', $raw)) {
+        jsonResponse(['results' => [], 'error' => 'Please enter a valid name or student ID (letters, numbers, spaces, dots, and hyphens only).']);
+    }
+    $q = '%' . $raw . '%';
     $sectionParams = [];
     $sectionFilter = '';
     if ($programId) { $sectionFilter .= " AND program_id=?"; $sectionParams[] = $programId; }
@@ -398,19 +403,35 @@ function initStudentAutocomplete(config) {
     let debounce  = null;
     let activeIdx = -1;
 
+    // Only allow letters, numbers, spaces, dots, hyphens, commas
+    const validPattern = /^[a-zA-Z0-9\s.\-,]*$/;
+
     input.addEventListener('input', function() {
-        const q = this.value.trim();
+        const raw = this.value;
         hidden.value = '';
         if (feedback) feedback.style.display = 'none';
         input.classList.remove('is-invalid');
 
+        // Silently strip invalid characters
+        if (!validPattern.test(raw)) {
+            this.value = raw.replace(/[^a-zA-Z0-9\s.\-,]/g, '');
+        }
+
+        const q = this.value.trim();
         clearTimeout(debounce);
         if (q.length < 1) { closeDropdown(); return; }
 
         debounce = setTimeout(() => {
             fetch('requests.php?search_student=' + encodeURIComponent(q))
                 .then(r => r.json())
-                .then(data => renderDropdown(data.results || []))
+                .then(data => {
+                    if (data.error) {
+                        dropdown.innerHTML = '<div class="student-ac-empty"><i class="bi bi-exclamation-triangle me-2"></i>' + escHtml(data.error) + '</div>';
+                        dropdown.classList.add('show');
+                        return;
+                    }
+                    renderDropdown(data.results || []);
+                })
                 .catch(() => closeDropdown());
         }, 250);
     });
@@ -499,7 +520,10 @@ function initStudentAutocomplete(config) {
                 e.preventDefault();
                 e.stopPropagation();
                 input.classList.add('is-invalid');
-                if (feedback) feedback.style.display = 'block';
+                if (feedback) {
+                    feedback.textContent = 'Please select a student from the dropdown.';
+                    feedback.style.display = 'block';
+                }
                 input.focus();
             }
         });
