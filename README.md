@@ -310,321 +310,351 @@ The system uses **14 tables** across four functional domains:
 
 ---
 
-## Function Reference
+## Page Features & Functionalities
 
-A complete reference of all PHP and JavaScript functions used throughout the application, organized by source file.
+A detailed breakdown of every page's UI components and features, organized by module.
 
 ---
 
+### Public Pages
+
 <details>
-<summary><strong>config/database.php</strong> — Database Singleton & Query Helpers</summary>
+<summary><strong>index.php</strong> — Public Landing Page</summary>
 
 <br>
 
-> **Class:** `Database` (Singleton pattern via PDO)
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Navbar** | Fixed-top navbar, responsive hamburger toggle, anchor links, CTA button | Sticky navigation with smooth-scroll links to each section and a **"Staff Login"** CTA button |
+| **Hero Section** | Image carousel (4 slides), animated background blobs, CTA buttons | Auto-sliding Bootstrap carousel (2.5s interval) with clinic photos, prev/next controls, dot indicators. Two CTA buttons: **"Latest Updates"** and **"Emergencies"** |
+| **Announcements** | Card grid (3 columns), date badges | Displays up to 6 published announcements in responsive cards with "New" badges and formatted dates |
+| **First Aid Guidelines** | Expandable cards, collapse/expand with chevron animation, PDF export button | Each guideline is a clickable card that expands to reveal content (from Quill editor). Includes a **"Save as PDF"** button that triggers Dompdf export |
+| **FAQs** | Bootstrap accordion | Collapsible accordion with the first item expanded by default. Question/answer format |
+| **Emergency Contacts** | Contact cards with phone icons, clickable `tel:` links | Displays emergency contacts with name, role, and tappable phone numbers |
+| **Clinic Hours** | Day-by-day schedule list, live "Open/Closed" status badge | Weekly schedule with icons per day, highlights today's row, shows real-time open/closed status based on current server time |
+| **Footer** | Centered branding | Logo, app name, and year |
+| **Scroll Behavior** | Smooth scroll JS, navbar scroll effect | Smooth-scrolls to anchors with 80px offset; navbar gains `.scrolled` class on scroll for visual effect |
 
-| Method | Signature | Returns | Description |
-| ------ | --------- | ------- | ----------- |
-| `getInstance()` | `static getInstance()` | `Database` | Returns the singleton database instance. Creates the PDO connection on first call. |
-| `getConnection()` | `getConnection()` | `PDO` | Returns the raw PDO connection object for advanced use cases. |
-| `query()` | `query(string $sql, array $params = [])` | `PDOStatement` | Executes a prepared SQL statement with optional bound parameters and returns the statement. |
-| `fetchAll()` | `fetchAll(string $sql, array $params = [])` | `array` | Executes a query and returns all matching rows as an associative array. |
-| `fetch()` | `fetch(string $sql, array $params = [])` | `array\|false` | Executes a query and returns a single row as an associative array, or `false` if none found. |
-| `fetchColumn()` | `fetchColumn(string $sql, array $params = [])` | `mixed` | Executes a query and returns the value of the first column of the first row. |
-| `lastInsertId()` | `lastInsertId()` | `string` | Returns the ID of the last inserted row. |
-| `beginTransaction()` | `beginTransaction()` | `bool` | Starts a database transaction. |
-| `commit()` | `commit()` | `bool` | Commits the current transaction. |
-| `rollback()` | `rollback()` | `bool` | Rolls back the current transaction. |
+</details>
+
+<details>
+<summary><strong>login.php</strong> — Login & Password Recovery</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Login Card** | Split-panel card (left: form, right: welcome), animated background blobs, fade-in animation | Two-panel layout with sign-in form on the left and a branded welcome panel with logo on the right |
+| **Sign-In Form** | Username input, password input with toggle visibility, submit button, CSRF token | Standard login with password eye-toggle icon and Bootstrap validation |
+| **Forgot Password Link** | Modal trigger link | Opens the forgot password modal |
+| **Forgot Password Modal** | Method selection cards, multi-step wizard | Two recovery options presented as styled cards with icons and chevrons |
+| **→ Contact Admin Flow** | Form with username, reason textarea, new password + confirm fields, password strength checklist, info alert | Submits a password reset request to the admin. Includes live password validation with checkmark indicators |
+| **→ Security Question Flow** | 3-step wizard with progress dots, AJAX-powered steps, loading spinners | **Step 1:** Enter username → **Step 2:** Answer security question → **Step 3:** Set new password. Each step uses AJAX with error handling and spinner feedback |
+| **Password Strength UI** | Live checklist (5 rules), color-coded icons | Real-time password validation showing ✓/✗ for: length, uppercase, lowercase, number, special character |
+| **SweetAlert2 Feedback** | Success/error popups | Displays styled alerts for submission results |
+
+</details>
+
+<details>
+<summary><strong>change_password.php</strong> — Change Password</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Password Form** | Current password, new password, confirm password with toggle visibility buttons | Stepper-style flow for changing password with live strength validation |
+| **Strength Checklist** | Real-time validation list, reuse prevention check | Validates against the 5 rules plus checks that the new password differs from the current one |
+
+</details>
+
+<details>
+<summary><strong>change_security_question.php</strong> — Change Security Question</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Security Form** | Current password verification, question dropdown, answer input | Users must verify their current password before changing their security question and answer |
 
 </details>
 
 ---
 
+### Admin Module (`admin/`)
+
 <details>
-<summary><strong>includes/session.php</strong> — Session, CSRF & Flash Messages</summary>
+<summary><strong>admin/dashboard.php</strong> — Admin Dashboard</summary>
 
 <br>
 
-> Handles session initialization (secure cookies, timeout), CSRF token management, and one-time flash messages.
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Page Header** | Welcome message, current date | Personalized greeting with today's date |
+| **Statistics Cards** | 4 clickable stat cards with icons, hover lift animation, month-over-month % change | **Registered Students**, **Active Nurses**, **Visits This Month** (with ↑/↓ % vs last month), **Pending Requests** (with "Review now" link). Each card links to its respective page |
+| **Visits – Last 7 Days** | Bar chart (Chart.js), backfilled missing days | Vertical bar chart showing daily visit counts for the past week |
+| **Quick Actions** | Button list (4 actions) | Shortcut buttons: Manage Users, View Reports, Access Logs, Archived Records |
+| **Students by Year Level** | Horizontal bar chart (Chart.js), color-coded bars | Displays student distribution across year levels |
+| **Top Complaints This Month** | Doughnut chart (Chart.js) with legend | Shows the top 6 complaint categories for the current month |
+| **Recent Visits** | Data table (10 rows), status badges, "View Reports" link | Displays student name, ID, complaint, date, attending nurse, and color-coded status badges |
+| **Visit Status This Month** | Doughnut chart (Chart.js) | Distribution of Completed / Follow-up / Referred visits |
+| **Recent Activity Feed** | Activity timeline with icons, color-coded by action type | Shows last 5 access log entries with user name, action, and timestamp. Icons differentiate logins, warnings, and general actions |
 
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `getCSRFToken()` | `getCSRFToken()` | `string` | Generates a new CSRF token (64-char hex) or returns the existing one stored in the session. |
-| `validateCSRFToken()` | `validateCSRFToken(string $token)` | `bool` | Validates a submitted CSRF token against the session token using timing-safe comparison (`hash_equals`). |
-| `csrfField()` | `csrfField()` | `void` | Outputs a hidden `<input>` element containing the CSRF token, ready to embed in any HTML form. |
-| `setFlashMessage()` | `setFlashMessage(string $type, string $message)` | `void` | Stores a flash message in the session. Supported types: `success`, `error`, `info`, `warning`. |
-| `getFlashMessage()` | `getFlashMessage(string $type)` | `string\|null` | Retrieves and clears a flash message of the given type. Returns `null` if none exists. |
-| `hasFlashMessage()` | `hasFlashMessage(string $type)` | `bool` | Checks whether a flash message of the given type exists in the session. |
+</details>
+
+<details>
+<summary><strong>admin/users.php</strong> — User Management</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Page Header** | Breadcrumb, "Add User" button | Navigation breadcrumb and primary action button |
+| **Filter Bar** | Search input with icon, role dropdown filter, Clear/Filter button | Real-time search across username, name, email; filter by role (Admin/Nurse/Class Rep) |
+| **Users Table** | Sortable columns, pagination, action buttons | Sortable by User, Username, Role, Last Login, Status. Shows assignment info for class reps. Edit and Archive action buttons per row |
+| **Add/Edit User Modal** | 3-step stepper wizard (Personal Info → Account → Assignment) | **Step 1:** First name, last name, email with real-time keystroke validation (letters only). **Step 2:** Username, password with strength checklist + confirmed, role selector. **Step 3:** Program/year/section assignment (only shown for Class Rep role). Step validation prevents advancing with errors (shake animation) |
+| **Deactivation Modal** | Reason dropdown (6 options), optional "Other" textarea | Requires a reason before archiving a user. Prevents self-deactivation |
+| **Rep Replacement Flow** | Prefill alert banner, auto-deactivation of old rep | When approving a replacement request, pre-fills the Add User modal and auto-deactivates the outgoing class rep upon save |
+
+</details>
+
+<details>
+<summary><strong>admin/programs.php</strong> — Program Management</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Programs Table** | Sortable table, CRUD actions | List of academic programs with code, name, and student count |
+| **Add/Edit Modal** | Form with input validation (special character prevention) | Code and name fields with real-time keystroke filtering to block special characters |
+
+</details>
+
+<details>
+<summary><strong>admin/students.php</strong> — Student Records (Admin View)</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Student Table** | Search, sortable columns, pagination | Read-only view of all active student records with filtering |
+
+</details>
+
+<details>
+<summary><strong>admin/current_requests.php</strong> — Pending Requests</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Requests Table** | Request type badges, status badges, action buttons | Lists all pending requests (replacement, deletion, password reset) |
+| **Password Reset Approval** | One-click approve button | Approves the request and applies the pre-stored hashed password to the user's account |
+| **Replacement Approval** | Redirects to user creation with pre-filled data | Navigates to the Add User modal with nominee details pre-populated |
+| **Reject Action** | SweetAlert2 confirmation | Confirms before rejecting a request |
+
+</details>
+
+<details>
+<summary><strong>admin/archive.php</strong> — Archived Records</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Tab Navigation** | Bootstrap tabs (Students, Users, Programs) | Three tabs to switch between archived record types |
+| **Archive Tables** | Restore and permanent delete buttons, SweetAlert2 confirmations | Each record has a Restore button and a Delete button with confirmation dialog |
+
+</details>
+
+<details>
+<summary><strong>admin/reports.php</strong> — Reports & Analytics</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Filter Panel** | Date range pickers, program/year/section dropdowns | Filter report data by date range and academic grouping |
+| **Generate PDF Modal** | Section checkboxes, sort order dropdown, page break toggle, landscape toggle | Allows selecting which report sections to include, sort order for visit records, and layout preferences |
+| **Charts** | Chart.js visualizations (bar, doughnut, horizontal bar) | Visits by month, visits by program, top complaints (podium chart), visit status, top allergens, top vaccines |
+| **Print/PDF Export** | Canvas-to-image conversion, `window.print()` | Converts Chart.js canvases to static PNG images before triggering the print dialog |
+
+</details>
+
+<details>
+<summary><strong>admin/access_logs.php</strong> — Activity Logs</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Logs Table** | Sortable columns, search, pagination | Full audit trail showing user, action, description, IP address, and timestamp |
+| **Filter** | Search input, date filter | Filter logs by user, action type, or time period |
 
 </details>
 
 ---
 
+### Nurse Module (`nurse/`)
+
 <details>
-<summary><strong>includes/auth.php</strong> — Authentication & Role-Based Access Control</summary>
+<summary><strong>nurse/dashboard.php</strong> — Nurse Dashboard</summary>
 
 <br>
 
-> Provides authentication guards, role enforcement, user data caching, and audit logging.
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Statistics Cards** | Stat cards with icons | Visit counts and trends for the nurse |
+| **Charts** | Chart.js visualizations | Visit statistics and trends relevant to the nurse role |
+| **Recent Visits** | Data table | Quick overview of latest clinic visits |
 
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `isLoggedIn()` | `isLoggedIn()` | `bool` | Checks if a user is currently logged in by verifying `$_SESSION['user_id']`. |
-| `requireLogin()` | `requireLogin()` | `void` | Middleware guard — redirects to the login page if the user is not authenticated. Terminates execution via `exit`. |
-| `requireRole()` | `requireRole(string\|array $roles)` | `void` | Middleware guard — checks that the logged-in user has one of the specified roles. Redirects to the user's dashboard if unauthorized. |
-| `getCurrentUser()` | `getCurrentUser()` | `array\|null` | Returns the full user record (with joined program/year-level data) for the logged-in user. Caches in session to avoid repeated DB queries. |
-| `getDashboardUrl()` | `getDashboardUrl(string $role)` | `string` | Returns the dashboard URL for a given role (`admin`, `nurse`, `rep`). Falls back to the login page. |
-| `logAccess()` | `logAccess(int $userId, string $action, string $description = '')` | `void` | Inserts an entry into the `access_logs` table with the user ID, action name, description, and client IP address. |
-| `getUserDisplayName()` | `getUserDisplayName()` | `string` | Returns the current user's full name (`first_name + last_name`) or `'Guest'` if not logged in. |
-| `getRoleDisplayName()` | `getRoleDisplayName(string $role)` | `string` | Converts a role key (`admin`, `nurse`, `rep`) to its human-readable label (e.g., `'School Nurse/Staff'`). |
+</details>
+
+<details>
+<summary><strong>nurse/new_visit.php</strong> — New Visit / Log Visit</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Student Search** | Live search input | Search and select a student to log a visit for |
+| **Visit Form** | Vitals inputs, complaint category dropdown, complaint text, clinical assessment (required), treatment notes, status selector | Comprehensive visit logging form with categorized complaint dropdown and required assessment field |
+
+</details>
+
+<details>
+<summary><strong>nurse/students.php</strong> — Student Records (Nurse View)</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Student Table** | Search (supports full-name search), sortable columns, pagination | Searchable list of all students with links to individual profiles |
+
+</details>
+
+<details>
+<summary><strong>nurse/student_profile.php</strong> — Student Health Profile</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Personal Information** | Read-only info card | Student's demographic and contact data |
+| **Allergies** | CRUD table with categorized `<optgroup>` dropdown | Add/edit/delete allergens organized by category (Food, Drug, Environmental, etc.) with severity badge |
+| **Chronic Conditions** | CRUD table with categorized dropdown | Manage chronic conditions with status tracking (Active/Resolved) |
+| **Medications** | CRUD table | Current and past medication records |
+| **Immunizations** | CRUD table with categorized dropdown, edit action | Vaccine records organized by category with date tracking |
+| **Emergency Contacts** | CRUD table | Emergency contact persons with phone and relationship |
+| **Visit History** | Data table with status badges | All clinic visits for this student in reverse chronological order |
+| **Clinical Notes Form** | Assessment (required), treatment fields | Form to add clinical notes to visits |
+
+</details>
+
+<details>
+<summary><strong>nurse/visits.php</strong> — Visit History</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Filter Bar** | Search (full-name support), date range, status filter | Multi-criteria filtering for visit records |
+| **Visits Table** | Sortable columns, pagination, status badges | Comprehensive visit record list with sorting and color-coded statuses |
+
+</details>
+
+<details>
+<summary><strong>nurse/reports.php</strong> — Nurse Reports</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Charts & Reports** | Same as admin reports — Chart.js + PDF export | Full reporting suite with chart visualizations and PDF export capability |
+
+</details>
+
+<details>
+<summary><strong>nurse/content.php</strong> — Public Content Management</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Tab Navigation** | Bootstrap tabs (Announcements, FAQs, First Aid, Emergency Contacts, Clinic Hours) | Five content areas managed via tabs |
+| **Announcements** | CRUD table, Quill rich text editor in modal | Create/edit/delete announcements with rich text content and publish/draft status toggle |
+| **FAQs** | CRUD table | Question and answer management |
+| **First Aid Guidelines** | CRUD table, icon selector, Quill editor | Create guidelines with custom SVG icons and rich text content |
+| **Emergency Contacts** | CRUD table, drag-and-drop sort order | Manage emergency contacts with sortable display order |
+| **Clinic Hours** | Editable day-by-day schedule | Set opening/closing times, closed days, and notes per day of the week |
 
 </details>
 
 ---
 
+### Class Representative Module (`rep/`)
+
 <details>
-<summary><strong>includes/functions.php</strong> — Utility & Helper Functions</summary>
+<summary><strong>rep/dashboard.php</strong> — Class Rep Dashboard</summary>
 
 <br>
 
-> Shared utility functions for sanitization, formatting, pagination, and UI rendering used across all modules.
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Section Overview** | Stat cards | Student count for the assigned program/year/section |
+| **Student Summary** | Quick-glance table | Overview of students in the rep's assigned section |
 
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `e()` | `e(string $string)` | `string` | Escapes a string for safe HTML output using `htmlspecialchars` with `ENT_QUOTES` and `UTF-8` encoding. Primary XSS prevention function. |
-| `sanitize()` | `sanitize(string\|array $input)` | `string\|array` | Sanitizes input by trimming whitespace, stripping HTML tags, and encoding special characters. Recursively handles arrays. |
-| `formatDate()` | `formatDate(string $date, string $format = 'M d, Y')` | `string` | Formats a date string for display. Returns `'N/A'` if the input is empty. |
-| `formatDateTime()` | `formatDateTime(string $datetime, string $format = 'M d, Y h:i A')` | `string` | Formats a datetime string for display with date and time. Returns `'N/A'` if empty. |
-| `formatTime()` | `formatTime(string $time, string $format = 'h:i A')` | `string` | Formats a time string for display (e.g., `'02:30 PM'`). Returns `'N/A'` if empty. |
-| `calculateAge()` | `calculateAge(string $dob)` | `int\|string` | Calculates age in years from a date of birth string. Returns `'N/A'` if the date is empty. |
-| `generatePagination()` | `generatePagination(int $currentPage, int $totalPages, string $baseUrl)` | `string` | Generates Bootstrap-styled pagination HTML with ellipsis, previous/next buttons, and active page highlighting. |
-| `sortableHeader()` | `sortableHeader(string $label, string $column, string $currentSort, string $currentOrder, string $extraClass = '')` | `string` | Generates a clickable `<th>` element for sortable table columns with ascending/descending sort icons. Preserves all existing query parameters. |
-| `statusBadge()` | `statusBadge(string $status)` | `string` | Returns a Bootstrap `<span class="badge">` for a given status string (e.g., `'active'`, `'Completed'`, `'Severe'`). Color-coded by severity/meaning. |
-| `truncate()` | `truncate(string $text, int $length = 100)` | `string` | Truncates text to the specified length, appending an ellipsis (`…`) if truncated. Output is HTML-escaped. |
-| `isActivePage()` | `isActivePage(string\|array $page)` | `string` | Returns `'active'` if the current page basename matches the given page(s). Used for sidebar navigation highlighting. |
-| `ordinal()` | `ordinal(int $number)` | `string` | Returns the number with its ordinal suffix (e.g., `1st`, `2nd`, `3rd`, `4th`). Handles teen exceptions (11th, 12th, 13th). |
-| `redirect()` | `redirect(string $url, string $flashType = null, string $flashMessage = null)` | `void` | Performs an HTTP redirect. Optionally sets a flash message before redirecting. Terminates via `exit`. |
-| `jsonResponse()` | `jsonResponse(array $data, int $statusCode = 200)` | `void` | Sends a JSON response for AJAX endpoints. Clears any buffered output, sets the appropriate headers, and terminates. |
-| `validatePasswordStrength()` | `validatePasswordStrength(string $password)` | `array` | Validates a password against the security policy (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character). Returns an array of error messages (empty = valid). |
+</details>
+
+<details>
+<summary><strong>rep/students.php</strong> — Manage Students</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Student Table** | Search, sortable columns, pagination, CRUD actions | Scoped to the rep's assigned program/year/section |
+| **Add/Edit Student Modal** | Student information form with validation | Create and update student records within the assigned scope |
+| **CSV Export** | Export button | Downloads student records as a CSV file with 14 columns |
+| **Delete Action** | SweetAlert2 confirmation | Submits a deletion request to admin for approval |
+
+</details>
+
+<details>
+<summary><strong>rep/request_change.php</strong> — Replacement & Deletion Requests</summary>
+
+<br>
+
+| Section | UI Components | Description |
+| ------- | ------------- | ----------- |
+| **Replacement Request** | Form with nominee student selection, reason textarea | Submit a request to be replaced by another student as class representative |
+| **Request History** | Status-tagged list | View past requests and their statuses (Pending/Approved/Rejected) |
 
 </details>
 
 ---
 
+### Shared Components
+
 <details>
-<summary><strong>includes/header.php</strong> — Page Header & Navbar Template</summary>
+<summary><strong>Shared UI Components</strong> — Used across all modules</summary>
 
 <br>
 
-> Not a function file — this is an includable template that outputs the HTML `<head>`, CSS imports (Bootstrap, Bootstrap Icons, Google Fonts, custom styles), and the top navigation bar for authenticated users. The navbar includes:
->
-> - Sidebar toggle button (mobile)
-> - Brand logo and name
-> - User dropdown menu (avatar initials, full name, role label)
-> - Links to **Change Password**, **Security Question**, and **Logout**
->
-> **Usage:** Set `$pageTitle` before including this file.
-
-</details>
-
----
-
-<details>
-<summary><strong>includes/sidebar.php</strong> — Role-Aware Sidebar Navigation</summary>
-
-<br>
-
-> Not a function file — this is an includable template that renders the sidebar navigation based on the user's role. Each role sees a different set of menu items:
->
-> | Role | Navigation Links |
-> | ---- | ---------------- |
-> | **Admin** | Dashboard, User Management, Programs, Student Records, Pending Requests, Archived Records, Reports, Activity Logs |
-> | **Nurse** | Dashboard, New Visit, Visit History, Student Records, Reports, Manage Content |
-> | **Class Rep** | Dashboard, Manage Students |
->
-> Also renders the mobile overlay for responsive sidebar toggle behavior.
-
-</details>
-
----
-
-<details>
-<summary><strong>includes/footer.php</strong> — Page Footer & Flash Message Display</summary>
-
-<br>
-
-> Not a function file — this is an includable template that closes the `<main>` content wrapper and loads JavaScript dependencies:
->
-> - **Bootstrap JS Bundle** — interactive components (modals, dropdowns, tooltips)
-> - **SweetAlert2** — styled alerts and toast notifications
-> - **Chart.js** — data visualization charts
-> - **Custom JS** (`js/app.js`) — application utilities
->
-> Also checks for flash messages (`success`, `error`, `info`, `warning`) and displays them as SweetAlert2 toast notifications.
-
-</details>
-
----
-
-<details>
-<summary><strong>includes/export_pdf.php</strong> — PDF Report Generation (Chart.js + Print)</summary>
-
-<br>
-
-> Not a standalone function file — this is a full page that generates a printable/PDF clinic visits report. Requires `admin` or `nurse` role.
->
-> **Features:**
-> - Dynamic filtering by date range, program, year level, and section
-> - Configurable sort order for visit records (12 options)
-> - Selectable report sections via `$_GET['sections']` array
-> - Optional page breaks and landscape orientation
-> - Chart.js visualizations converted to images for print
->
-> **Report sections include:**
->
-> | Section Key | Content |
-> | ----------- | ------- |
-> | `summary` | Total visits, unique patients, avg visits/day stat boxes |
-> | `visits_month` | Bar chart + data table of visits by month |
-> | `visits_program` | Doughnut chart + data table of visits by program |
-> | `top_complaints` | Podium-style bar chart + ranked table of top 10 health complaints |
-> | `visit_status` | Doughnut chart + table of status distribution (Completed/Follow-up/Referred) |
-> | `top_allergens` | Horizontal bar chart + table of top 5 allergens |
-> | `top_vaccines` | Horizontal bar chart + table of top 5 vaccines |
-> | `top_conditions` | Ranked table of top 4 chronic conditions |
-> | `visit_records` | Full visit records table with all columns |
->
-> **Inline JavaScript functions:**
->
-> | Function | Description |
-> | -------- | ----------- |
-> | `preparePrint()` | Converts all Chart.js canvases to static PNG images, then triggers `window.print()`. |
-> | `goBack()` | Navigates back to the reports page via `history.back()` or direct URL. |
-
-</details>
-
----
-
-<details>
-<summary><strong>includes/export_students_csv.php</strong> — CSV Student Records Export</summary>
-
-<br>
-
-> Not a standalone function file — this is an endpoint that exports student records as a CSV file. Requires `rep` role.
->
-> **Behavior:**
-> 1. Scopes query to the class rep's assigned program, year level, and section
-> 2. Supports optional search filtering (student ID, name, full name combinations)
-> 3. Outputs a downloadable CSV with 14 columns: Student ID, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Type, Contact Number, Email, Address, Program Code, Program Name, Year Level, Section
-> 4. Logs the export action to the audit trail
->
-> **Output filename format:** `CampusCare_Students_YYYY-MM-DD.csv`
-
-</details>
-
----
-
-<details>
-<summary><strong>export_firstaid_pdf.php</strong> — First Aid Guideline PDF Export (Dompdf)</summary>
-
-<br>
-
-> Public endpoint (no login required) that generates a styled PDF of a first-aid guideline using **Dompdf**.
->
-> **Usage:** `export_firstaid_pdf.php?id=<guideline_id>`
->
-> **Behavior:**
-> 1. Validates the guideline ID from the query string
-> 2. Fetches the guideline from the `first_aid_guidelines` table (only active records)
-> 3. Embeds the guideline icon and app logo as base64 data URIs for portability
-> 4. Renders a styled HTML document with header, title, content, and footer
-> 5. Generates an A4 portrait PDF and streams it as a download
->
-> **Output filename format:** `FirstAid_<sanitized_title>.pdf`
-
-</details>
-
----
-
-<details>
-<summary><strong>js/app.js</strong> — Client-Side Utilities & UI Helpers</summary>
-
-<br>
-
-> Main JavaScript file loaded on every authenticated page. Provides SweetAlert2 wrappers, form validation, search utilities, and UI helpers.
-
-#### SweetAlert2 Helpers
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `showAlert()` | `showAlert(icon, title, text)` | `Promise` | Displays a SweetAlert2 modal dialog with the given icon (`success`, `error`, `warning`, `info`), title, and body text. |
-| `showToast()` | `showToast(icon, title)` | `Promise` | Displays a toast notification in the top-right corner. Auto-dismisses after 3 seconds with a progress bar. Pauses on hover. |
-| `scheduleToast()` | `scheduleToast(icon, title)` | `void` | Saves toast data to `sessionStorage` and reloads the page. The toast is displayed after the reload (useful for post-action feedback). |
-| `showConfirm()` | `showConfirm(title, text, confirmText, icon)` | `Promise` | Displays a confirmation dialog with confirm/cancel buttons. Returns a Promise that resolves with the user's choice. |
-| `showDeleteConfirm()` | `showDeleteConfirm(itemName)` | `Promise` | Displays a delete-specific confirmation dialog with a red confirm button and trash icon. |
-
-#### Form & Validation
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `initFormValidation()` | `initFormValidation()` | `void` | Initializes Bootstrap's client-side validation on all forms with the `.needs-validation` class. Focuses the first invalid field and shows an error toast on submit. |
-
-#### Date Formatting
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `initDateFormatOverride()` | `initDateFormatOverride()` | `void` | Overrides all `<input type="date">` elements to display dates in `mm/dd/yyyy` format using CSS `data-display` attributes. Uses a `MutationObserver` to handle dynamically added inputs. |
-
-#### Search
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `debounce()` | `debounce(func, wait)` | `Function` | Returns a debounced version of the given function that delays invocation until `wait` milliseconds after the last call. |
-| `initLiveSearch()` | `initLiveSearch(inputSelector, targetUrl, resultContainerId)` | `void` | Attaches a debounced (300ms) live search handler to an input field. Sends AJAX requests to `targetUrl` and populates the result container with the HTML response. |
-
-#### AJAX Helpers
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `postForm()` | `postForm(url, formData)` | `Promise<Object>` | Sends a POST request with `FormData` body and returns the parsed JSON response. Includes the `X-Requested-With: XMLHttpRequest` header. |
-| `postJson()` | `postJson(url, data)` | `Promise<Object>` | Sends a POST request with a JSON body and returns the parsed JSON response. Sets `Content-Type: application/json`. |
-
-#### Utility Functions
-
-| Function | Signature | Returns | Description |
-| -------- | --------- | ------- | ----------- |
-| `formatNumber()` | `formatNumber(num)` | `string` | Formats a number with comma separators (e.g., `1000` → `'1,000'`). |
-| `copyToClipboard()` | `copyToClipboard(text)` | `void` | Copies the given text to the clipboard using the Clipboard API and shows a success toast. |
-| `printSection()` | `printSection(elementId)` | `void` | Opens a new window with the content of the specified element (by ID), includes Bootstrap styles, and triggers the browser print dialog. |
-
-</details>
-
----
-
-<details>
-<summary><strong>config/config.php</strong> — Application Configuration Constants</summary>
-
-<br>
-
-> Defines all application-wide constants. No functions — constants only.
-
-| Constant | Default Value | Description |
-| -------- | ------------- | ----------- |
-| `DB_HOST` | `'localhost'` | Database server hostname |
-| `DB_NAME` | `'campuscare'` | Database name |
-| `DB_USER` | `'root'` | Database username |
-| `DB_PASS` | `''` | Database password |
-| `DB_CHARSET` | `'utf8mb4'` | Database character set |
-| `APP_NAME` | `'CampusCare'` | Application display name |
-| `APP_TAGLINE` | `'School Clinic Patient Information Record System'` | Application tagline |
-| `APP_VERSION` | `'1.0.0'` | Application version string |
-| `BASE_URL` | `'/CampusCare'` | Base URL path (adjust for deployment) |
-| `SESSION_LIFETIME` | `3600` | Session timeout in seconds (1 hour) |
-| `SESSION_NAME` | `'CAMPUSCARE_SESSION'` | PHP session cookie name |
-| `ROOT_PATH` | *(auto-detected)* | Absolute path to project root |
-| `INCLUDES_PATH` | *(auto-detected)* | Absolute path to `includes/` directory |
-| `CONFIG_PATH` | *(auto-detected)* | Absolute path to `config/` directory |
-| `LIBS_PATH` | *(auto-detected)* | Absolute path to `libs/` directory |
+| Component | Technology | Description |
+| --------- | ---------- | ----------- |
+| **Top Navbar** | Bootstrap 5 fixed-top navbar | Brand logo, sidebar toggle (mobile), user dropdown with avatar initials |
+| **Sidebar** | Custom CSS with role-based rendering | Collapsible on mobile with overlay, section headings, active page highlighting |
+| **Toast Notifications** | SweetAlert2 toast (top-right) | Auto-dismiss after 3s with progress bar, pause on hover. Used for success/error/info/warning feedback |
+| **Confirmation Dialogs** | SweetAlert2 modal | Styled confirm/cancel dialogs for destructive actions (delete, deactivate, logout) |
+| **Sortable Table Headers** | Custom PHP helper + CSS | Clickable column headers with ascending/descending sort icons; preserves all query parameters |
+| **Pagination** | Custom PHP helper | Bootstrap-styled pagination with ellipsis, prev/next buttons, active page highlighting |
+| **Status Badges** | Bootstrap badges, color-coded | Consistent status representation: green (active/completed), yellow (follow-up/moderate), red (severe/referred), gray (inactive/draft) |
+| **Form Validation** | Bootstrap validation + custom JS | `.needs-validation` class enables client-side validation with focus-on-first-invalid and error toast |
+| **Date Format Override** | Custom JS + CSS data-display | All date inputs display in `mm/dd/yyyy` format; uses MutationObserver for dynamically added inputs |
+| **Password Strength Checker** | Live JS validation with icon indicators | Real-time checklist (✓/✗) for 5 password rules, shared across login, change password, and user management |
+| **Stepper Wizard** | Custom CSS stepper with step validation | Multi-step form flow (e.g., 3-step user creation) with progress circles, step completion checks, and shake animation on validation failure |
+| **Background Blobs** | CSS animated blobs | Floating gradient blobs on the login and hero sections for visual depth |
+| **Flash Messages** | PHP session + SweetAlert2 | Server-side flash messages automatically displayed as toast notifications on page load |
 
 </details>
 
@@ -633,3 +663,4 @@ A complete reference of all PHP and JavaScript functions used throughout the app
 ## License
 
 This project is for educational purposes.
+
