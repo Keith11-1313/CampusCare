@@ -5,5 +5,9 @@ vendor/
 # Composer executable - can be re-downloaded
 *.phar
 
-# Environment variables (uncomment if using .env)
+# Environment variables
 #.env
+
+# Sensitive config files — use *.example.php as templates
+config/config.php
+config/mail.php

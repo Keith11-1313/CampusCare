@@ -2,9 +2,11 @@
 /**
  * CampusCare — Mail (SMTP) Configuration
  * 
- * Fill in your SMTP credentials below.
+ * Copy this file to mail.php and fill in your SMTP credentials.
  * For Gmail: enable 2-Step Verification, then generate an App Password at
  *   https://myaccount.google.com/apppasswords
+ * 
+ * IMPORTANT: Never commit mail.php — it contains secrets.
  */
 
 // SMTP server settings
@@ -13,11 +15,11 @@ define('MAIL_PORT', 587);                        // SMTP port (587 = TLS)
 define('MAIL_ENCRYPTION', 'tls');                // 'tls' or 'ssl'
 
 // SMTP authentication
-define('MAIL_USERNAME', 'noreply.campuscare.bsis2a@gmail.com'); // ← Replace with your Gmail address
-define('MAIL_PASSWORD', 'rwvs irda hyfc asdj');     // ← Replace with your Gmail App Password
+define('MAIL_USERNAME', 'your-email@gmail.com');  // ← Replace with your Gmail address
+define('MAIL_PASSWORD', 'xxxx xxxx xxxx xxxx');   // ← Replace with your Gmail App Password
 
 // Sender identity
-define('MAIL_FROM_ADDRESS', 'noreply.campuscare.bsis2a@gmail.com'); // ← Same as MAIL_USERNAME
+define('MAIL_FROM_ADDRESS', 'your-email@gmail.com'); // ← Same as MAIL_USERNAME
 define('MAIL_FROM_NAME', 'CampusCare');
 
 // OTP settings

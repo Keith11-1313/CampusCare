@@ -153,9 +153,15 @@ The mailer is pre-configured for **Gmail SMTP** (`smtp.gmail.com`, port 587, TLS
 
 > **Note:** The **App passwords** option is only visible when 2-Step Verification is enabled on the account.
 
-#### 4b. Update `config/mail.php`
+#### 4b. Create `config/mail.php`
 
-Open `config/mail.php` and fill in your credentials:
+Copy the template and fill in your credentials:
+
+```powershell
+copy config\mail.example.php config\mail.php
+```
+
+Then open `config/mail.php` and update the values:
 
 ```php
 // SMTP server settings
@@ -225,7 +231,13 @@ If no email arrives, check **Apache error logs** (`C:\xampp\apache\logs\error.lo
 
 ### 6. Configure the credentials (ignore for localhost)
 
-Edit `config/config.php` to match your database credentials:
+Copy the template:
+
+```powershell
+copy config\config.example.php config\config.php
+```
+
+Then edit `config/config.php` to match your database credentials:
 
 ```php
 define('DB_HOST', 'localhost');
@@ -312,9 +324,11 @@ CampusCare/
 │   └── logo-main-w.png     # Logo (light variant)
 ├── config/
 │   ├── .htaccess           # Deny direct access
-│   ├── config.php          # App config & DB credentials
+│   ├── config.example.php  # App config template (tracked)
+│   ├── config.php          # App config & DB credentials (gitignored)
 │   ├── database.php        # PDO singleton
-│   └── mail.php            # SMTP / PHPMailer configuration
+│   ├── mail.example.php    # SMTP config template (tracked)
+│   └── mail.php            # SMTP / PHPMailer credentials (gitignored)
 ├── includes/
 │   ├── .htaccess           # Deny direct access
 │   ├── auth.php            # Auth helpers & RBAC
