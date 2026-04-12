@@ -31,6 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($studentIdNum) || empty($firstName) || empty($lastName) || empty($gender) || empty($dob))
             jsonResponse(['success' => false, 'message' => 'Student ID, name, gender, and DOB are required.']);
 
+        // Validate Student ID format - must end with -N and contain no other letters
+        if (!preg_match('/^[0-9-]+-N$/', $studentIdNum))
+            jsonResponse(['success' => false, 'message' => 'Student ID must end with -N and contain no other letters (e.g. 2024-001-N).']);
+
         // Validate name fields — letters, spaces, hyphens, periods, and apostrophes only
         $namePattern = '/^[a-zA-Z\s\-\.\'ñÑ]+$/';
         if (!preg_match($namePattern, $firstName))
@@ -129,6 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             if (empty($sid) || empty($fn) || empty($ln) || empty($gender) || empty($dob)) {
                 $errors[] = "Row $rowNum: missing required fields";
+                $skipped++;
+                continue;
+            }
+
+            // Validate Student ID format
+            if (!preg_match('/^[0-9-]+-N$/', $sid)) {
+                $errors[] = "Row $rowNum: Student ID must end with -N and contain no other letters";
                 $skipped++;
                 continue;
             }
@@ -303,7 +314,7 @@ endif; ?>
 <input type="hidden" name="action" id="formAction" value="save">
 <input type="hidden" name="id" id="studentDbId" value="0">
 <div class="row g-3">
-<div class="col-md-4"><label class="form-label">Student ID <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="student_id_num" id="studentIdNum" required></div>
+<div class="col-md-4"><label class="form-label">Student ID <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="student_id_num" id="studentIdNum" required pattern="[0-9\-]+-N" title="Format: XXXXXX-N (Numbers, hyphens, and ends with -N)" oninput="this.value = this.value.toUpperCase().replace(/[^0-9\-N]/g, '')"><div class="invalid-feedback">Must end with -N and contain no other letters.</div></div>
 <div class="col-md-4"><label class="form-label">First Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="first_name" id="sFirstName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"><div class="invalid-feedback">Please enter a valid first name (letters only).</div></div>
 <div class="col-md-4"><label class="form-label">Last Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="last_name" id="sLastName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"><div class="invalid-feedback">Please enter a valid last name (letters only).</div></div>
 <div class="col-md-4"><label class="form-label">Middle Name</label><input type="text" class="form-control" name="middle_name" id="sMiddleName" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']*" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"><div class="invalid-feedback">Please enter a valid middle name (letters only).</div></div>
@@ -408,7 +419,7 @@ document.getElementById('importForm').addEventListener('submit', function(e){
 
 function downloadTemplate(){
     const headers = 'student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address';
-    const sample = '2024-0001,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
+    const sample = '2024-0001-N,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
     const blob = new Blob([headers + '\n' + sample + '\n'], {type:'text/csv'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
