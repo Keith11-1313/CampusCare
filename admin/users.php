@@ -405,7 +405,7 @@ endif; ?>
                                         minlength="8" style="padding-right: 45px;">
                                     <button class="btn btn-link position-absolute text-muted p-0" type="button"
                                         id="togglePasswordBtn" tabindex="-1"
-                                        style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
+                                        style="right:12px;top:20px;transform:translateY(-50%);text-decoration:none;">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -432,11 +432,11 @@ endif; ?>
                                         id="confirmPassword" minlength="8" style="padding-right: 45px;">
                                     <button class="btn btn-link position-absolute text-muted p-0" type="button"
                                         id="toggleConfirmPasswordBtn" tabindex="-1"
-                                        style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
+                                        style="right:12px;top:20px;transform:translateY(-50%);text-decoration:none;">
                                         <i class="bi bi-eye"></i>
                                     </button>
+                                    <div class="invalid-feedback" id="confirmPwdFeedback">Passwords do not match.</div>
                                 </div>
-                                <div class="invalid-feedback" id="confirmPwdFeedback">Passwords do not match.</div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Role <span class="required-asterisk">*</span></label>
@@ -598,14 +598,19 @@ endif; ?>
         });
     });
 
-    // Confirm password live validation
-    document.getElementById('confirmPassword').addEventListener('input', function () {
+    // Confirm password validation
+    document.getElementById('confirmPassword').addEventListener('blur', function () {
         const pwd = document.getElementById('password').value;
         if (this.value && this.value !== pwd) {
             this.classList.add('is-invalid');
         } else {
             this.classList.remove('is-invalid');
         }
+    });
+
+    // Clear validation while typing
+    document.getElementById('confirmPassword').addEventListener('input', function () {
+        this.classList.remove('is-invalid');
     });
     document.getElementById('password').addEventListener('input', function () {
         const confirmPwd = document.getElementById('confirmPassword');

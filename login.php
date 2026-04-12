@@ -930,14 +930,19 @@ endif; ?>
             }
         });
 
-        // Confirm password live validation for Contact Admin form
-        document.getElementById('forgot_confirm_password').addEventListener('input', function() {
+        // Confirm password validation for Contact Admin form
+        document.getElementById('forgot_confirm_password').addEventListener('blur', function() {
             const pwd = document.getElementById('forgot_new_password').value;
             if (this.value && this.value !== pwd) {
                 this.classList.add('is-invalid');
             } else {
                 this.classList.remove('is-invalid');
             }
+        });
+
+        // Clear validation while typing
+        document.getElementById('forgot_confirm_password').addEventListener('input', function() {
+            this.classList.remove('is-invalid');
         });
 
         function updateForgotPwdRequirements(pwd) {

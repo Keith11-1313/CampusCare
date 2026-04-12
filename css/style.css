@@ -698,8 +698,25 @@ a:hover {
 }
 
 /* Invalid input state: red border to indicate validation error. */
-.form-control.is-invalid {
-    border-color: var(--cc-danger);
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--cc-danger) !important;
+    background-color: var(--cc-danger-bg) !important;
+    color: var(--cc-danger) !important;
+}
+
+.form-control.is-invalid ~ .invalid-feedback,
+.form-select.is-invalid ~ .invalid-feedback {
+    display: block !important;
+    font-weight: 500;
+}
+
+.form-control.is-invalid::placeholder {
+    color: rgba(192, 57, 43, 0.6);
+}
+
+.form-control.is-invalid::placeholder {
+    color: rgba(192, 57, 43, 0.6);
 }
 
 /* Remove Bootstrap's injected validation icons (red "!" and green "✓" SVG
@@ -1436,7 +1453,7 @@ input[type="date"].date-formatted[data-display=""]::before {
 /* Password toggle button */
 .login-pwd-toggle {
     right: 12px;
-    top: 50%;
+    top: 20px;
     transform: translateY(-50%);
     text-decoration: none;
 }
