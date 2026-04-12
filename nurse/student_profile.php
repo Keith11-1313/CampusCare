@@ -197,21 +197,59 @@ $immunizations = $db->fetchAll("SELECT * FROM immunizations WHERE student_id=? O
 $emergencyContacts = $db->fetchAll("SELECT * FROM emergency_contacts WHERE student_id=? ORDER BY id ASC", [$studentId]);
 $visits = $db->fetchAll("SELECT v.*, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v LEFT JOIN users u ON v.attended_by=u.id WHERE v.student_id=? ORDER BY v.visit_date DESC LIMIT 20", [$studentId]);
 
-// Predefined common options + any existing DB values
-$presetAllergens = ['Amoxicillin', 'Aspirin', 'Bee Stings', 'Cats', 'Cockroach', 'Codeine', 'Dairy / Lactose', 'Dogs', 'Dust Mites', 'Eggs', 'Fish', 'Gluten / Wheat', 'Grass Pollen', 'Ibuprofen', 'Insect Bites', 'Latex', 'Mold', 'Peanuts', 'Penicillin', 'Pollen', 'Sesame', 'Shellfish', 'Soy', 'Sulfa Drugs', 'Sulfites', 'Tree Nuts'];
+// Predefined common options grouped by category + any existing DB values
+$categorizedAllergens = [
+    'Drug Allergies' => ['Amoxicillin', 'Aspirin', 'Codeine', 'Ibuprofen', 'Penicillin', 'Sulfa Drugs', 'Sulfites'],
+    'Food Allergies' => ['Dairy / Lactose', 'Eggs', 'Fish', 'Gluten / Wheat', 'Peanuts', 'Sesame', 'Shellfish', 'Soy', 'Tree Nuts'],
+    'Environmental Allergies' => ['Cats', 'Cockroach', 'Dogs', 'Dust Mites', 'Grass Pollen', 'Mold', 'Pollen'],
+    'Other Allergies' => ['Bee Stings', 'Insect Bites', 'Latex'],
+];
+$presetAllergens = array_merge(...array_values($categorizedAllergens));
 $dbAllergens = array_column($db->fetchAll("SELECT DISTINCT allergen FROM allergies WHERE allergen IS NOT NULL AND allergen != '' ORDER BY allergen ASC"), 'allergen');
-$allAllergens = array_unique(array_merge($presetAllergens, $dbAllergens));
-sort($allAllergens);
+// Find DB allergens not in any preset category
+$extraAllergens = array_diff($dbAllergens, $presetAllergens);
+if (!empty($extraAllergens)) {
+    sort($extraAllergens);
+    $categorizedAllergens['Other Allergies'] = array_unique(array_merge($categorizedAllergens['Other Allergies'], $extraAllergens));
+    sort($categorizedAllergens['Other Allergies']);
+}
 
-$presetConditions = ['Anxiety Disorder', 'Asthma', 'Attention Deficit Hyperactivity Disorder (ADHD)', 'Autism Spectrum Disorder', 'Bipolar Disorder', 'Cerebral Palsy', 'Chronic Fatigue Syndrome', 'Chronic Migraine', 'Congenital Heart Disease', 'Crohn\'s Disease', 'Cystic Fibrosis', 'Depression', 'Diabetes - Type 1', 'Diabetes - Type 2', 'Down Syndrome', 'Eating Disorder', 'Eczema / Dermatitis', 'Epilepsy / Seizure Disorder', 'Hemophilia', 'Hypertension', 'Hyperthyroidism', 'Hypothyroidism', 'Irritable Bowel Syndrome (IBS)', 'Kidney Disease', 'Lupus (SLE)', 'Muscular Dystrophy', 'Obsessive-Compulsive Disorder (OCD)', 'Polycystic Ovary Syndrome (PCOS)', 'Psoriasis', 'Rheumatoid Arthritis', 'Scoliosis', 'Sickle Cell Disease', 'Thalassemia', 'Tourette Syndrome', 'Tuberculosis (latent)', 'Ulcerative Colitis'];
+$categorizedConditions = [
+    'Mental Health' => ['Anxiety Disorder', 'Attention Deficit Hyperactivity Disorder (ADHD)', 'Autism Spectrum Disorder', 'Bipolar Disorder', 'Depression', 'Eating Disorder', 'Obsessive-Compulsive Disorder (OCD)'],
+    'Respiratory' => ['Asthma', 'Cystic Fibrosis', 'Tuberculosis (latent)'],
+    'Endocrine & Metabolic' => ['Diabetes - Type 1', 'Diabetes - Type 2', 'Hyperthyroidism', 'Hypothyroidism', 'Polycystic Ovary Syndrome (PCOS)'],
+    'Neurological' => ['Chronic Migraine', 'Epilepsy / Seizure Disorder', 'Tourette Syndrome'],
+    'Cardiovascular' => ['Congenital Heart Disease', 'Hypertension'],
+    'Gastrointestinal' => ['Crohn\'s Disease', 'Irritable Bowel Syndrome (IBS)', 'Ulcerative Colitis'],
+    'Musculoskeletal' => ['Cerebral Palsy', 'Muscular Dystrophy', 'Rheumatoid Arthritis', 'Scoliosis'],
+    'Skin' => ['Eczema / Dermatitis', 'Psoriasis'],
+    'Blood & Immune' => ['Hemophilia', 'Lupus (SLE)', 'Sickle Cell Disease', 'Thalassemia'],
+    'Other Conditions' => ['Chronic Fatigue Syndrome', 'Down Syndrome', 'Kidney Disease'],
+];
+$presetConditions = array_merge(...array_values($categorizedConditions));
 $dbConditions = array_column($db->fetchAll("SELECT DISTINCT condition_name FROM chronic_conditions WHERE condition_name IS NOT NULL AND condition_name != '' ORDER BY condition_name ASC"), 'condition_name');
-$allConditions = array_unique(array_merge($presetConditions, $dbConditions));
-sort($allConditions);
+$extraConditions = array_diff($dbConditions, $presetConditions);
+if (!empty($extraConditions)) {
+    sort($extraConditions);
+    $categorizedConditions['Other Conditions'] = array_unique(array_merge($categorizedConditions['Other Conditions'], $extraConditions));
+    sort($categorizedConditions['Other Conditions']);
+}
 
-$presetVaccines = ['BCG (Bacillus Calmette-Guérin)', 'Chickenpox (Varicella)', 'COVID-19 - AstraZeneca', 'COVID-19 - Janssen', 'COVID-19 - Moderna', 'COVID-19 - Pfizer-BioNTech', 'COVID-19 - Sinovac', 'DPT (Diphtheria, Pertussis, Tetanus)', 'Flu (Influenza) - Seasonal', 'Hepatitis A', 'Hepatitis B', 'HPV (Human Papillomavirus)', 'Japanese Encephalitis', 'Measles, Mumps, Rubella (MMR)', 'Meningococcal', 'Oral Polio Vaccine (OPV)', 'Inactivated Polio Vaccine (IPV)', 'Pneumococcal (PCV13)', 'Rabies', 'Rotavirus', 'Tdap (Tetanus, Diphtheria, Pertussis)', 'Tetanus Toxoid (TT)', 'Typhoid', 'Yellow Fever'];
+$categorizedVaccines = [
+    'COVID-19 Vaccines' => ['COVID-19 - AstraZeneca', 'COVID-19 - Janssen', 'COVID-19 - Moderna', 'COVID-19 - Pfizer-BioNTech', 'COVID-19 - Sinovac'],
+    'Childhood Vaccines' => ['BCG (Bacillus Calmette-Guérin)', 'DPT (Diphtheria, Pertussis, Tetanus)', 'Measles, Mumps, Rubella (MMR)', 'Oral Polio Vaccine (OPV)', 'Inactivated Polio Vaccine (IPV)', 'Rotavirus'],
+    'Hepatitis' => ['Hepatitis A', 'Hepatitis B'],
+    'Adolescent & Adult' => ['HPV (Human Papillomavirus)', 'Tdap (Tetanus, Diphtheria, Pertussis)', 'Tetanus Toxoid (TT)', 'Flu (Influenza) - Seasonal', 'Pneumococcal (PCV13)', 'Meningococcal'],
+    'Travel & Other' => ['Chickenpox (Varicella)', 'Japanese Encephalitis', 'Rabies', 'Typhoid', 'Yellow Fever'],
+];
+$presetVaccines = array_merge(...array_values($categorizedVaccines));
 $dbVaccines = array_column($db->fetchAll("SELECT DISTINCT vaccine_name FROM immunizations WHERE vaccine_name IS NOT NULL AND vaccine_name != '' ORDER BY vaccine_name ASC"), 'vaccine_name');
-$allVaccines = array_unique(array_merge($presetVaccines, $dbVaccines));
-sort($allVaccines);
+$extraVaccines = array_diff($dbVaccines, $presetVaccines);
+if (!empty($extraVaccines)) {
+    sort($extraVaccines);
+    $categorizedVaccines['Travel & Other'] = array_unique(array_merge($categorizedVaccines['Travel & Other'], $extraVaccines));
+    sort($categorizedVaccines['Travel & Other']);
+}
 
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -576,10 +614,13 @@ endif; ?>
                         <label class="form-label">Allergen <span class="required-asterisk">*</span></label>
                         <select class="form-select" name="data[allergen]" id="allergenSelect" required>
                             <option value="" disabled selected>Select an allergen</option>
-                            <?php foreach ($allAllergens as $a): ?>
-                            <option value="<?php echo e($a); ?>"><?php echo e($a); ?></option>
-                            <?php
-endforeach; ?>
+                            <?php foreach ($categorizedAllergens as $group => $items): ?>
+                            <optgroup label="<?php echo e($group); ?>">
+                                <?php foreach ($items as $a): ?>
+                                <option value="<?php echo e($a); ?>"><?php echo e($a); ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -625,10 +666,13 @@ endforeach; ?>
                         <label class="form-label">Condition Name <span class="required-asterisk">*</span></label>
                         <select class="form-select" name="data[condition_name]" id="conditionSelect" required>
                             <option value="" disabled selected>Select a condition</option>
-                            <?php foreach ($allConditions as $c): ?>
-                            <option value="<?php echo e($c); ?>"><?php echo e($c); ?></option>
-                            <?php
-endforeach; ?>
+                            <?php foreach ($categorizedConditions as $group => $items): ?>
+                            <optgroup label="<?php echo e($group); ?>">
+                                <?php foreach ($items as $c): ?>
+                                <option value="<?php echo e($c); ?>"><?php echo e($c); ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -742,10 +786,13 @@ endforeach; ?>
                         <label class="form-label">Vaccine Name <span class="required-asterisk">*</span></label>
                         <select class="form-select" name="data[vaccine_name]" id="vaccineSelect" required>
                             <option value="" disabled selected>Select a vaccine</option>
-                            <?php foreach ($allVaccines as $v): ?>
-                            <option value="<?php echo e($v); ?>"><?php echo e($v); ?></option>
-                            <?php
-endforeach; ?>
+                            <?php foreach ($categorizedVaccines as $group => $items): ?>
+                            <optgroup label="<?php echo e($group); ?>">
+                                <?php foreach ($items as $v): ?>
+                                <option value="<?php echo e($v); ?>"><?php echo e($v); ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
