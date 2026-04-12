@@ -406,7 +406,15 @@ document.getElementById('importForm').addEventListener('submit', function(e){
         btn.innerHTML = '<i class="bi bi-upload me-1"></i>Import';
         if(d.success){
             importModal.hide();
-            showAlert('success', 'Import Complete', d.message).then(()=>location.reload());
+            let alertType = 'success', alertTitle = 'Import Complete';
+            if(d.imported === 0 && d.skipped > 0){
+                alertType = 'error';
+                alertTitle = 'Import Failed';
+            } else if(d.imported > 0 && d.skipped > 0){
+                alertType = 'warning';
+                alertTitle = 'Partially Imported';
+            }
+            showAlert(alertType, alertTitle, d.message).then(()=>location.reload());
         } else {
             showAlert('error', 'Import Failed', d.message);
         }
