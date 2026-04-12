@@ -3006,3 +3006,45 @@ input[type="date"].date-formatted[data-display=""]::before {
 .request-status-item:last-child {
     border-bottom: none;
 }
+
+/* ---- Export Modal Checkbox Items ---- */
+/* Styled checkbox rows in the Generate Report modal with
+   a card-like appearance, hover effects, and checked state indicator. */
+.export-check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    overflow: hidden;
+}
+
+.export-check-item .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.export-check-item .form-check-label {
+    display: block;
+    width: 100%;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: var(--cc-radius-sm);
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.export-check-item .form-check-label:hover {
+    background: var(--cc-primary-bg);
+    border-color: var(--cc-primary-light);
+}
+
+.export-check-item .form-check-input:checked ~ .form-check-label {
+    color: var(--cc-primary);
+    border-color: var(--cc-primary-light);
+    background: var(--cc-primary-bg);
+}

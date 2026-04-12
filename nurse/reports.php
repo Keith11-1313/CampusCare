@@ -145,7 +145,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
     <div>
         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal">
-            <i class="bi bi-filetype-pdf me-1"></i>Export PDF
+            <i class="bi bi-filetype-pdf me-1"></i>Generate Report
         </button>
     </div>
 </div>
@@ -208,122 +208,216 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <!-- Export Modal -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exportModalLabel"><i class="bi bi-printer me-2 text-danger"></i>Export
+            <div class="modal-header"
+                style="background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary)); border-bottom: none;">
+                <h5 class="modal-title text-white" id="exportModalLabel"><i class="bi bi-filetype-pdf me-2"></i>Generate
                     Report</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <form action="" method="GET">
+            <form action="" method="GET" id="exportForm">
                 <input type="hidden" name="export" value="pdf">
-                <!-- Carry current filters -->
-                <input type="hidden" name="start_date" value="<?php echo e($filterStartDate); ?>">
-                <input type="hidden" name="end_date" value="<?php echo e($filterEndDate); ?>">
-                <input type="hidden" name="program_id" value="<?php echo e($filterProgramId); ?>">
-                <input type="hidden" name="year_level_id" value="<?php echo e($filterYearLevelId); ?>">
-                <input type="hidden" name="section" value="<?php echo e($filterSection); ?>">
-                <div class="modal-body">
-                    <p class="text-muted mb-3">Select the sections you want to include in the exported report.</p>
+                <div class="modal-body px-4">
 
-                    <?php if ($filterStartDate || $filterEndDate || $filterProgramId || $filterYearLevelId || $filterSection): ?>
-                        <div class="alert alert-info py-2 small mb-3">
-                            <i class="bi bi-funnel-fill me-1"></i><strong>Active Filters:</strong>
-                            <?php if ($filterStartDate || $filterEndDate)
-                                echo ($filterStartDate ?: '…') . ' to ' . ($filterEndDate ?: '…') . ' '; ?>
-                            <?php if ($filterProgramId) {
-                                $pName = array_filter($programs, fn($p) => $p['id'] == $filterProgramId);
-                                echo '• ' . e(reset($pName)['code'] ?? '') . ' ';
-                            } ?>
-                            <?php if ($filterYearLevelId) {
-                                $ylName = array_filter($yearLevels, fn($y) => $y['id'] == $filterYearLevelId);
-                                echo '• ' . e(reset($ylName)['name'] ?? '') . ' ';
-                            } ?>
-                            <?php if ($filterSection)
-                                echo '• Section ' . e($filterSection); ?>
+                    <!-- Charts Section -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0"><i class="bi bi-bar-chart-line me-2 text-primary"></i>Charts & Data
+                                to Include</h6>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary btn-sm me-1"
+                                    id="exportSelectAllCharts"
+                                    onclick="document.querySelectorAll('#exportChartsGroup input[type=checkbox]').forEach(cb => cb.checked = true)"><i
+                                        class="bi bi-check-all me-1"></i>All</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    id="exportDeselectAllCharts"
+                                    onclick="document.querySelectorAll('#exportChartsGroup input[type=checkbox]').forEach(cb => cb.checked = false)"><i
+                                        class="bi bi-x-lg me-1"></i>None</button>
+                            </div>
                         </div>
-                        <?php
-                    endif; ?>
+                        <div id="exportChartsGroup" class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]" value="summary"
+                                        id="secSummary" checked>
+                                    <label class="form-check-label" for="secSummary">
+                                        <i class="bi bi-speedometer2 me-1 text-primary"></i>Summary Statistics
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="visits_month" id="secVisitsMonth" checked>
+                                    <label class="form-check-label" for="secVisitsMonth">
+                                        <i class="bi bi-bar-chart me-1 text-info"></i>Visits by Month
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="visits_program" id="secVisitsProgram" checked>
+                                    <label class="form-check-label" for="secVisitsProgram">
+                                        <i class="bi bi-pie-chart me-1 text-success"></i>Visits by Program
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="top_complaints" id="secComplaints" checked>
+                                    <label class="form-check-label" for="secComplaints">
+                                        <i class="bi bi-list-ol me-1 text-warning"></i>Top Complaints
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="visit_status" id="secStatus" checked>
+                                    <label class="form-check-label" for="secStatus">
+                                        <i class="bi bi-diagram-3-fill me-1 text-secondary"></i>Visit Status
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="top_allergens" id="secAllergens" checked>
+                                    <label class="form-check-label" for="secAllergens">
+                                        <i class="bi bi-exclamation-triangle me-1 text-danger"></i>Top Allergens
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="top_vaccines" id="secVaccines" checked>
+                                    <label class="form-check-label" for="secVaccines">
+                                        <i class="bi bi-shield-plus me-1 text-success"></i>Top Vaccines
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check export-check-item">
+                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                        value="top_conditions" id="secConditions" checked>
+                                    <label class="form-check-label" for="secConditions">
+                                        <i class="bi bi-heart-pulse me-1 text-danger"></i>Top Conditions
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="summary"
-                            id="secSummary" checked>
-                        <label class="form-check-label" for="secSummary">Summary Statistics</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="visits_month"
-                            id="secVisitsMonth" checked>
-                        <label class="form-check-label" for="secVisitsMonth">Visits by Month Chart</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="visits_program"
-                            id="secVisitsProgram" checked>
-                        <label class="form-check-label" for="secVisitsProgram">Visits by Program Chart</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_complaints"
-                            id="secComplaints" checked>
-                        <label class="form-check-label" for="secComplaints">Top Health Complaints (Chart &amp;
-                            Table)</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="visit_records"
-                            id="secRecords" checked>
-                        <label class="form-check-label" for="secRecords">Visit Records Table</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="visit_status"
-                            id="secStatus" checked>
-                        <label class="form-check-label" for="secStatus">Visit Status Distribution</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_allergens"
-                            id="secAllergens" checked>
-                        <label class="form-check-label" for="secAllergens">Top Allergens</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_vaccines"
-                            id="secVaccines" checked>
-                        <label class="form-check-label" for="secVaccines">Top Vaccines</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="sections[]" value="top_conditions"
-                            id="secConditions" checked>
-                        <label class="form-check-label" for="secConditions">Top Chronic Conditions</label>
+                    <hr>
+
+                    <!-- Visit Records Table Toggle -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3"
+                            style="background: var(--cc-primary-bg); border: 1px solid #d1e3f8;">
+                            <div>
+                                <h6 class="fw-bold mb-1"><i class="bi bi-table me-2 text-primary"></i>Visit Records
+                                    Table</h6>
+                                <small class="text-muted">Include detailed visit records in the report</small>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch" name="sections[]"
+                                    value="visit_records" id="secRecordsToggle" checked
+                                    style="width: 3em; height: 1.5em; cursor: pointer;">
+                            </div>
+                        </div>
+                        <!-- Sort (shown only when table toggle is on) -->
+                        <div id="exportSortSection" class="mt-2">
+                            <label class="form-label small fw-semibold mb-1"><i class="bi bi-sort-down me-1"></i>Sort
+                                Records by</label>
+                            <select class="form-select form-select-sm" name="sort_by" id="exportSortBy">
+                                <option value="date_desc">Date (Newest First)</option>
+                                <option value="date_asc">Date (Oldest First)</option>
+                                <option value="name_asc">Student Name (A–Z)</option>
+                                <option value="name_desc">Student Name (Z–A)</option>
+                                <option value="program_asc">Program (A–Z)</option>
+                                <option value="program_desc">Program (Z–A)</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <hr class="my-3">
-                    <label class="form-label small fw-semibold mb-1"><i class="bi bi-sort-down me-1"></i>Sort Visit
-                        Records by</label>
-                    <select class="form-select form-select-sm" name="sort_by" id="exportSortBy">
-                        <option value="date_desc">Date (Newest First)</option>
-                        <option value="date_asc">Date (Oldest First)</option>
-                        <option value="name_asc">Student Name (A–Z)</option>
-                        <option value="name_desc">Student Name (Z–A)</option>
-                        <option value="program_asc">Program (A–Z)</option>
-                        <option value="program_desc">Program (Z–A)</option>
-                        <option value="complaint_asc">Complaint (A–Z)</option>
-                        <option value="complaint_desc">Complaint (Z–A)</option>
-                        <option value="status_asc">Status (A–Z)</option>
-                        <option value="status_desc">Status (Z–A)</option>
-                        <option value="nurse_asc">Nurse (A–Z)</option>
-                        <option value="nurse_desc">Nurse (Z–A)</option>
-                    </select>
+                    <hr>
+
+                    <!-- Filters Section -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-funnel me-2 text-primary"></i>Report Filters</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold mb-1">Program</label>
+                                <select class="form-select form-select-sm" name="program_id" id="exportProgram">
+                                    <option value="">All Programs</option>
+                                    <?php foreach ($programs as $p): ?>
+                                        <option value="<?php echo $p['id']; ?>" <?php echo $filterProgramId == $p['id'] ? 'selected' : ''; ?>>
+                                            <?php echo e($p['code']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold mb-1">Year Level</label>
+                                <select class="form-select form-select-sm" name="year_level_id" id="exportYearLevel">
+                                    <option value="">All Year Levels</option>
+                                    <?php foreach ($yearLevels as $yl): ?>
+                                        <option value="<?php echo $yl['id']; ?>" <?php echo $filterYearLevelId == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold mb-1">Section</label>
+                                <select class="form-select form-select-sm" name="section" id="exportSection">
+                                    <option value="">All Sections</option>
+                                    <?php foreach ($sections as $sec): ?>
+                                        <option value="<?php echo e($sec['section']); ?>" <?php echo $filterSection == $sec['section'] ? 'selected' : ''; ?>>
+                                            <?php echo e($sec['section']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold mb-1"><i
+                                        class="bi bi-calendar-event me-1"></i>Start Date</label>
+                                <input type="date" class="form-control form-control-sm" name="start_date"
+                                    id="exportStartDate" value="<?php echo e($filterStartDate); ?>"
+                                    max="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold mb-1"><i
+                                        class="bi bi-calendar-event me-1"></i>End Date</label>
+                                <input type="date" class="form-control form-control-sm" name="end_date"
+                                    id="exportEndDate" value="<?php echo e($filterEndDate); ?>"
+                                    max="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary btn-sm"
-                        onclick="document.querySelectorAll('input[name=\'sections[]\']').forEach(cb => cb.checked = true)">Select
-                        All</button>
-                    <div>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary"><i
-                                class="bi bi-box-arrow-up-right me-1"></i>Generate</button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-filetype-pdf me-1"></i>Generate
+                        Report</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // Toggle sort section visibility based on table toggle
+    document.getElementById('secRecordsToggle').addEventListener('change', function () {
+        document.getElementById('exportSortSection').style.display = this.checked ? 'block' : 'none';
+    });
+</script>
 
 <!-- Summary -->
 <div class="row g-3 mb-4">
@@ -487,7 +581,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             type: 'bar', data: {
                 labels: monthData.map(d => d.month),
                 datasets: [{ label: 'Visits', data: monthData.map(d => d.count), backgroundColor: 'rgba(0, 90, 156, 0.7)', borderColor: '#005a9c', borderWidth: 1, borderRadius: 6 }]
-            }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0, 0, 0, 0.08)' } } } }
         });
 
         // Program visits
@@ -497,7 +591,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
             type: 'doughnut', data: {
                 labels: progData.map(d => d.code || 'Unknown'),
                 datasets: [{ data: progData.map(d => d.count), backgroundColor: colors.slice(0, progData.length), borderWidth: 2, borderColor: '#fff', borderRadius: 4 }]
-            }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } } } }
+            }, options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } },
+                    tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + ctx.raw; } } }
+                }
+            }
         });
 
         // Top complaints — podium layout
@@ -562,7 +662,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     y: {
                         beginAtZero: true,
                         ticks: { stepSize: 1 },
-                        grid: { display: false }
+                        grid: { color: 'rgba(0, 0, 0, 0.08)' }
                     },
                     x: {
                         grid: { display: false },
@@ -592,7 +692,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } },
+                        tooltip: { callbacks: { label: function(ctx) { return ' ' + statusData[ctx.dataIndex].status + ': ' + ctx.raw; } } }
+                    },
                     cutout: '55%'
                 }
             });

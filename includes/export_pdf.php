@@ -280,26 +280,56 @@ $hasPreviousSection = false;
     <?php $hasPreviousSection = true;
 endif; ?>
 
-    <!-- Charts Row -->
-    <?php if (in_array('visits_month', $sections) || in_array('visits_program', $sections)): ?>
+    <!-- Visits by Month Row: Chart + Table side by side -->
+    <?php if (in_array('visits_month', $sections)): ?>
     <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
-        <?php if (in_array('visits_month', $sections)): ?>
-        <div class="chart-box <?php echo in_array('visits_program', $sections) ? 'wide' : 'full'; ?>">
+        <div class="chart-box half">
             <h3>Visits by Month (Last 12 Months)</h3>
             <canvas id="monthlyChart"></canvas>
             <img class="chart-img" id="monthlyChartImg" alt="Monthly visits chart">
         </div>
-        <?php
-    endif; ?>
-        
-        <?php if (in_array('visits_program', $sections)): ?>
-        <div class="chart-box <?php echo in_array('visits_month', $sections) ? 'narrow' : 'full'; ?>">
+        <div class="chart-box narrow">
+            <h3>Monthly Summary</h3>
+            <table>
+                <thead><tr><th>Month</th><th>Count</th></tr></thead>
+                <tbody>
+                <?php foreach ($visitsByMonth as $vm): 
+                    $monthLabel = date('F Y', strtotime($vm['month'] . '-01'));
+                ?>
+                <tr>
+                    <td><?php echo e($monthLabel); ?></td>
+                    <td><?php echo $vm['count']; ?></td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php $hasPreviousSection = true;
+endif; ?>
+
+    <!-- Visits by Program Row: Chart + Table side by side -->
+    <?php if (in_array('visits_program', $sections)): ?>
+    <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
+        <div class="chart-box half">
             <h3>Visits by Program</h3>
             <canvas id="programChart"></canvas>
             <img class="chart-img" id="programChartImg" alt="Program visits chart">
         </div>
-        <?php
-    endif; ?>
+        <div class="chart-box narrow">
+            <h3>Program Summary</h3>
+            <table>
+                <thead><tr><th>Program</th><th>Count</th></tr></thead>
+                <tbody>
+                <?php foreach ($visitsByProgram as $vp): ?>
+                <tr>
+                    <td><?php echo e($vp['code'] ?? 'Unknown'); ?></td>
+                    <td><?php echo $vp['count']; ?></td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
     <?php $hasPreviousSection = true;
 endif; ?>
@@ -484,12 +514,11 @@ endif; ?>
     const monthData = <?php echo json_encode($visitsByMonth); ?>;
     new Chart(document.getElementById('monthlyChart'), {
         type:'bar', data:{
-            labels: monthData.map(d=>d.month),
+            labels: monthData.map(d=>{ const [y,m]=d.month.split('-'); return new Date(y,m-1).toLocaleString('en-US',{month:'long',year:'numeric'}); }),
             datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
-        }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+        }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.08)'}}}}
     });
-    <?php
-endif; ?>
+    <?php endif; ?>
 
     // Program visits doughnut chart
     <?php if (in_array('visits_program', $sections)): ?>
@@ -497,7 +526,7 @@ endif; ?>
     const colors = ['#0d6e3f','#1a73a7','#e8910c','#c0392b','#8e44ad','#27ae60','#f39c12','#2c3e50'];
     new Chart(document.getElementById('programChart'), {
         type:'doughnut', data:{
-            labels: progData.map(d=>d.code||'Unknown'),
+            labels: progData.map(d=>(d.code||'Unknown')+' ('+d.count+')'),
             datasets:[{data:progData.map(d=>d.count),backgroundColor:colors.slice(0,progData.length)}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}
     });
@@ -560,7 +589,7 @@ endif; ?>
                 }
             },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0, 0, 0, 0.08)' } },
                 x: { grid: { display: false }, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }
             }
         }
@@ -574,7 +603,7 @@ endif; ?>
     const statusColorsMap = { 'Completed': '#27ae60', 'Follow-up': '#f39c12', 'Referred': '#c0392b' };
     new Chart(document.getElementById('statusChart'), {
         type:'doughnut', data:{
-            labels: statusData.map(d=>d.status),
+            labels: statusData.map(d=>d.status+' ('+d.count+')'),
             datasets:[{data:statusData.map(d=>d.count),backgroundColor:statusData.map(d=>statusColorsMap[d.status]||'#6b7c93'),borderWidth:2,borderColor:'#fff'}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},cutout:'55%'}
     });
