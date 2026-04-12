@@ -29,8 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $complaintCategory = trim($_POST['complaint_category'] ?? '');
     $complaintDesc = trim($_POST['complaint_description'] ?? '');
 
-    if (!$sid || empty($complaintCategory)) {
-        setFlashMessage('error', 'Student and complaint are required.');
+    $assessmentVal = trim($_POST['assessment'] ?? '');
+
+    if (!$sid || empty($complaintCategory) || empty($assessmentVal)) {
+        setFlashMessage('error', 'Student, complaint, and assessment are required.');
         header('Location: new_visit.php');
         exit;
     }
@@ -46,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         trim($_POST['height'] ?? '') ?: null,
         $complaintCategory,
         $complaintDesc ?: null,
-        trim($_POST['assessment'] ?? '') ?: null,
+        $assessmentVal,
         trim($_POST['treatment'] ?? '') ?: null,
         trim($_POST['follow_up_notes'] ?? '') ?: null,
         !empty($_POST['follow_up_date']) ? $_POST['follow_up_date'] : null,
@@ -204,7 +206,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <label class="form-label">Complaint Description</label>
         <textarea class="form-control" name="complaint_description" rows="3" placeholder="Provide additional details about the complaint..."></textarea>
     </div>
-    <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
+    <div class="mb-3"><label class="form-label">Assessment <span class="required-asterisk">*</span></label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..." required></textarea><div class="invalid-feedback">Please provide an assessment.</div></div>
     <div class="mb-3">
         <label class="form-label">Treatment Provided</label>
         <div id="treatmentSuggestions" class="treatment-suggestions" style="display:none;"></div>
