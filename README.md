@@ -6,24 +6,71 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 
 ---
 
+## Project Status
+
+> **Status:** Active Development — Feature Complete (Pre-Release)
+>
+> **Last Updated:** April 12, 2026
+
+### Completed Modules
+
+| Module | Status | Notes |
+| ------ | ------ | ----- |
+| Public Landing Page | Complete | Announcements, FAQs, first-aid guidelines, emergency contacts, clinic hours |
+| Authentication & Security | Complete | Login, password reset (security question + contact admin flow), secure password policy, session management |
+| Admin Dashboard | Complete | Statistics overview with year-level distribution charts |
+| User Management | Complete | Full CRUD with stepper form, password validation, role-based assignment |
+| Program Management | Complete | CRUD with input validation (special character prevention) |
+| Archive Management | Complete | Restore & permanent delete for students, users, and programs |
+| Admin Reports | Complete | Chart.js visualizations + PDF export (Dompdf) |
+| Access Logs | Complete | Full audit trail of user actions |
+| Admin Request Handling | Complete | Password reset requests with one-click approval |
+| Nurse Dashboard | Complete | Visit statistics and trends |
+| Student Profiles | Complete | Health records with categorized dropdowns (allergens, conditions, immunizations) |
+| Visit Logging | Complete | Vitals, complaint categorization, clinical assessment (required), treatment notes |
+| Visit History | Complete | Searchable visit records with full-name search support |
+| Nurse Reports | Complete | Chart.js visualizations + PDF export |
+| Public Content Management | Complete | Announcements, FAQs, first-aid, emergency contacts, clinic hours (Quill editor) |
+| Class Rep Dashboard | Complete | Section-scoped student overview |
+| Class Rep Student Management | Complete | CRUD scoped to assigned program/year/section, CSV export |
+| Class Rep Requests | Complete | Replacement and student deletion requests |
+
+### Recent Enhancements
+
+- **Categorized Health Dropdowns** — Allergens, chronic conditions, and immunizations organized into `<optgroup>` categories for faster data entry
+- **Contact Admin Password Reset** — Users can request a password reset by setting a desired password; admin approves with one click
+- **Full-Name Search** — All search queries support `CONCAT(first_name, ' ', last_name)` for seamless full-name lookups
+- **Report Generation Improvements** — Removed redundant charts, added data tables for PDF exports, horizontal grid lines on bar charts, numerical counts on doughnut charts
+- **Enhanced Input Validation** — Server-side and client-side validation for names (supports ñ/Ñ, periods, hyphens, apostrophes), programs, emergency contacts, and prescribing doctor fields
+- **Archive Delete Action** — Permanent deletion of archived students, users, and programs
+- **Password Policy Enforcement** — Stepper-based password change flow with "must not reuse" validation
+- **Immunization Edit** — Replaced delete with edit action for immunization records
+- **Password Visibility Toggles** — Added to all password fields across login, security question, and change password flows
+
+---
+
 ## Features
 
 | Role | Capabilities |
 | ------ | ------------- |
-| **Admin** | Dashboard, user management (CRUD), programs & year levels, access logs, archives, reports (Chart.js + PDF export) |
-| **Nurse/Staff** | Dashboard, student search & profile (allergies, conditions, medications, immunizations, emergency contacts), visit logging, visit history, public content management (announcements, FAQs, first-aid, emergency contacts, clinic hours) |
-| **Class Rep** | Dashboard, student CRUD (scoped to assigned program/year/section), CSV export of student records |
-| **Public** | Landing page with announcements, FAQs, first-aid guidelines, emergency contacts, clinic hours |
+| **Admin** | Dashboard with year-level charts, user management (CRUD with stepper form), program management, access logs, archive (restore & delete), password reset request approval, reports (Chart.js + PDF export) |
+| **Nurse/Staff** | Dashboard, student search & profile (allergies, conditions, medications, immunizations, emergency contacts — all with categorized dropdowns), visit logging (required assessment), visit history, public content management (announcements, FAQs, first-aid, emergency contacts, clinic hours), reports (Chart.js + PDF export) |
+| **Class Rep** | Dashboard, student CRUD (scoped to assigned program/year/section), CSV export, replacement & deletion requests |
+| **Public** | Landing page with announcements, FAQs, first-aid guidelines (with PDF export), emergency contacts, clinic hours |
 
 ## Security
 
 - **PDO prepared statements** (SQL injection prevention)
 - **CSRF token protection** on all forms
 - **Bcrypt password hashing** (`password_hash`)
+- **Secure password policy** (minimum length, uppercase, lowercase, number, special character)
+- **Password reuse prevention** (cannot reuse current password)
 - **Session management** with timeout & secure cookies
 - **Role-based access control** middleware
 - **Output encoding** (XSS prevention via `htmlspecialchars`)
+- **Input validation** (server-side & client-side with real-time keystroke filtering)
 - **Access logging** (audit trail)
+- **Directory access control** (`.htaccess` deny on config/includes)
 
 ---
 
@@ -49,7 +96,7 @@ cd CampusCare
 npm install
 ```
 
-This installs all packages listed in `package.json` (Bootstrap, SweetAlert2, Chart.js, etc.) into the `node_modules/` folder.
+This installs all packages listed in `package.json` (Bootstrap, SweetAlert2, Chart.js, Quill, etc.) into the `node_modules/` folder.
 
 ### 3. Install Backend Dependencies (Composer)
 
@@ -165,8 +212,7 @@ CampusCare/
 │   ├── programs.php
 │   ├── reports.php
 │   ├── students.php
-│   ├── users.php
-│   └── year_levels.php
+│   └── users.php
 ├── nurse/                  # Nurse/Staff module
 │   ├── content.php
 │   ├── dashboard.php
@@ -180,11 +226,10 @@ CampusCare/
 │   ├── request_change.php
 │   └── students.php
 ├── assets/                 # Static assets
-│   ├── clinic1.jpg
-│   ├── clinic2.jpg
-│   ├── clinic3.jpg
-│   ├── clinic4.jpg
-│   └── logo-main-w.png
+│   ├── first-aid-icons/    # SVG icons for first-aid guidelines
+│   ├── clinic1–4.jpg       # Clinic photos
+│   ├── logo-main-b.png     # Logo (dark variant)
+│   └── logo-main-w.png     # Logo (light variant)
 ├── config/
 │   ├── .htaccess           # Deny direct access
 │   ├── config.php          # App config & DB credentials
@@ -192,7 +237,7 @@ CampusCare/
 ├── includes/
 │   ├── .htaccess           # Deny direct access
 │   ├── auth.php            # Auth helpers & RBAC
-│   ├── export_pdf.php      # PDF report export (admin)
+│   ├── export_pdf.php      # PDF report export (admin & nurse)
 │   ├── export_students_csv.php  # CSV student records export (rep)
 │   ├── footer.php          # Page footer template
 │   ├── functions.php       # Utility functions
@@ -202,20 +247,23 @@ CampusCare/
 ├── database/
 │   ├── demo-data/          # Demo/testing data
 │   │   ├── campuscare.sql
-│   │   ├── programs.pdf
 │   │   └── seed_data.sql
 │   └── real-data/          # Production data & scripts
 │       ├── bulk_seed_data.sql
 │       ├── campuscare.sql
 │       ├── generate_seed.py
 │       └── seed_data.sql
+├── docs/                   # Documentation & diagrams
+│   ├── CampusCare.svg      # System diagram
+│   ├── programs.pdf        # Program reference document
+│   └── testing/            # Test documentation
 ├── css/style.css           # Custom styles
 ├── js/app.js               # Main JavaScript
 ├── index.php               # Public landing page
 ├── export_firstaid_pdf.php # First aid guideline PDF export
-├── login.php               # Login page
+├── login.php               # Login page (with security question & contact admin reset)
 ├── logout.php              # Logout handler
-├── change_password.php     # Change password
+├── change_password.php     # Change password (with stepper flow)
 ├── change_security_question.php  # Change security question
 ├── vendor/                 # PHP dependencies (Composer)
 ├── composer.json           # Composer dependencies
@@ -223,12 +271,25 @@ CampusCare/
 └── .gitignore              # gitignore file
 ```
 
+## Database Schema
+
+The system uses **14 tables** across four functional domains:
+
+| Domain | Tables |
+| ------ | ------ |
+| **Academic** | `programs`, `year_levels` |
+| **Users & Auth** | `users`, `access_logs`, `current_requests` |
+| **Students & Health** | `students`, `allergies`, `chronic_conditions`, `medications`, `immunizations`, `emergency_contacts` |
+| **Clinic Operations** | `visits` |
+| **Public Content** | `announcements`, `faqs`, `first_aid_guidelines`, `clinic_emergency_contacts`, `clinic_hours` |
+
 ## Tech Stack
 
 - **Backend:** PHP 7.4+ (vanilla, no framework)
 - **Database:** MySQL via PDO
-- **PDF Export:** Dompdf (via Composer)
-- **Frontend:** Bootstrap 5.3, Bootstrap Icons, SweetAlert2, Chart.js
+- **PDF Export:** Dompdf 3.x (via Composer)
+- **Frontend:** Bootstrap 5.3, Bootstrap Icons, SweetAlert2, Chart.js 4.x
+- **Rich Text Editor:** Quill 1.3
 - **Typography:** Google Fonts (Inter)
 
 ---
