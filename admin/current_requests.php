@@ -43,27 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
                     redirect(BASE_URL . "/admin/users.php?$params&msg=Please+complete+the+new+class+representative+account+setup.+The+old+class+representative+will+be+deactivated+once+saved.");
                 }
-                elseif ($request['request_type'] === 'password_reset') {
-                    // Password reset — apply the user's requested password
-                    if (!empty($request['requested_password'])) {
-                        $db->query("UPDATE users SET password = ? WHERE id = ?", [$request['requested_password'], $request['rep_user_id']]);
-                        $db->query("UPDATE current_requests SET status = 'approved', admin_notes = 'Password has been reset to user\'s requested password.' WHERE id = ?", [$requestId]);
-                        logAccess($_SESSION['user_id'], 'approve_password_reset', "Approved password reset request ID $requestId for user: " . $request['old_rep_username'] . " (" . $request['user_fname'] . " " . $request['user_lname'] . ")");
-                        $message = 'Password has been reset successfully for ' . $request['user_fname'] . ' ' . $request['user_lname'] . '. The user can now log in with the password they set during the request.';
-                    } else {
-                        // Fallback for old requests without requested_password
-                        $newPassword = trim($_POST['new_password'] ?? '');
-                        if (empty($newPassword) || strlen($newPassword) < 6) {
-                            $error = 'Please provide a new password (at least 6 characters).';
-                        } else {
-                            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                            $db->query("UPDATE users SET password = ? WHERE id = ?", [$hashedPassword, $request['rep_user_id']]);
-                            $db->query("UPDATE current_requests SET status = 'approved', admin_notes = 'Password has been reset.' WHERE id = ?", [$requestId]);
-                            logAccess($_SESSION['user_id'], 'approve_password_reset', "Approved password reset request ID $requestId for user: " . $request['old_rep_username'] . " (" . $request['user_fname'] . " " . $request['user_lname'] . ")");
-                            $message = 'Password has been reset successfully for ' . $request['user_fname'] . ' ' . $request['user_lname'] . '.';
-                        }
-                    }
-                }
+
                 elseif ($request['request_type'] === 'student_deletion') {
                     // Student deletion — archive the student
                     if ($request['nominee_student_id']) {
@@ -93,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             [$notes, $requestId]
             );
             $rt = $reqInfo['request_type'] ?? 'replacement';
-            $typeLabel = $rt === 'password_reset' ? 'password reset' : ($rt === 'student_deletion' ? 'student deletion' : 'replacement');
+            $typeLabel = $rt === 'student_deletion' ? 'student deletion' : 'replacement';
             logAccess($_SESSION['user_id'], 'reject_request', "Rejected $typeLabel request ID $requestId. User: " . ($reqInfo['username'] ?? 'unknown'));
             $message = 'Request has been rejected.';
         }
@@ -167,9 +147,7 @@ else: ?>
                             <tr>
                                 <td class="align-middle small"><?php echo formatDateTime($r['created_at']); ?></td>
                                 <td class="align-middle">
-                                    <?php if ($r['request_type'] === 'password_reset'): ?>
-                                        <span class="badge bg-info text-dark"><i class="bi bi-key me-1"></i>Password Reset</span>
-                                    <?php elseif ($r['request_type'] === 'student_deletion'): ?>
+                                    <?php if ($r['request_type'] === 'student_deletion'): ?>
                                         <span class="badge bg-danger"><i class="bi bi-person-dash me-1"></i>Student Deletion</span>
                                     <?php else: ?>
                                         <span class="badge bg-secondary"><i class="bi bi-person-x me-1"></i>Replacement</span>
@@ -215,24 +193,7 @@ else: ?>
                                 <td class="align-middle text-center">
                                     <?php if ($r['status'] === 'pending'): ?>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <?php if ($r['request_type'] === 'password_reset'): ?>
-                                                <?php if (!empty($r['requested_password'])): ?>
-                                                    <!-- New flow: user already set their desired password -->
-                                                    <form method="POST" id="approveForm<?php echo $r['id']; ?>">
-                                                        <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-                                                        <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
-                                                        <input type="hidden" name="action" value="approve">
-                                                        <button type="button" class="btn btn-sm btn-success" onclick="confirmPasswordReset(<?php echo $r['id']; ?>, '<?php echo e($r['user_fname'] . ' ' . $r['user_lname']); ?>')">
-                                                            <i class="bi bi-check-lg me-1"></i>Approve
-                                                        </button>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <!-- Fallback for old requests without pre-set password -->
-                                                    <button type="button" class="btn btn-sm btn-success" onclick="openPasswordResetModal(<?php echo $r['id']; ?>, '<?php echo e($r['user_fname'] . ' ' . $r['user_lname']); ?>')">
-                                                        <i class="bi bi-check-lg me-1"></i>Reset
-                                                    </button>
-                                                <?php endif; ?>
-                                            <?php elseif ($r['request_type'] === 'student_deletion'): ?>
+                                            <?php if ($r['request_type'] === 'student_deletion'): ?>
                                                 <form method="POST" id="approveForm<?php echo $r['id']; ?>">
                                                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
                                                     <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
@@ -299,40 +260,7 @@ endif; ?>
     </div>
 </div>
 
-<!-- Password Reset Modal -->
-<div class="modal fade" id="passwordResetModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-key me-2"></i>Reset Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
-                    <input type="hidden" name="request_id" id="resetRequestId">
-                    <input type="hidden" name="action" value="approve">
-                    <p class="text-muted small">Set a new password for <strong id="resetUserName"></strong>.</p>
-                    <div class="mb-3">
-                        <label for="new_password" class="form-label fw-semibold">New Password</label>
-                        <div class="position-relative">
-                            <input type="password" class="form-control" id="new_password" name="new_password" 
-                                   minlength="6" required placeholder="Enter new password (min 6 characters)"
-                                   style="padding-right: 45px;">
-                            <button class="btn btn-link position-absolute text-muted p-0" type="button" id="toggleNewPassword" style="right:12px;top:50%;transform:translateY(-50%);text-decoration:none;">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Reset Password</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 <script>
 function confirmApprove(id) {
@@ -366,38 +294,7 @@ function openRejectModal(id) {
     new bootstrap.Modal(document.getElementById('rejectModal')).show();
 }
 
-function openPasswordResetModal(id, userName) {
-    document.getElementById('resetRequestId').value = id;
-    document.getElementById('resetUserName').textContent = userName;
-    document.getElementById('new_password').value = '';
-    new bootstrap.Modal(document.getElementById('passwordResetModal')).show();
-}
 
-function confirmPasswordReset(id, userName) {
-    showConfirm(
-        'Approve password reset?',
-        'The password for <strong>' + userName + '</strong> will be updated to the password they set when submitting this request. They will be able to log in with their new password immediately.',
-        'Yes, approve',
-        'question'
-    ).then(result => {
-        if (result.isConfirmed) {
-            document.getElementById('approveForm' + id).submit();
-        }
-    });
-}
-
-// Toggle password visibility in reset modal
-document.getElementById('toggleNewPassword').addEventListener('click', function() {
-    const pwd = document.getElementById('new_password');
-    const icon = this.querySelector('i');
-    if (pwd.type === 'password') {
-        pwd.type = 'text';
-        icon.className = 'bi bi-eye-slash';
-    } else {
-        pwd.type = 'password';
-        icon.className = 'bi bi-eye';
-    }
-});
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

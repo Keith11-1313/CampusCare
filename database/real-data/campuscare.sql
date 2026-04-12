@@ -313,10 +313,9 @@ CREATE TABLE IF NOT EXISTS `access_logs` (
 CREATE TABLE IF NOT EXISTS `current_requests` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `rep_user_id` INT(11) NOT NULL,
-  `request_type` ENUM('replacement','password_reset','student_deletion') NOT NULL DEFAULT 'replacement',
+  `request_type` ENUM('replacement','student_deletion') NOT NULL DEFAULT 'replacement',
   `nominee_student_id` INT(11) DEFAULT NULL,
   `reason` TEXT NOT NULL,
-  `requested_password` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `admin_notes` TEXT DEFAULT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -326,6 +325,23 @@ CREATE TABLE IF NOT EXISTS `current_requests` (
   KEY `fk_request_nominee` (`nominee_student_id`),
   CONSTRAINT `fk_request_rep` FOREIGN KEY (`rep_user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_request_nominee` FOREIGN KEY (`nominee_student_id`) REFERENCES `students`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- Table: password_reset_otps (OTP codes for self-service password reset)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `password_reset_otps` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `otp_code` VARCHAR(255) NOT NULL COMMENT 'Bcrypt-hashed OTP code',
+  `attempts` INT(11) NOT NULL DEFAULT 0 COMMENT 'Number of failed verification attempts',
+  `used` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 if code has been used or invalidated',
+  `expires_at` DATETIME NOT NULL COMMENT 'When the OTP expires',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_otp_user` (`user_id`),
+  KEY `idx_otp_lookup` (`user_id`, `used`, `expires_at`),
+  CONSTRAINT `fk_otp_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

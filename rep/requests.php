@@ -343,9 +343,7 @@ else: ?>
                                     <tr>
                                         <td class="align-middle small"><?php echo formatDateTime($r['created_at']); ?></td>
                                         <td class="align-middle">
-                                            <?php if ($r['request_type'] === 'password_reset'): ?>
-                                                <span class="badge bg-info text-dark"><i class="bi bi-key me-1"></i>Password Reset</span>
-                                            <?php elseif ($r['request_type'] === 'student_deletion'): ?>
+                                            <?php if ($r['request_type'] === 'student_deletion'): ?>
                                                 <span class="badge bg-danger"><i class="bi bi-person-dash me-1"></i>Student Deletion</span>
                                             <?php else: ?>
                                                 <span class="badge bg-secondary"><i class="bi bi-person-x me-1"></i>Replacement</span>

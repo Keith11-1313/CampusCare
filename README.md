@@ -133,11 +133,75 @@ C:\xampp\php\php.exe composer.phar install
 del composer-setup.php
 ```
 
-This installs the PHP packages listed in `composer.json` (e.g., Dompdf for PDF export) into the `vendor/` folder.
+This installs the PHP packages listed in `composer.json` (Dompdf for PDF export, PHPMailer for SMTP email) into the `vendor/` folder.
 
 > **Tip:** To install Composer globally on Windows, download the [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe) installer.
 
-### 4. Create the Database
+### 4. Configure Email (PHPMailer / Gmail SMTP)
+
+CampusCare uses **PHPMailer** to send OTP emails for the password-reset flow. PHPMailer is already included in `composer.json` and installed by the `composer install` command above — no separate download is needed.
+
+#### 4a. Create a Gmail App Password
+
+The mailer is pre-configured for **Gmail SMTP** (`smtp.gmail.com`, port 587, TLS). To use it:
+
+1. Sign in to the Gmail account you want to send from.
+2. Go to **Google Account → Security → 2-Step Verification** and ensure it is **enabled**.
+3. Go to **Google Account → Security → App passwords** (or visit <https://myaccount.google.com/apppasswords>).
+4. Create a new App Password — name it anything (e.g., *CampusCare*).
+5. Copy the 16-character password shown (it looks like `xxxx xxxx xxxx xxxx`).
+
+> **Note:** The **App passwords** option is only visible when 2-Step Verification is enabled on the account.
+
+#### 4b. Update `config/mail.php`
+
+Open `config/mail.php` and fill in your credentials:
+
+```php
+// SMTP server settings
+define('MAIL_HOST',       'smtp.gmail.com'); // SMTP host
+define('MAIL_PORT',       587);              // 587 = TLS
+define('MAIL_ENCRYPTION', 'tls');            // 'tls' or 'ssl'
+
+// SMTP authentication — replace with your Gmail address & App Password
+define('MAIL_USERNAME', 'your-email@gmail.com');
+define('MAIL_PASSWORD', 'xxxx xxxx xxxx xxxx'); // ← 16-char App Password
+
+// Sender identity shown to recipients
+define('MAIL_FROM_ADDRESS', 'your-email@gmail.com');
+define('MAIL_FROM_NAME',    'CampusCare');
+
+// OTP behaviour
+define('OTP_LENGTH',          6);  // digits
+define('OTP_EXPIRY_MINUTES', 10);  // minutes until the OTP expires
+define('OTP_MAX_ATTEMPTS',    5);  // failed attempts before lockout
+define('OTP_RESEND_COOLDOWN', 30); // seconds before a resend is allowed
+```
+
+#### 4c. Run the OTP table migration
+
+The password-reset OTP feature requires one extra table. Run the migration file in **phpMyAdmin** or via MySQL CLI:
+
+```sql
+USE campuscare;
+SOURCE database/migrations/add_password_reset_otps.sql;
+```
+
+Alternatively, open the file and paste its contents directly into a phpMyAdmin SQL tab.
+
+> **Tip:** If you are using the bundled `database/real-data/campuscare.sql` schema, the `password_reset_otps` table may already be included. Check before running the migration to avoid duplicate-table errors.
+
+#### 4d. Verify the setup
+
+1. Start XAMPP (Apache + MySQL).
+2. Open `http://localhost/CampusCare/login.php`.
+3. Click **Forgot Password → Reset via Email OTP**.
+4. Enter a valid username that has an email address on record.
+5. Check the inbox — an OTP email should arrive within a few seconds.
+
+If no email arrives, check **Apache error logs** (`C:\xampp\apache\logs\error.log`) for PHPMailer error messages and verify your App Password and Gmail 2-Step Verification settings.
+
+### 5. Create the Database
 
 1. Open **phpMyAdmin** or MySQL CLI
 2. Create a database named `campuscare` (for local development):
@@ -150,16 +214,16 @@ This installs the PHP packages listed in `composer.json` (e.g., Dompdf for PDF e
 
    ```sql
    USE campuscare;
-   SOURCE database/campuscare.sql;
+   SOURCE database/real-data/campuscare.sql;
    ```
 
-4. Import/Paste the seed data (for ready to-go data):
+4. Import/Paste the seed data (for ready-to-go data):
 
    ```sql
-   SOURCE database/seed_data.sql;
+   SOURCE database/real-data/seed_data.sql;
    ```
 
-### 5. Configure the credentials (ignore for localhost)
+### 6. Configure the credentials (ignore for localhost)
 
 Edit `config/config.php` to match your database credentials:
 
@@ -176,7 +240,7 @@ Also update `BASE_URL` if not using the default:
 define('BASE_URL', 'http://localhost/CampusCare');
 ```
 
-### 6. Enable PHP GD Extension (ignore as it is enabled by default)
+### 7. Enable PHP GD Extension (ignore as it is enabled by default)
 
 The GD extension is required for PDF export with images. In your `php.ini`, make sure this line is **uncommented**:
 
@@ -186,7 +250,7 @@ extension=gd
 
 For XAMPP, the `php.ini` file is at `C:\xampp\php\php.ini`. After editing, **restart Apache**.
 
-### 7. Start the Server
+### 8. Start the Server
 
 Start Apache & MySQL in XAMPP, then visit:
 
@@ -249,7 +313,8 @@ CampusCare/
 ├── config/
 │   ├── .htaccess           # Deny direct access
 │   ├── config.php          # App config & DB credentials
-│   └── database.php        # PDO singleton
+│   ├── database.php        # PDO singleton
+│   └── mail.php            # SMTP / PHPMailer configuration
 ├── includes/
 │   ├── .htaccess           # Deny direct access
 │   ├── auth.php            # Auth helpers & RBAC
@@ -258,9 +323,12 @@ CampusCare/
 │   ├── footer.php          # Page footer template
 │   ├── functions.php       # Utility functions
 │   ├── header.php          # Page header template
+│   ├── mailer.php          # PHPMailer helper (sendMail, sendOTP, generateOTP)
 │   ├── session.php         # Session & CSRF management
 │   └── sidebar.php         # Role-aware sidebar
 ├── database/
+│   ├── migrations/         # Incremental schema changes
+│   │   └── add_password_reset_otps.sql  # OTP table for email-based password reset
 │   ├── demo-data/          # Demo/testing data
 │   │   ├── campuscare.sql
 │   │   └── seed_data.sql
@@ -289,12 +357,12 @@ CampusCare/
 
 ## Database Schema
 
-The system uses **14 tables** across four functional domains:
+The system uses **15 tables** across four functional domains:
 
 | Domain | Tables |
 | ------ | ------ |
 | **Academic** | `programs`, `year_levels` |
-| **Users & Auth** | `users`, `access_logs`, `current_requests` |
+| **Users & Auth** | `users`, `access_logs`, `current_requests`, `password_reset_otps` |
 | **Students & Health** | `students`, `allergies`, `chronic_conditions`, `medications`, `immunizations`, `emergency_contacts` |
 | **Clinic Operations** | `visits` |
 | **Public Content** | `announcements`, `faqs`, `first_aid_guidelines`, `clinic_emergency_contacts`, `clinic_hours` |
@@ -304,6 +372,7 @@ The system uses **14 tables** across four functional domains:
 - **Backend:** PHP 7.4+ (vanilla, no framework)
 - **Database:** MySQL via PDO
 - **PDF Export:** Dompdf 3.x (via Composer)
+- **Email / SMTP:** PHPMailer 7.x (via Composer) — Gmail SMTP with App Password
 - **Frontend:** Bootstrap 5.3, Bootstrap Icons, SweetAlert2, Chart.js 4.x
 - **Rich Text Editor:** Quill 1.3
 - **Typography:** Google Fonts (Inter)

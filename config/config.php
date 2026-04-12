@@ -15,6 +15,11 @@ define('APP_VERSION', '1.0.0');
 // Base URL - adjust for deployment
 define('BASE_URL', '/CampusCare');
 
+// Absolute URL (used in emails where relative paths don't work)
+$_cc_scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+$_cc_host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+define('APP_URL', $_cc_scheme . '://' . $_cc_host . BASE_URL);
+
 // Session Configuration
 define('SESSION_LIFETIME', 3600); // 1 hour in seconds
 define('SESSION_NAME', 'CAMPUSCARE_SESSION');
