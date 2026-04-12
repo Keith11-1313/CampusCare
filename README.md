@@ -239,7 +239,7 @@ CampusCare/
 │   └── visits.php
 ├── rep/                    # Class Representative module
 │   ├── dashboard.php
-│   ├── request_change.php
+│   ├── requests.php
 │   └── students.php
 ├── assets/                 # Static assets
 │   ├── first-aid-icons/    # SVG icons for first-aid guidelines
@@ -620,7 +620,7 @@ A detailed breakdown of every page's UI components and features, organized by mo
 </details>
 
 <details>
-<summary><strong>rep/request_change.php</strong> — Replacement & Deletion Requests</summary>
+<summary><strong>rep/requests.php</strong> — Replacement & Deletion Requests</summary>
 
 <br>
 

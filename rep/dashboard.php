@@ -138,7 +138,7 @@ endif; ?>
                     <i class="bi bi-person-plus me-2"></i>Add Student</a>
                 <a href="students.php" class="btn btn-outline-primary btn-sm w-100 mb-2 text-start">
                     <i class="bi bi-people me-2"></i>View Students</a>
-                <a href="request_change.php" class="btn btn-outline-primary btn-sm w-100 text-start">
+                <a href="requests.php" class="btn btn-outline-primary btn-sm w-100 text-start">
                     <i class="bi bi-inbox me-2"></i>Requests</a>
             </div>
         </div>
@@ -176,7 +176,7 @@ endif; ?>
         <div class="card mt-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-inbox me-2"></i>My Requests</span>
-                <a href="request_change.php?tab=my_requests" class="btn btn-sm btn-outline-secondary">View All</a>
+                <a href="requests.php?tab=my_requests" class="btn btn-sm btn-outline-secondary">View All</a>
             </div>
             <div class="card-body">
                 <?php if (empty($myRequests)): ?>

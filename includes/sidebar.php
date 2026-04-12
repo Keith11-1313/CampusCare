@@ -114,6 +114,10 @@ $userRole = $_SESSION['user_role'] ?? '';
                 class="sidebar-link <?php echo isActivePage('students.php'); ?>">
                 <i class="bi bi-person-lines-fill"></i><span>Manage Students</span>
             </a>
+            <a href="<?php echo BASE_URL; ?>/rep/requests.php"
+                class="sidebar-link <?php echo isActivePage('requests.php'); ?>">
+                <i class="bi bi-inbox"></i><span>Requests</span>
+            </a>
             <?php
         endif; ?>
     </nav>
