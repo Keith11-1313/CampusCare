@@ -316,6 +316,7 @@ CREATE TABLE IF NOT EXISTS `current_requests` (
   `request_type` ENUM('replacement','password_reset','student_deletion') NOT NULL DEFAULT 'replacement',
   `nominee_student_id` INT(11) DEFAULT NULL,
   `reason` TEXT NOT NULL,
+  `requested_password` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `admin_notes` TEXT DEFAULT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

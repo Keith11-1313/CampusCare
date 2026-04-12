@@ -170,6 +170,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
         }
         else {
             $error = 'Invalid username or password.';
+
+            // Check if user has a pending/rejected password reset request
+            if ($user) {
+                $pendingReset = $db->fetch(
+                    "SELECT status FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' ORDER BY created_at DESC LIMIT 1",
+                    [$user['id']]
+                );
+                if ($pendingReset) {
+                    if ($pendingReset['status'] === 'pending') {
+                        $error = 'Invalid username or password. You have a pending password reset request — please wait for admin approval.';
+                    } elseif ($pendingReset['status'] === 'rejected') {
+                        $error = 'Invalid username or password. Your recent password reset request was rejected. Please submit a new request or use the security question.';
+                    }
+                }
+            }
+
             // Log failed attempt
             $db->query(
                 "INSERT INTO access_logs (user_id, action, description, ip_address) VALUES (NULL, 'login_failed', ?, ?)",
@@ -183,6 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
     $forgotUsername = trim($_POST['forgot_username'] ?? '');
     $forgotReason = trim($_POST['forgot_reason'] ?? '');
+    $forgotNewPassword = $_POST['forgot_new_password'] ?? '';
+    $forgotConfirmPassword = $_POST['forgot_confirm_password'] ?? '';
 
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $forgotError = 'Invalid security token. Please try again.';
@@ -193,32 +211,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
     elseif (empty($forgotReason)) {
         $forgotError = 'Please provide a reason for the password reset request.';
     }
+    elseif (empty($forgotNewPassword)) {
+        $forgotError = 'Please enter your desired new password.';
+    }
     else {
-        $db = Database::getInstance();
-        $user = $db->fetch("SELECT * FROM users WHERE username = ?", [$forgotUsername]);
-
-        if (!$user) {
-            $forgotError = 'No account found with that username.';
+        // Validate password strength
+        $pwdErrors = validatePasswordStrength($forgotNewPassword);
+        if (!empty($pwdErrors)) {
+            $forgotError = implode(' ', $pwdErrors);
         }
-        elseif ($user['status'] === 'inactive') {
-            $forgotError = 'This account has been deactivated. Please contact the administrator directly.';
+        elseif ($forgotNewPassword !== $forgotConfirmPassword) {
+            $forgotError = 'Passwords do not match.';
         }
         else {
-            // Check for existing pending password reset request
-            $pending = $db->fetchColumn(
-                "SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'",
-            [$user['id']]
-            );
+            $db = Database::getInstance();
+            $user = $db->fetch("SELECT * FROM users WHERE username = ?", [$forgotUsername]);
 
-            if ($pending > 0) {
-                $forgotError = 'A password reset request is already pending for this account. Please wait for the admin to process it.';
+            if (!$user) {
+                $forgotError = 'No account found with that username.';
+            }
+            elseif ($user['status'] === 'inactive') {
+                $forgotError = 'This account has been deactivated. Please contact the administrator directly.';
             }
             else {
-                $db->query(
-                    "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, status) VALUES (?, 'password_reset', NULL, ?, 'pending')",
-                [$user['id'], $forgotReason]
+                // Check for existing pending password reset request
+                $pending = $db->fetchColumn(
+                    "SELECT COUNT(*) FROM current_requests WHERE rep_user_id = ? AND request_type = 'password_reset' AND status = 'pending'",
+                [$user['id']]
                 );
-                $forgotSuccess = 'Your password reset request has been submitted. Please contact the administrator for your new password.';
+
+                if ($pending > 0) {
+                    $forgotError = 'A password reset request is already pending for this account. Please wait for the admin to process it.';
+                }
+                else {
+                    $hashedRequestedPassword = password_hash($forgotNewPassword, PASSWORD_DEFAULT);
+                    $db->query(
+                        "INSERT INTO current_requests (rep_user_id, request_type, nominee_student_id, reason, requested_password, status) VALUES (?, 'password_reset', NULL, ?, ?, 'pending')",
+                    [$user['id'], $forgotReason, $hashedRequestedPassword]
+                    );
+                    $forgotSuccess = 'Your password reset request has been submitted. Once approved by the administrator, you can log in using the password you entered.';
+                }
             }
         }
     }
@@ -356,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 <span class="fw-semibold forgot-section-label">Contact Admin</span>
                             </div>
 
-                            <p class="text-muted mb-3 forgot-description">Enter your username and a reason for the password reset. The administrator will be notified.</p>
+                            <p class="text-muted mb-3 forgot-description">Enter your username, reason, and your desired new password. The administrator will review your request.</p>
                             
                             <div class="mb-3">
                                 <label for="forgot_username" class="form-label fw-semibold forgot-form-label">Username</label>
@@ -369,13 +401,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
 
                             <div class="mb-3">
                                 <label for="forgot_reason" class="form-label fw-semibold forgot-form-label">Reason</label>
-                                <textarea class="form-control" id="forgot_reason" name="forgot_reason" rows="3" 
+                                <textarea class="form-control" id="forgot_reason" name="forgot_reason" rows="2" 
                                           placeholder="Briefly explain why you need a password reset..." required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="forgot_new_password" class="form-label fw-semibold forgot-form-label">Desired New Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control login-input-pwd" id="forgot_new_password" name="forgot_new_password" 
+                                           placeholder="Min 8 chars, uppercase, number, special" minlength="8" required>
+                                    <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" onclick="toggleForgotPwd(this, 'forgot_new_password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="forgotPwdRequirements" style="font-size:0.78rem;">
+                                    <li id="forgot-req-length"><i class="bi bi-x-circle text-muted me-1"></i>At least 8 characters</li>
+                                    <li id="forgot-req-upper"><i class="bi bi-x-circle text-muted me-1"></i>One uppercase letter</li>
+                                    <li id="forgot-req-lower"><i class="bi bi-x-circle text-muted me-1"></i>One lowercase letter</li>
+                                    <li id="forgot-req-number"><i class="bi bi-x-circle text-muted me-1"></i>One number</li>
+                                    <li id="forgot-req-special"><i class="bi bi-x-circle text-muted me-1"></i>One special character</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="forgot_confirm_password" class="form-label fw-semibold forgot-form-label">Confirm Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control login-input-pwd" id="forgot_confirm_password" name="forgot_confirm_password" 
+                                           placeholder="Re-enter your new password" minlength="8" required>
+                                    <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" onclick="toggleForgotPwd(this, 'forgot_confirm_password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="forgotConfirmPwdFeedback">Passwords do not match.</div>
                             </div>
 
                             <div class="alert alert-info mb-3 py-2 px-3 forgot-info-alert">
                                 <i class="bi bi-info-circle-fill me-1"></i>
-                                After submitting, please contact the administrator to receive your new password.
+                                After your request is approved by the administrator, you can log in using the password you entered above.
                             </div>
 
                             <div class="d-flex gap-2">
@@ -592,6 +654,11 @@ endif; ?>
             document.getElementById('security_answer').value = '';
             document.getElementById('new_password').value = '';
             document.getElementById('confirm_password').value = '';
+            // Clear Contact Admin password fields
+            document.getElementById('forgot_new_password').value = '';
+            document.getElementById('forgot_confirm_password').value = '';
+            document.getElementById('forgot_confirm_password').classList.remove('is-invalid');
+            updateForgotPwdRequirements('');
             hideAllSecurityErrors();
         }
 
@@ -792,6 +859,10 @@ endif; ?>
             backToMethodChoice();
             document.getElementById('forgot_username').value = '';
             document.getElementById('forgot_reason').value = '';
+            document.getElementById('forgot_new_password').value = '';
+            document.getElementById('forgot_confirm_password').value = '';
+            document.getElementById('forgot_confirm_password').classList.remove('is-invalid');
+            updateForgotPwdRequirements('');
         });
 
         // Allow Enter key on security inputs
@@ -817,6 +888,65 @@ endif; ?>
                 { id: 'req-number', test: /[0-9]/.test(pwd) },
                 { id: 'req-special', test: /[^a-zA-Z0-9]/.test(pwd) },
                 { id: 'req-notold', test: notSameAsOld }
+            ];
+            rules.forEach(function(rule) {
+                const el = document.getElementById(rule.id);
+                if (!el) return;
+                const icon = el.querySelector('i');
+                if (pwd.length === 0) {
+                    icon.className = 'bi bi-x-circle text-muted me-1';
+                } else if (rule.test) {
+                    icon.className = 'bi bi-check-circle-fill text-success me-1';
+                } else {
+                    icon.className = 'bi bi-x-circle-fill text-danger me-1';
+                }
+            });
+        }
+
+        // ─── Contact Admin Password Logic ───
+
+        // Toggle password visibility for Contact Admin fields
+        function toggleForgotPwd(btn, fieldId) {
+            const pwd = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                pwd.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        // Live password requirements for Contact Admin form
+        document.getElementById('forgot_new_password').addEventListener('input', function() {
+            updateForgotPwdRequirements(this.value);
+            // Also check confirm password match
+            const confirmPwd = document.getElementById('forgot_confirm_password');
+            if (confirmPwd.value && confirmPwd.value !== this.value) {
+                confirmPwd.classList.add('is-invalid');
+            } else {
+                confirmPwd.classList.remove('is-invalid');
+            }
+        });
+
+        // Confirm password live validation for Contact Admin form
+        document.getElementById('forgot_confirm_password').addEventListener('input', function() {
+            const pwd = document.getElementById('forgot_new_password').value;
+            if (this.value && this.value !== pwd) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+
+        function updateForgotPwdRequirements(pwd) {
+            const rules = [
+                { id: 'forgot-req-length', test: pwd.length >= 8 },
+                { id: 'forgot-req-upper', test: /[A-Z]/.test(pwd) },
+                { id: 'forgot-req-lower', test: /[a-z]/.test(pwd) },
+                { id: 'forgot-req-number', test: /[0-9]/.test(pwd) },
+                { id: 'forgot-req-special', test: /[^a-zA-Z0-9]/.test(pwd) }
             ];
             rules.forEach(function(rule) {
                 const el = document.getElementById(rule.id);
