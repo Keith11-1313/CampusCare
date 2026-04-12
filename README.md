@@ -35,17 +35,33 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 | Class Rep Student Management | Complete | CRUD scoped to assigned program/year/section, CSV export |
 | Class Rep Requests | Complete | Replacement and student deletion requests |
 
-### Recent Enhancements
+### Live Demo
 
-- **Categorized Health Dropdowns** — Allergens, chronic conditions, and immunizations organized into `<optgroup>` categories for faster data entry
-- **Contact Admin Password Reset** — Users can request a password reset by setting a desired password; admin approves with one click
-- **Full-Name Search** — All search queries support `CONCAT(first_name, ' ', last_name)` for seamless full-name lookups
-- **Report Generation Improvements** — Removed redundant charts, added data tables for PDF exports, horizontal grid lines on bar charts, numerical counts on doughnut charts
-- **Enhanced Input Validation** — Server-side and client-side validation for names (supports ñ/Ñ, periods, hyphens, apostrophes), programs, emergency contacts, and prescribing doctor fields
-- **Archive Delete Action** — Permanent deletion of archived students, users, and programs
-- **Password Policy Enforcement** — Stepper-based password change flow with "must not reuse" validation
-- **Immunization Edit** — Replaced delete with edit action for immunization records
-- **Password Visibility Toggles** — Added to all password fields across login, security question, and change password flows
+The application is hosted online at:
+
+```
+http://campuscare.page.gd/
+```
+
+#### How to Access
+
+1. Open your browser and navigate to **http://campuscare.page.gd/**
+2. Use the [default login credentials](#default-login-credentials) below to sign in
+3. If the page does not load, follow the troubleshooting steps below
+
+#### Troubleshooting: Cannot Access the Site
+
+The live demo is hosted on **InfinityFree**, a free hosting provider. Some users may experience issues accessing the site due to **DNS filtering** by their Internet Service Provider (ISP).
+
+**Why does this happen?**
+
+InfinityFree uses shared IP addresses that host many websites. Some ISPs — particularly in the Philippines and other regions — block or filter DNS requests to these shared IPs as part of anti-phishing or content-filtering policies. This means your ISP's DNS resolver may refuse to resolve `campuscare.page.gd`, even though the site is legitimate and functional.
+
+**How to fix it:**
+
+- **Option 1: Use a VPN** — Turn on any VPN service (e.g., Proton VPN, Windscribe, or a browser-based VPN). This bypasses your ISP's DNS filtering entirely.
+- **Option 2: Use mobile data** — Switch from Wi-Fi to your phone's mobile data connection. Mobile carriers often use different DNS resolvers that do not block InfinityFree domains.
+- **Option 3: Change your DNS server** — Manually set your device's DNS to a public resolver like Google DNS (`8.8.8.8`, `8.8.4.4`) or Cloudflare DNS (`1.1.1.1`, `1.0.0.1`) to bypass your ISP's filtered DNS.
 
 ---
 
