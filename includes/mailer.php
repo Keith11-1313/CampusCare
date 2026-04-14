@@ -79,14 +79,14 @@ function generateOTP($length = null)
 function sendOTP($toEmail, $otpCode, $userName)
 {
     $expiryMinutes = OTP_EXPIRY_MINUTES;
-    $appName       = APP_NAME ?? 'CampusCare';
+    $appName = APP_NAME ?? 'CampusCare';
 
     // Logo hosted on public GitHub — loads correctly in all real email clients
     $logoUrl = 'https://raw.githubusercontent.com/Keith11-1313/CampusCare/main/assets/logo-main-w.png';
 
     // Split OTP into individual digit boxes for GCash-style display
     $otpDigits = str_split(htmlspecialchars($otpCode));
-    $otpBoxes  = '';
+    $otpBoxes = '';
     foreach ($otpDigits as $digit) {
         $otpBoxes .= '<td style="padding:0 4px;">
             <div style="
@@ -187,16 +187,6 @@ function sendOTP($toEmail, $otpCode, $userName)
                             <table cellpadding="0" cellspacing="0" style="margin:0 auto 28px;">
                                 <tr>' . $otpBoxes . '</tr>
                             </table>
-
-                            <!-- Security notice -->
-                            <div style="background:#fff8e1;border-left:4px solid #f59e0b;
-                                        border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:24px;">
-                                <p style="margin:0;color:#78350f;font-size:12px;line-height:1.6;">
-                                    &#x26A0;&#xFE0F;&nbsp;
-                                    <strong>Official ' . htmlspecialchars($appName) . ' representatives will never ask for this code.</strong>
-                                    For your protection, please do not share this code with anyone.
-                                </p>
-                            </div>
 
                             <!-- Expiry -->
                             <p style="margin:0 0 24px;color:#4a5568;font-size:13px;line-height:1.6;text-align:center;">
