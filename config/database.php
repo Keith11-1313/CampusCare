@@ -18,7 +18,8 @@ class Database
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         }
         catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
+            error_log("CampusCare DB connection failed: " . $e->getMessage());
+            die("<h1>Service Unavailable</h1><p>We're experiencing technical difficulties. Please try again later.</p>");
         }
     }
 
