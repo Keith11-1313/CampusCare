@@ -8,9 +8,9 @@ A PHP/MySQL web application for managing school clinic operations, student healt
 
 ## Project Status
 
-> **Status:** Active Development — Feature Complete (Pre-Release)
+> **Status:** Finished & Defended — Web Development 2 Final Project
 >
-> **Last Updated:** April 12, 2026
+> **Last Updated:** April 15, 2026
 
 ### Completed Modules
 
@@ -45,7 +45,7 @@ http://campuscare.page.gd/
 
 #### How to Access
 
-1. Open your browser and navigate to **http://campuscare.page.gd/**
+1. Open your browser and navigate to **<http://campuscare.page.gd/>**
 2. Use the [default login credentials](#default-login-credentials) below to sign in
 3. If the page does not load, follow the troubleshooting steps below
 
@@ -352,9 +352,11 @@ CampusCare/
 │       ├── generate_seed.py
 │       └── seed_data.sql
 ├── docs/                   # Documentation & diagrams
-│   ├── CampusCare.svg      # System diagram
-│   ├── programs.pdf        # Program reference document
-│   └── testing/            # Test documentation
+│   ├── CampusCare.zip      # Full project source archive
+│   ├── CampusCare ERD.svg  # System entity-relationship diagram
+│   ├── CampusCare Research Paper.pdf
+│   ├── Final Defense Rubrics.pdf
+│   └── testing/            # Test documentation & sample CSV files
 ├── css/style.css           # Custom styles
 ├── js/app.js               # Main JavaScript
 ├── index.php               # Public landing page
@@ -746,4 +748,3 @@ A detailed breakdown of every page's UI components and features, organized by mo
 ## License
 
 This project is for educational purposes.
-
