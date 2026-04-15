@@ -65,9 +65,12 @@ $recentAdded = $db->fetchAll(
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
-<div class="page-header">
-    <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
-    <p class="text-muted mb-0">Welcome, <?php echo e($user['first_name']); ?>! You manage students in <?php echo e(($user['program_code'] ?? '') . ' ' . ($user['year_level_name'] ?? '') . ' Sec. ' . ($user['assigned_section'] ?? '')); ?>.</p>
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap">
+    <div>
+        <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+        <p class="text-muted mb-0">Welcome, <?php echo e($user['first_name']); ?>! You manage students in <?php echo e(($user['program_code'] ?? '') . ' ' . ($user['year_level_name'] ?? '') . ' Sec. ' . ($user['assigned_section'] ?? '')); ?>.</p>
+    </div>
+    <div class="text-muted small mt-2"><?php echo date('l, F d, Y'); ?></div>
 </div>
 
 
