@@ -1,0 +1,23 @@
+# Dependencies - managed via Composer (vendor/) only
+vendor/
+
+# Composer executable - can be re-downloaded
+*.phar
+
+# Environment variables
+#.env
+
+# Sensitive config files — use *.example.php as templates
+config/config.php
+config/mail.php
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Archives
+*.zip

@@ -1,0 +1,3090 @@
+/* ---- CSS Variables / Design Tokens ---- */
+/* Defines the global design tokens (colors, sizes, shadows, transitions, radii)
+   used throughout the entire application for consistent theming. */
+:root {
+    --cc-primary: #005a9c;
+    --cc-primary-light: #2d89cf;
+    --cc-primary-dark: #003d6b;
+    --cc-primary-bg: #f0f7ff;
+    --cc-secondary: #4a6fa5;
+    --cc-secondary-light: #6c8ebf;
+    --cc-secondary-bg: #f8fafc;
+    --cc-accent: #0ea5e9;
+    --cc-accent-bg: #ffffff;
+    --cc-danger: #c0392b;
+    --cc-danger-bg: #fdecea;
+    --cc-success: #27ae60;
+    --cc-warning: #f39c12;
+    --cc-info: #2980b9;
+    --cc-sidebar-width: 260px;
+    --cc-navbar-height: 60px;
+    --cc-body-bg: #f0f4f3;
+    --cc-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    --cc-transition: all 0.3s ease;
+    --cc-radius: 12px;
+    --cc-radius-sm: 8px;
+}
+
+/* ---- Hide browser native password toggle ---- */
+/* Hides the default browser-provided password reveal button (Edge/Chrome)
+   so it doesn't conflict with a custom toggle button. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
+
+/* ---- Hide browser native validation icons ---- */
+/* Suppresses the red "!" icon browsers inject into :invalid fields,
+   which overlaps the custom password-toggle button on the login form.
+   Bootstrap's red border + .invalid-feedback text are used instead. */
+input::-webkit-validation-bubble,
+input::-webkit-validation-bubble-message,
+input::-webkit-validation-bubble-arrow,
+input::-webkit-validation-bubble-arrow-clipper {
+    display: none !important;
+}
+
+/* Removes Firefox's native red glow on invalid inputs so only
+   Bootstrap-style validation feedback is shown. */
+input:invalid {
+    box-shadow: none !important;
+}
+
+/* Same as above, specifically targeting Firefox's :-moz-ui-invalid state. */
+input:-moz-ui-invalid {
+    box-shadow: none !important;
+}
+
+/* ---- Base Styles ---- */
+/* Universal reset: removes default margins/padding and sets border-box sizing
+   so padding is included in element widths/heights. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Sets the global font stack, background color, text color,
+   and hides horizontal overflow for the entire page. */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--cc-body-bg);
+    color: #2c3e50;
+    overflow-x: hidden;
+}
+
+/* Adds top padding equal to the navbar height on pages that have
+   a fixed sidebar layout, preventing content from hiding under the navbar. */
+body.has-sidebar {
+    padding-top: var(--cc-navbar-height);
+}
+
+/* Default link styling: uses the primary brand color with no underline
+   and a smooth transition for hover effects. */
+a {
+    color: var(--cc-primary);
+    text-decoration: none;
+    transition: var(--cc-transition);
+}
+
+/* Darkens links on hover for visual feedback. */
+a:hover {
+    color: var(--cc-primary-dark);
+}
+
+/* ---- Top Navbar ---- */
+/* The fixed top navigation bar with a gradient background,
+   fixed height, shadow, and high z-index to stay above content. */
+.cc-navbar {
+    background: linear-gradient(135deg, var(--cc-primary-dark) 0%, var(--cc-primary) 50%, var(--cc-primary-light) 100%);
+    height: var(--cc-navbar-height);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+    z-index: 1040;
+    border: none;
+}
+
+/* Styles the brand/logo text inside the navbar with slightly larger
+   font size and letter spacing. */
+.cc-navbar .navbar-brand {
+    font-size: 1.15rem;
+    letter-spacing: 0.3px;
+}
+
+/* Circular avatar icon in the navbar showing a user's initials,
+   with a semi-transparent background and white border. */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ---- User Dropdown Menu ---- */
+/* Custom styled dropdown for the navbar user menu with smooth
+   animations, refined items, and a premium card-like appearance. */
+.cc-navbar .dropdown-menu {
+    border: none;
+    border-radius: var(--cc-radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0;
+    min-width: 220px;
+    margin-top: 0.5rem;
+    animation: dropdownFadeIn 0.2s ease;
+    overflow: hidden;
+}
+
+/* Smooth fade-in + slide-down animation when dropdown opens. */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdown header showing the username with a subtle bottom border,
+   muted text color, and comfortable padding. */
+.cc-navbar .dropdown-menu .dropdown-header {
+    color: var(--cc-primary-dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.6rem 1rem 0.5rem;
+    letter-spacing: 0.2px;
+}
+
+/* Subtle dividers between dropdown sections. */
+.cc-navbar .dropdown-menu .dropdown-divider {
+    margin: 0.3rem 0;
+    border-color: #eef2f1;
+    opacity: 1;
+}
+
+/* Individual dropdown item: comfortable padding, smooth transition,
+   flexbox for icon alignment, with left border indicator. */
+.cc-navbar .dropdown-menu .dropdown-item {
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #3d4f5f;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+
+/* Hover state: light blue-tinted background with primary text
+   and a left border indicator matching the brand. */
+.cc-navbar .dropdown-menu .dropdown-item:hover {
+    background: var(--cc-primary-bg);
+    color: var(--cc-primary);
+    border-left-color: var(--cc-primary);
+}
+
+/* Active/focus state for dropdown items. */
+.cc-navbar .dropdown-menu .dropdown-item:active,
+.cc-navbar .dropdown-menu .dropdown-item:focus {
+    background: var(--cc-primary-bg);
+    color: var(--cc-primary);
+}
+
+/* Icons inside dropdown items: fixed width for alignment,
+   consistent size, and a muted color by default. */
+.cc-navbar .dropdown-menu .dropdown-item i {
+    font-size: 1rem;
+    width: 22px;
+    color: var(--cc-secondary-light);
+    transition: color 0.2s ease;
+}
+
+/* Icon color follows the text color on hover. */
+.cc-navbar .dropdown-menu .dropdown-item:hover i {
+    color: var(--cc-primary);
+}
+
+/* Danger-colored logout item with red text and matching icon. */
+.cc-navbar .dropdown-menu .dropdown-item.text-danger {
+    color: var(--cc-danger);
+}
+
+.cc-navbar .dropdown-menu .dropdown-item.text-danger i {
+    color: var(--cc-danger);
+}
+
+/* Logout hover state: light red background with darker red text. */
+.cc-navbar .dropdown-menu .dropdown-item.text-danger:hover {
+    background: var(--cc-danger-bg);
+    color: #922b21;
+    border-left-color: var(--cc-danger);
+}
+
+.cc-navbar .dropdown-menu .dropdown-item.text-danger:hover i {
+    color: #922b21;
+}
+
+/* Small decorative arrow/triangle pointing toward the dropdown
+   toggle button, placed at the top-right of the menu. */
+.cc-navbar .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    transform: rotate(45deg);
+    border-top: 1px solid #eef2f1;
+    border-left: 1px solid #eef2f1;
+}
+
+/* ---- Sidebar ---- */
+/* Fixed left-side navigation panel that stretches from below the navbar
+   to the bottom of the viewport with a dark gradient background. */
+.cc-sidebar {
+    position: fixed;
+    top: var(--cc-navbar-height);
+    left: 0;
+    width: var(--cc-sidebar-width);
+    height: calc(100vh - var(--cc-navbar-height));
+    background: linear-gradient(180deg, #1a2332 0%, #243447 100%);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1030;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Slim custom scrollbar for the sidebar (WebKit browsers). */
+.cc-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Semi-transparent scrollbar thumb for the sidebar. */
+.cc-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+/* Sidebar header area (hidden by default since the top navbar
+   already displays the brand). */
+.sidebar-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: none;
+    /* Hidden since navbar shows brand */
+}
+
+/* Wrapper for the sidebar's navigation links; takes up
+   remaining vertical space with vertical padding. */
+.sidebar-nav {
+    flex: 1;
+    padding: 0.75rem 0;
+}
+
+/* Small uppercase label used to group sidebar links into
+   logical sections (e.g., "Main", "Records"). */
+.sidebar-section-title {
+    padding: 1rem 1.25rem 0.4rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Individual navigation link inside the sidebar with a left
+   border highlight, smooth transitions, and muted text. */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1.25rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    font-weight: 400;
+    transition: var(--cc-transition);
+    border-left: 3px solid transparent;
+    text-decoration: none;
+}
+
+/* Hover state for sidebar links: brightens text and reveals
+   the left border indicator. */
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Active/current-page state for sidebar links: uses a primary-tinted
+   background, bold text, and a colored left border. */
+.sidebar-link.active {
+    background: rgba(0, 90, 156, 0.2);
+    color: #fff;
+    border-left-color: var(--cc-primary-light);
+    font-weight: 600;
+}
+
+/* Icon inside each sidebar link: fixed width for alignment,
+   with a right margin to separate it from the label text. */
+.sidebar-link i {
+    font-size: 1.1rem;
+    width: 28px;
+    margin-right: 0.75rem;
+    text-align: center;
+}
+
+/* Footer area at the bottom of the sidebar (e.g., logout link),
+   pushed to the bottom via margin-top: auto. */
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+}
+
+/* Semi-transparent dark overlay that covers the page behind the sidebar
+   on mobile; hidden by default and shown when the sidebar is open. */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1025;
+}
+
+/* ---- Main Content ---- */
+/* Primary content area that sits to the right of the sidebar,
+   with padding and a minimum height to fill the viewport. */
+.cc-main-content {
+    margin-left: var(--cc-sidebar-width);
+    padding: 1.5rem;
+    min-height: calc(100vh - var(--cc-navbar-height));
+    transition: margin-left 0.3s ease;
+}
+
+/* ---- Page Header ---- */
+/* Container for the page title and breadcrumb at the top of each page. */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+/* Page title styling: large bold text in a dark color. */
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a2332;
+    margin-bottom: 0.25rem;
+}
+
+/* Small breadcrumb navigation below the page title. */
+.page-header .breadcrumb {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+/* Breadcrumb link colored with the primary brand color. */
+.page-header .breadcrumb-item a {
+    color: var(--cc-primary);
+}
+
+/* ---- Cards ---- */
+/* Base card component: borderless with rounded corners,
+   subtle shadow, and a hover transition. */
+.card {
+    border: none;
+    border-radius: var(--cc-radius);
+    box-shadow: var(--cc-card-shadow);
+    transition: var(--cc-transition);
+    background: #fff;
+}
+
+/* Cards lift slightly with a deeper shadow on hover. */
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Card header with transparent background and a light bottom border. */
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid #eef2f1;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+}
+
+/* Standard card body padding. */
+.card-body {
+    padding: 1.25rem;
+}
+
+/* ---- Stat Cards (Dashboard) ---- */
+/* Dashboard statistics card: rounded, padded, with overflow hidden
+   for decorative elements and a smooth hover transition. */
+.stat-card {
+    border-radius: var(--cc-radius);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: var(--cc-transition);
+    border: none;
+<<<<<<< HEAD
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensures the internal d-flex row in stat cards stretches to fill the height */
+.stat-card > .d-flex {
+    flex: 1;
+}
+
+
+=======
+}
+
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+/* Stat card lifts up and gains a stronger shadow on hover. */
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Icon container inside a stat card: a rounded square that
+   centers the icon with flexbox. */
+.stat-card .stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Large bold number displayed as the main statistic value. */
+.stat-card .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Small uppercase label below the stat value describing what
+   the number represents (e.g., "Total Students"). */
+.stat-card .stat-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #6b7c93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Primary stat card variant: green-tinted gradient background. */
+.stat-card-primary {
+    background: linear-gradient(135deg, #e8f5ee 0%, #d4efdf 100%);
+}
+
+/* Primary stat card icon: solid primary-colored background with white icon. */
+.stat-card-primary .stat-icon {
+    background: var(--cc-primary);
+    color: #fff;
+}
+
+/* Primary stat card value: dark shade of the primary color. */
+.stat-card-primary .stat-value {
+    color: var(--cc-primary-dark);
+}
+
+/* Secondary stat card variant: blue-tinted gradient background. */
+.stat-card-secondary {
+    background: linear-gradient(135deg, #e3f2fd 0%, #d1e8fc 100%);
+}
+
+/* Secondary stat card icon: solid secondary-colored background with white icon. */
+.stat-card-secondary .stat-icon {
+    background: var(--cc-secondary);
+    color: #fff;
+}
+
+/* Secondary stat card value: deep blue color. */
+.stat-card-secondary .stat-value {
+    color: #0d5987;
+}
+
+/* Accent stat card variant: warm yellow gradient background. */
+.stat-card-accent {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+}
+
+/* Accent stat card icon: amber/brown background with white icon. */
+.stat-card-accent .stat-icon {
+    background: #b8700a;
+    color: #fff;
+}
+
+/* Accent stat card value: amber/brown text color. */
+.stat-card-accent .stat-value {
+    color: #b8700a;
+}
+
+/* Danger stat card variant: red-tinted gradient background. */
+.stat-card-danger {
+    background: linear-gradient(135deg, #fdecea 0%, #fadbd8 100%);
+}
+
+/* Danger stat card icon: solid danger-colored background with white icon. */
+.stat-card-danger .stat-icon {
+    background: var(--cc-danger);
+    color: #fff;
+}
+
+/* Danger stat card value: dark red text color. */
+.stat-card-danger .stat-value {
+    color: #922b21;
+}
+
+<<<<<<< HEAD
+/* ---- Stat Card Extra Info Line ---- */
+/* Small line below the stat value for supplementary context
+   (e.g., "6 vs yesterday", "5 overdue", "This month", "Review now").
+   Consistent font size, weight, spacing, and opacity across all dashboards. */
+.stat-extra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    margin-top: 6px;
+    opacity: 0.80;
+    color: inherit;
+    letter-spacing: 0.1px;
+}
+
+/* Upward trend: green tint */
+.stat-extra.up {
+    color: #1a7a4a;
+    opacity: 1;
+}
+
+/* Downward trend: red tint */
+.stat-extra.down {
+    color: #c0392b;
+    opacity: 1;
+}
+
+/* Danger / alert emphasis (e.g., overdue) */
+.stat-extra.danger {
+    color: #c0392b;
+    opacity: 1;
+}
+
+/* Neutral / informational */
+.stat-extra.neutral {
+    opacity: 0.70;
+}
+
+
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+/* ---- Tables ---- */
+/* Base table: slightly smaller font size for compact data display. */
+.table {
+    font-size: 0.875rem;
+}
+
+/* Table header cells: light gray background, uppercase labels,
+   small font, with a bottom border and no text wrapping. */
+.table thead th {
+    background: #f8faf9;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    color: #6b7c93;
+    border-bottom: 2px solid #e2e8e5;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+/* Sortable table header: clickable column headers that toggle sort */
+.sortable-th {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sortable-th a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sortable-th:hover {
+    background: #eef2f1;
+    color: var(--cc-primary);
+}
+
+.sortable-th .sort-icon-idle {
+    font-size: 0.6rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sortable-th:hover .sort-icon-idle {
+    opacity: 0.5;
+}
+
+.sortable-th.sortable-active {
+    color: var(--cc-primary);
+    border-bottom-color: var(--cc-primary);
+}
+
+.sortable-th .sort-icon {
+    font-size: 0.65rem;
+    color: var(--cc-primary);
+}
+
+/* Table body cells: vertically centered with a subtle bottom border. */
+.table tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+/* Highlights the table row with a light background on hover. */
+.table tbody tr:hover {
+    background-color: #f8faf9;
+}
+
+/* Compact action buttons (e.g., Edit, Delete) inside table rows. */
+.table-action-btns {
+    white-space: nowrap;
+}
+
+.table-action-btns .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0 2px;
+}
+
+/* ---- Forms ---- */
+/* Form field label: medium weight, small font, muted color. */
+.form-label {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #3d4f5f;
+    margin-bottom: 0.35rem;
+}
+
+/* Text inputs and select dropdowns: rounded with a light border,
+   comfortable padding, and a focus transition. */
+.form-control,
+.form-select {
+    border-radius: var(--cc-radius-sm);
+    border: 1.5px solid #d5dcd9;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.875rem;
+    transition: var(--cc-transition);
+}
+
+/* Focus state for inputs/selects: primary-colored border with
+   a subtle ring glow for accessibility. */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--cc-primary);
+    box-shadow: 0 0 0 3px rgba(13, 110, 63, 0.12);
+}
+
+/* Invalid input state: red border to indicate validation error. */
+<<<<<<< HEAD
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--cc-danger) !important;
+    background-color: var(--cc-danger-bg) !important;
+    color: var(--cc-danger) !important;
+}
+
+.form-control.is-invalid ~ .invalid-feedback,
+.form-select.is-invalid ~ .invalid-feedback {
+    display: block !important;
+    font-weight: 500;
+}
+
+.form-control.is-invalid::placeholder {
+    color: rgba(192, 57, 43, 0.6);
+}
+
+.form-control.is-invalid::placeholder {
+    color: rgba(192, 57, 43, 0.6);
+=======
+.form-control.is-invalid {
+    border-color: var(--cc-danger);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+}
+
+/* Remove Bootstrap's injected validation icons (red "!" and green "✓" SVG
+   background-images) so they don't overlap custom right-side elements
+   like the password toggle. */
+.was-validated .form-control:invalid,
+.was-validated .form-control:valid,
+.was-validated .form-select:invalid,
+.was-validated .form-select:valid,
+.form-control.is-invalid,
+.form-control.is-valid,
+.form-select.is-invalid,
+.form-select.is-valid {
+    background-image: none !important;
+    padding-right: 0.85rem !important;
+}
+
+/* Validation error message text: small red text below the field. */
+.invalid-feedback {
+    font-size: 0.78rem;
+}
+
+<<<<<<< HEAD
+/* ---- Date Input Format Override (mm/dd/yyyy) ---- */
+/* Forces all date inputs to display in mm/dd/yyyy format regardless
+   of the browser's locale, using a transparent native text layer
+   overlaid with a formatted ::before pseudo-element. */
+input[type="date"].date-formatted {
+    position: relative;
+    color: transparent;
+}
+
+/* Overlay showing the formatted date text from the data-display attribute. */
+input[type="date"].date-formatted::before {
+    content: attr(data-display);
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2c3e50;
+    pointer-events: none;
+}
+
+/* Show placeholder text when the date input is empty. */
+input[type="date"].date-formatted:not([data-display])::before,
+input[type="date"].date-formatted[data-display=""]::before {
+    content: "mm/dd/yyyy";
+    color: #9aadbd;
+}
+
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+/* Red asterisk appended to required field labels. */
+.required-asterisk {
+    color: var(--cc-danger);
+    font-weight: 700;
+}
+
+/* ---- Buttons ---- */
+/* Base button: rounded corners, medium weight, compact size,
+   with a smooth transition for hover/active states. */
+.btn {
+    border-radius: var(--cc-radius-sm);
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.15rem;
+    transition: var(--cc-transition);
+}
+
+/* Primary filled button using the brand color. */
+.btn-primary {
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+}
+
+/* Primary button hover: darkens, lifts up, and adds a colored shadow. */
+.btn-primary:hover {
+    background: var(--cc-primary-dark);
+    border-color: var(--cc-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 63, 0.3);
+}
+
+/* Outline variant of the primary button: transparent background
+   with a primary-colored border and text. */
+.btn-outline-primary {
+    color: var(--cc-primary);
+    border-color: var(--cc-primary);
+}
+
+/* Outline primary button hover: fills with the primary color. */
+.btn-outline-primary:hover {
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+}
+
+/* Secondary filled button using the secondary brand color. */
+.btn-secondary {
+    background: var(--cc-secondary);
+    border-color: var(--cc-secondary);
+}
+
+/* Success filled button (green) for positive actions. */
+.btn-success {
+    background: var(--cc-success);
+    border-color: var(--cc-success);
+}
+
+/* Danger filled button (red) for destructive actions. */
+.btn-danger {
+    background: var(--cc-danger);
+    border-color: var(--cc-danger);
+}
+
+/* Warning filled button (orange/yellow) for cautionary actions. */
+.btn-warning {
+    background: var(--cc-warning);
+    border-color: var(--cc-warning);
+}
+
+/* Square icon-only button: fixed dimensions with centered content,
+   used for compact actions like edit/delete icons. */
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--cc-radius-sm);
+}
+
+/* ---- Badges ---- */
+/* Small labels/tags used for status indicators, counts, etc.
+   Medium weight with compact padding and rounded corners. */
+.badge {
+    font-weight: 500;
+    font-size: 0.72rem;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+}
+
+/* ---- Pagination ---- */
+/* Custom pagination styling to match the application's design system:
+   rounded corners, brand colors, smooth transitions, and subtle shadows. */
+.pagination {
+    gap: 4px;
+}
+
+.pagination .page-link {
+    border: 1.5px solid #d5dcd9;
+    border-radius: var(--cc-radius-sm) !important;
+    color: var(--cc-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.45rem 0.8rem;
+    transition: var(--cc-transition);
+    background: #fff;
+    line-height: 1.2;
+    min-width: 36px;
+    text-align: center;
+}
+
+.pagination .page-link:hover {
+    background: var(--cc-primary-bg);
+    border-color: var(--cc-primary-light);
+    color: var(--cc-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 90, 156, 0.15);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 90, 156, 0.3);
+}
+
+.pagination .page-item.active .page-link:hover {
+    background: var(--cc-primary-dark);
+    border-color: var(--cc-primary-dark);
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #f8faf9;
+    border-color: #e2e8e5;
+    color: #b0bec5;
+}
+
+/* ---- Search Box / Filters ---- */
+/* Wrapper for a search input with a positioned icon inside. */
+.search-box {
+    position: relative;
+}
+
+/* Magnifying-glass icon positioned inside the left side of
+   the search input field. */
+.search-box .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    z-index: 1;
+}
+
+/* Adds left padding to the search input to make room for the icon. */
+.search-box input {
+    padding-left: 38px;
+}
+
+/* Container bar for filter controls (dropdowns, search, buttons)
+   with a white background, shadow, and bottom margin. */
+.filter-bar {
+    background: #fff;
+    border-radius: var(--cc-radius);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--cc-card-shadow);
+    margin-bottom: 1.25rem;
+}
+
+/* ---- Modals ---- */
+/* Modal dialog content wrapper: rounded, borderless, with a
+   pronounced shadow for the floating-card effect. */
+.modal-content {
+    border-radius: var(--cc-radius);
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal header: light bottom border with generous padding. */
+.modal-header {
+    border-bottom: 1px solid #eef2f1;
+    padding: 1rem 1.5rem;
+}
+
+/* Modal body: generous padding for form content or messages. */
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Modal footer: light top border for action buttons area. */
+.modal-footer {
+    border-top: 1px solid #eef2f1;
+    padding: 1rem 1.5rem;
+}
+
+/* ---- Modal Pop-In Animation ---- */
+/* Override Bootstrap's default fade with a scale + slide entrance.
+   The dialog starts scaled down and slightly below, then springs
+   into place with a smooth cubic-bezier curve. */
+.modal.fade .modal-dialog {
+    transform: scale(0.85) translateY(30px);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.25s ease;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Smooth backdrop fade-in with a slightly longer duration. */
+.modal-backdrop.fade {
+    transition: opacity 0.3s ease;
+}
+
+/* Subtle content entrance: the modal-content itself fades in
+   with a very short delay so the dialog scales first. */
+.modal.fade .modal-content {
+    opacity: 0;
+    transition: opacity 0.2s ease 0.1s;
+}
+
+.modal.show .modal-content {
+    opacity: 1;
+}
+
+/* ---- Charts ---- */
+/* Responsive container for chart.js or similar chart libraries,
+   with a fixed height and full width. */
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+/* ---- Profile Section ---- */
+/* Gradient banner at the top of a student/user profile card
+   with rounded top corners and white text. */
+.profile-header {
+    background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary-light));
+    border-radius: var(--cc-radius) var(--cc-radius) 0 0;
+    padding: 2rem;
+    color: #fff;
+}
+
+/* Large circular avatar on the profile page showing the user's
+   initials, with a semi-transparent background and white border. */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+/* A single row of profile information (label + value pair)
+   with a subtle bottom border separator. */
+.info-item {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+/* Removes the bottom border from the last info item. */
+.info-item:last-child {
+    border-bottom: none;
+}
+
+/* Small uppercase label above a profile info value
+   (e.g., "Student ID", "Course"). */
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7c93;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+/* The actual data value displayed under a profile info label. */
+.info-value {
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+/* ---- Health Record Tabs ---- */
+/* Tab navigation links: borderless with a bottom highlight line;
+   muted color by default with medium weight text. */
+.nav-tabs .nav-link {
+    border: none;
+    color: #6b7c93;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+
+/* Active tab: primary-colored text and a solid bottom border
+   to indicate the currently selected tab. */
+.nav-tabs .nav-link.active {
+    color: var(--cc-primary);
+    border-bottom-color: var(--cc-primary);
+    background: transparent;
+}
+
+/* Tab hover state: text turns primary-colored with a faint
+   bottom border preview. */
+.nav-tabs .nav-link:hover {
+    color: var(--cc-primary);
+    border-bottom-color: rgba(13, 110, 63, 0.3);
+}
+
+/* ---- Login Page ---- */
+/* Full-viewport wrapper for the login page with centered content,
+   a blue gradient background, and decorative pseudo-element circles. */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #003d6b 0%, #005a9c 30%, #2d89cf 60%, #4a6fa5 100%);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative radial-gradient circle in the top-right corner
+   of the login page background. */
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    border-radius: 50%;
+}
+
+/* Decorative radial-gradient circle in the bottom-left corner
+   of the login page background. */
+.login-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    bottom: -100px;
+    left: -100px;
+    border-radius: 50%;
+}
+
+/* ---- Login Floating Blobs ---- */
+/* Keyframe animation for the first decorative blob: drifts around
+   while morphing its border-radius for an organic shape effect. */
+@keyframes blobFloat1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+
+    25% {
+        transform: translate(30px, -40px) scale(1.05);
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+
+    50% {
+        transform: translate(60px, 20px) scale(0.95);
+        border-radius: 50% 40% 60% 30% / 40% 70% 30% 60%;
+    }
+
+    75% {
+        transform: translate(20px, 50px) scale(1.08);
+        border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+}
+
+/* Keyframe animation for the second decorative blob with a
+   different drift pattern and timing. */
+@keyframes blobFloat2 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+
+    33% {
+        transform: translate(-40px, 30px) scale(1.1);
+        border-radius: 70% 30% 40% 60% / 60% 40% 50% 50%;
+    }
+
+    66% {
+        transform: translate(20px, -50px) scale(0.9);
+        border-radius: 30% 70% 60% 40% / 50% 30% 70% 40%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+}
+
+/* Keyframe animation for the third decorative blob with
+   yet another unique drift and morphing pattern. */
+@keyframes blobFloat3 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%;
+    }
+
+    40% {
+        transform: translate(50px, 30px) scale(1.05);
+        border-radius: 70% 30% 50% 50% / 30% 50% 70% 50%;
+    }
+
+    80% {
+        transform: translate(-20px, -40px) scale(0.95);
+        border-radius: 30% 70% 40% 60% / 60% 40% 50% 50%;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%;
+    }
+}
+
+/* Base class for the decorative floating blobs on the login page:
+   absolutely positioned, non-interactive, blurred, and semi-transparent. */
+.login-blob {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+    filter: blur(2px);
+}
+
+/* First blob: large, positioned top-left, uses the blobFloat1 animation
+   with a 14-second infinite loop. */
+.login-blob-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.9), rgba(160, 210, 255, 0.5));
+    top: -100px;
+    left: -80px;
+    animation: blobFloat1 14s ease-in-out infinite;
+}
+
+/* Second blob: medium-sized, positioned bottom-right, uses the
+   blobFloat2 animation with an 18-second infinite loop. */
+.login-blob-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.8), rgba(130, 190, 255, 0.4));
+    bottom: -80px;
+    right: -60px;
+    animation: blobFloat2 18s ease-in-out infinite;
+    opacity: 0.10;
+}
+
+/* Third blob: small, positioned center-right, uses the blobFloat3
+   animation with a 22-second infinite loop. */
+.login-blob-3 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(100, 170, 255, 0.3));
+    top: 50%;
+    right: 8%;
+    animation: blobFloat3 22s ease-in-out infinite;
+    opacity: 0.08;
+}
+
+/* The login form card: split two-panel layout with shadow. */
+.login-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 820px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Split layout: side by side */
+.login-card-split {
+    display: flex;
+    padding: 0;
+}
+
+/* Left panel: sign-in form */
+.login-card-left {
+    flex: 1;
+    padding: 2.5rem 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Header row: title + social icons */
+.login-card-left-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+}
+
+/* Social icon buttons */
+.login-social-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.login-social-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7c93;
+    border: 1.5px solid #d5dcd9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.25s ease;
+}
+
+.login-social-btn:hover {
+    color: #fff;
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+    transform: translateY(-2px);
+}
+
+/* Clean, underline-style input */
+.login-input {
+    border: none;
+    border-bottom: 1.5px solid #d5dcd9;
+    border-radius: 0 !important;
+    padding: 0.6rem 0.25rem;
+    font-size: 0.88rem;
+    background: transparent;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-input:focus {
+    border-color: var(--cc-primary);
+    box-shadow: none;
+    outline: none;
+}
+
+.login-input::placeholder {
+    color: #b0b8c4;
+}
+
+/* Gradient sign-in button */
+.login-btn-signin {
+    background: var(--cc-primary-dark);
+    border: none;
+    color: #fff;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.login-btn-signin:hover {
+    background: linear-gradient(135deg, #002d52, var(--cc-primary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 90, 156, 0.35);
+    color: #fff;
+}
+
+/* Footer: Forgot Password */
+.login-card-left-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+
+.login-forgot {
+    font-size: 0.8rem;
+    color: #6b7c93;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.login-forgot:hover {
+    color: var(--cc-primary);
+}
+
+/* ---- Right panel: gradient welcome ---- */
+.login-card-right {
+    flex: 1;
+    background: linear-gradient(135deg, var(--cc-primary-dark) 0%, var(--cc-primary) 50%, var(--cc-primary-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card-right-content {
+    text-align: center;
+}
+
+.login-welcome-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 1.5rem;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.login-welcome-title {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.login-welcome-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.88rem;
+    margin-bottom: 1.75rem;
+    line-height: 1.5;
+}
+
+.login-btn-public {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    color: #fff;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+.login-btn-public:hover {
+    background: #fff;
+    color: var(--cc-primary);
+    border-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Login card title */
+.login-card-left-header h4 {
+    color: #1a2332;
+    font-size: 1.5rem;
+}
+
+/* Login form labels */
+.login-form-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7c93;
+}
+
+/* Login alert */
+.login-alert {
+    font-size: 0.82rem;
+    border-radius: 8px;
+}
+
+/* Password toggle button */
+.login-pwd-toggle {
+    right: 12px;
+<<<<<<< HEAD
+    top: 20px;
+=======
+    top: 50%;
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+    transform: translateY(-50%);
+    text-decoration: none;
+}
+
+/* Password input right padding for toggle */
+.login-input-pwd {
+    padding-right: 45px;
+}
+
+/* ---- Forgot Password Modal ---- */
+.forgot-method-card {
+    background: #f8f9fb;
+    border: 1.5px solid #e3e7ee;
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.forgot-method-card:hover {
+    border-color: #0d6efd;
+    background: #eef4ff;
+    box-shadow: 0 4px 16px rgba(13, 110, 253, 0.10);
+    transform: translateY(-2px);
+}
+
+.forgot-method-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 14px;
+    font-size: 1.3rem;
+}
+
+.forgot-method-icon.admin-icon {
+    background: linear-gradient(135deg, #e0edff 0%, #c7dbff 100%);
+    color: #2563eb;
+}
+
+.forgot-method-icon.security-icon {
+    background: linear-gradient(135deg, #e6f9ee 0%, #c5f0d6 100%);
+    color: #16a34a;
+}
+
+.forgot-method-card:hover .forgot-method-icon.admin-icon {
+    background: linear-gradient(135deg, #2563eb 0%, #0d6efd 100%);
+    color: #fff;
+}
+
+.forgot-method-card:hover .forgot-method-icon.security-icon {
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    color: #fff;
+}
+
+.forgot-method-chevron {
+    margin-left: auto;
+    color: #adb5bd;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.forgot-method-card:hover .forgot-method-chevron {
+    color: #0d6efd;
+    transform: translateX(3px);
+}
+
+.forgot-method-title {
+    font-size: 0.95rem;
+    color: #1a2332;
+}
+
+.forgot-method-desc {
+    font-size: 0.8rem;
+    color: #6c757d;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+.forgot-step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.forgot-step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.forgot-step-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: #0d6efd;
+}
+
+.forgot-step-dot.done {
+    background: #198754;
+}
+
+#forgotPasswordModal .modal-content {
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+#forgotPasswordModal .modal-header {
+    padding: 20px 24px 8px;
+}
+
+#forgotPasswordModal .modal-body {
+    padding: 8px 24px 24px;
+}
+
+.forgot-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+.forgot-section-title .badge-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.forgot-section-title .badge-icon.admin-badge {
+    background: linear-gradient(135deg, #e0edff, #c7dbff);
+    color: #2563eb;
+}
+
+.forgot-section-title .badge-icon.security-badge {
+    background: linear-gradient(135deg, #e6f9ee, #c5f0d6);
+    color: #16a34a;
+}
+
+.forgot-section-label {
+    font-size: 0.92rem;
+    color: #1a2332;
+}
+
+.forgot-modal-icon {
+    color: #0d6efd;
+}
+
+.forgot-description {
+    font-size: 0.83rem;
+}
+
+.forgot-description-lg {
+    font-size: 0.88rem;
+}
+
+.forgot-form-label {
+    font-size: 0.88rem;
+}
+
+.forgot-input-icon {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.forgot-input-padded {
+    padding-left: 38px;
+}
+
+.forgot-info-alert {
+    font-size: 0.8rem;
+    border-radius: 10px;
+    border: none;
+    background: #e8f4fd;
+}
+
+.forgot-rounded-btn {
+    border-radius: 10px;
+}
+
+.forgot-error-alert {
+    font-size: 0.83rem;
+    border-radius: 10px;
+    display: none;
+    border: none;
+}
+
+.forgot-question-box {
+    background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+    border-radius: 12px;
+    border: 1px solid #d4ddff;
+}
+
+.forgot-question-icon {
+    color: #4f6df5;
+    font-size: 1.1rem;
+    margin-top: 1px;
+}
+
+.forgot-question-text {
+    font-size: 0.9rem;
+    color: #1a2332;
+}
+
+.forgot-verified-box {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-radius: 12px;
+    border: 1px solid #a7f3d0;
+}
+
+.forgot-verified-icon {
+    color: #16a34a;
+    font-size: 1.1rem;
+}
+
+.forgot-verified-text {
+    font-size: 0.85rem;
+    color: #166534;
+    font-weight: 500;
+}
+
+.forgot-form-hint {
+    font-size: 0.78rem;
+}
+
+/* ---- Public / Guest Page ---- */
+
+/* Floating navbar wrapper – positions the bar inside the hero */
+.public-navbar-wrapper {
+    padding: 16px 28px;
+    z-index: 1030;
+}
+
+/* The rounded navbar itself */
+.public-navbar {
+    background: #fff;
+    border-radius: 16px;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Brand text */
+.public-navbar .navbar-brand {
+    font-size: 1.05rem;
+    letter-spacing: 0.3px;
+    color: var(--cc-primary) !important;
+}
+
+/* Nav links */
+.public-navbar .nav-link {
+    color: #3a4a5c !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.5rem 0.85rem !important;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.public-navbar .nav-link:hover {
+    color: var(--cc-primary) !important;
+}
+
+/* Staff Login button */
+.public-navbar-login-btn {
+    border: 1.5px solid #1a2332;
+    color: #1a2332 !important;
+    border-radius: 10px;
+    padding: 0.35rem 1.1rem !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.public-navbar-login-btn:hover {
+    background: var(--cc-primary);
+    border-color: var(--cc-primary);
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrolled state – slightly deeper shadow */
+.public-navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ---- Hero Section (Public Page) ---- */
+/* Full-viewport hero with the login-page-style blue gradient and blobs */
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #003d6b 0%, #005a9c 30%, #2d89cf 60%, #0077b6 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 7rem 0 4rem;
+}
+
+/* Decorative radial-gradient circle (top-right) */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    border-radius: 50%;
+}
+
+/* Decorative radial-gradient circle (bottom-left) */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    bottom: -100px;
+    left: -100px;
+    border-radius: 50%;
+}
+
+/* ---- Hero Floating Blobs ---- */
+.hero-blob {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+    filter: blur(2px);
+}
+
+.hero-blob-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.9), rgba(160, 210, 255, 0.5));
+    top: -100px;
+    left: -80px;
+    animation: blobFloat1 14s ease-in-out infinite;
+}
+
+.hero-blob-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.8), rgba(130, 190, 255, 0.4));
+    bottom: -80px;
+    right: -60px;
+    animation: blobFloat2 18s ease-in-out infinite;
+    opacity: 0.10;
+}
+
+.hero-blob-3 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), rgba(100, 170, 255, 0.3));
+    top: 50%;
+    right: 8%;
+    animation: blobFloat3 22s ease-in-out infinite;
+    opacity: 0.08;
+}
+
+
+
+/* Hero row alignment */
+.hero-row {
+    min-height: 70vh;
+}
+
+/* ---- Hero Text ---- */
+.hero-text-col {
+    padding-right: 0;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.hero-title-campus {
+    font-weight: 700;
+}
+
+.hero-title-care {
+    font-weight: 700;
+    color: #a0d8f8;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.hero-description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+    max-width: 520px;
+}
+
+/* ---- Hero Buttons ---- */
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    background: var(--cc-accent);
+    border: none;
+    color: #fff;
+    padding: 0.7rem 2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+.hero-btn-primary:hover {
+    background: #0891d6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.45);
+    color: #fff;
+}
+
+.hero-btn-outline {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    color: #fff;
+    padding: 0.7rem 2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.hero-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ---- Hero Image ---- */
+.hero-image-col {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.hero-image-wrapper {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    position: relative;
+}
+
+/* Smooth carousel slide transition */
+.hero-image-wrapper .carousel-item {
+    transition: transform 1s ease-in-out;
+}
+
+/* Hero carousel indicator dots */
+.hero-carousel-dots {
+    margin-bottom: 12px;
+}
+
+.hero-carousel-dots button {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    border: none !important;
+    margin: 0 4px !important;
+    padding: 0 !important;
+    transition: all 0.3s ease;
+}
+
+.hero-carousel-dots button.active {
+    background-color: #fff !important;
+    transform: scale(1.2);
+}
+
+.hero-image {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Generic section wrapper for the public page with vertical padding. */
+.public-section {
+    padding: 4rem 0;
+}
+
+/* Alternating sections on the public page get a white background. */
+.public-section:nth-child(even) {
+    background: #fff;
+}
+
+/* Large bold heading used in public page sections. */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a2332;
+    margin-bottom: 0.5rem;
+}
+
+/* Muted subtitle text placed below a section title. */
+.section-subtitle {
+    color: #6b7c93;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+/* Card component for the public page: full height, borderless,
+   with rounded corners and a hover lift effect. */
+.public-card {
+    border: none;
+    border-radius: var(--cc-radius);
+    box-shadow: var(--cc-card-shadow);
+    transition: var(--cc-transition);
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Public card hover: lifts up and gains a deeper shadow. */
+.public-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Expandable First Aid Cards ---- */
+.fa-expand-card {
+    cursor: pointer;
+}
+
+.fa-expand-card:hover {
+    transform: translateY(-2px);
+}
+
+.fa-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--cc-primary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fa-expand-header {
+    border-radius: var(--cc-radius);
+    transition: background 0.2s ease;
+}
+
+.fa-expand-header:hover {
+    background: #f8fafc;
+}
+
+.fa-expand-chevron {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.fa-expand-header[aria-expanded="true"] .fa-expand-chevron {
+    transform: rotate(180deg);
+}
+
+.fa-expand-content {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 0.75rem !important;
+}
+
+/* ---- First Aid Export Actions ---- */
+.fa-export-actions {
+    border-top: 1px solid #eef2f1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.fa-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--cc-primary);
+    background: var(--cc-primary-bg);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.fa-export-btn:hover {
+    background: var(--cc-primary);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 90, 156, 0.25);
+}
+
+.fa-export-btn i {
+    font-size: 0.85rem;
+}
+
+/* ---- Clinic Hours Section ---- */
+/* Right schedule list */
+.clinic-hours-schedule {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+/* Individual day row */
+.clinic-hours-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #f0f4f3;
+    transition: background 0.2s ease;
+}
+
+.clinic-hours-row:last-child {
+    border-bottom: none;
+}
+
+.clinic-hours-row:hover {
+    background: #f8fafc;
+}
+
+/* Day icon circle */
+.clinic-hours-day-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f0f4f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7c93;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.clinic-hours-day-icon.active {
+    background: var(--cc-primary);
+    color: #fff;
+}
+
+/* Day name */
+.clinic-hours-day-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* "Today" highlight row */
+.clinic-hours-today {
+    background: var(--cc-primary-bg);
+    border-left: 3px solid var(--cc-primary);
+}
+
+.clinic-hours-today:hover {
+    background: #e3edf7;
+}
+
+/* "Open / Closed" status badge */
+.clinic-hours-status-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.clinic-hours-status-badge.open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.clinic-hours-status-badge.closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Time display */
+.clinic-hours-time {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.clinic-hours-open-time {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cc-primary);
+    white-space: nowrap;
+}
+
+/* Closed badge */
+.clinic-hours-closed-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7c93;
+    background: #eef2f1;
+    padding: 3px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ---- Empty State ---- */
+/* Centered placeholder shown when a list or table has no data,
+   with muted text and generous padding. */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+}
+
+/* Large, faded icon displayed above the empty-state message. */
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+}
+
+/* Descriptive text in the empty-state component. */
+.empty-state p {
+    font-size: 0.9rem;
+}
+
+/* ---- Responsive ---- */
+/* Tablet breakpoint (≤991.98px): hides the sidebar off-screen
+   by default and allows the main content to span full width. */
+@media (max-width: 991.98px) {
+
+    /* Slides the sidebar off the left edge of the screen. */
+    .cc-sidebar {
+        transform: translateX(-100%);
+    }
+
+    /* When toggled open on mobile, slides the sidebar back into view. */
+    .cc-sidebar.show {
+        transform: translateX(0);
+    }
+
+    /* Shows the dark overlay behind the sidebar when it is open. */
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    /* Removes the left margin so content fills the full width. */
+    .cc-main-content {
+        margin-left: 0;
+    }
+
+    /* ---- Mobile Navbar ---- */
+    .public-navbar-wrapper {
+        padding: 10px 12px;
+    }
+
+    /* Dark hamburger icon on white background */
+    .public-navbar .navbar-toggler {
+        border-color: rgba(0, 0, 0, 0.15);
+        padding: 0.3rem 0.55rem;
+    }
+
+    .public-navbar .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2830, 40, 55, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* Soften corners when dropdown is expanded */
+    .public-navbar:has(.navbar-collapse.show),
+    .public-navbar:has(.navbar-collapse.collapsing) {
+        border-radius: 16px;
+    }
+
+    /* Dropdown menu area */
+    .public-navbar .navbar-collapse {
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* Stack nav items with proper spacing */
+    .public-navbar .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .public-navbar .nav-link {
+        padding: 0.55rem 0.5rem !important;
+        font-size: 0.9rem;
+    }
+
+    /* Full-width login button on mobile */
+    .public-navbar .nav-item.ms-lg-2 {
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+
+    .public-navbar-login-btn {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 0.5rem 1rem !important;
+    }
+}
+
+/* Small-screen breakpoint (≤575.98px): reduces padding and sizes
+   for a more compact mobile layout. */
+@media (max-width: 575.98px) {
+
+    /* Tighter padding for the main content area on small screens. */
+    .cc-main-content {
+        padding: 1rem;
+    }
+
+    /* Reduced padding on stat cards for small screens. */
+    .stat-card {
+        padding: 1rem;
+    }
+
+    /* Smaller stat value text on small screens. */
+    .stat-card .stat-value {
+        font-size: 1.4rem;
+    }
+
+    /* Stack the split login card vertically on small screens. */
+    .login-card-split {
+        flex-direction: column-reverse;
+    }
+
+    .login-card-left {
+        padding: 1.75rem;
+    }
+
+    .login-card-right {
+        padding: 1.75rem;
+    }
+
+    /* Hero section responsive */
+    .hero-section {
+        padding: 6rem 0 3rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .hero-image-col {
+        margin-top: 2rem;
+        justify-content: center;
+    }
+
+    .hero-image {
+        height: 260px;
+    }
+
+    .hero-row {
+        min-height: auto;
+    }
+}
+
+/* ---- Utilities ---- */
+/* Utility: forces the primary brand color on text. */
+.text-primary-cc {
+    color: var(--cc-primary) !important;
+}
+
+/* Utility: forces the primary brand color as a background. */
+.bg-primary-cc {
+    background-color: var(--cc-primary) !important;
+}
+
+/* Utility: forces a muted gray text color. */
+.text-muted-cc {
+    color: #6b7c93 !important;
+}
+
+/* Utility: forces font-weight 600 (semi-bold). */
+.fw-600 {
+    font-weight: 600 !important;
+}
+
+/* Utility: extra-small font size (0.75rem). */
+.fs-xs {
+    font-size: 0.75rem !important;
+}
+
+/* Utility: small font size (0.85rem). */
+.fs-sm {
+    font-size: 0.85rem !important;
+}
+
+/* ---- Process Timeline / Stepper ---- */
+/* Horizontal multi-step progress indicator: a flex row of step
+   circles connected by lines, used in multi-step forms. */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 1rem 1.25rem;
+    margin-bottom: 0;
+    counter-reset: step;
+    position: relative;
+}
+
+/* Individual step in the stepper: a flex column containing a
+   circle and a label, each taking equal width. */
+.stepper-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    z-index: 1;
+}
+
+/* Connecting line between steps: a horizontal pseudo-element
+   positioned between each step circle (except the last). */
+.stepper-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: calc(50% + 20px);
+    width: calc(100% - 40px);
+    height: 2px;
+    background: #d5dcd9;
+    transition: background 0.4s ease;
+}
+
+/* Completed step's connecting line turns primary-colored. */
+.stepper-step.completed:not(:last-child)::after {
+    background: var(--cc-primary);
+}
+
+/* Step circle: the numbered/icon circle for each step,
+   gray by default with a dashed-style border. */
+.stepper-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #f0f4f3;
+    color: #9ca3af;
+    border: 2px solid #d5dcd9;
+    transition: all 0.35s ease;
+    position: relative;
+    z-index: 2;
+}
+
+/* Active step circle: primary-colored background with a focus
+   ring (box-shadow) and a slight scale-up effect. */
+.stepper-step.active .stepper-circle {
+    background: var(--cc-primary);
+    color: #fff;
+    border-color: var(--cc-primary);
+    box-shadow: 0 0 0 4px rgba(0, 90, 156, 0.15);
+    transform: scale(1.08);
+}
+
+/* Completed step circle: solid primary background without the
+   focus ring (already past this step). */
+.stepper-step.completed .stepper-circle {
+    background: var(--cc-primary);
+    color: #fff;
+    border-color: var(--cc-primary);
+}
+
+/* Step label text below each circle: small, uppercase, muted,
+   centered, non-wrapping. */
+.stepper-label {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: center;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+/* Active step label: highlighted with the primary color. */
+.stepper-step.active .stepper-label {
+    color: var(--cc-primary);
+}
+
+/* Completed step label: also highlighted with the primary color. */
+.stepper-step.completed .stepper-label {
+    color: var(--cc-primary);
+}
+
+/* Step content section: hidden by default, shown when active,
+   with a fade-in slide animation. */
+.step-section {
+    display: none;
+    animation: stepFadeIn 0.3s ease forwards;
+}
+
+/* Makes the active step section visible. */
+.step-section.active {
+    display: block;
+}
+
+/* Fade-in and slide-right animation for revealing step content. */
+@keyframes stepFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Shake animation for validation feedback on step sections. */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-6px);
+    }
+
+    40% {
+        transform: translateX(6px);
+    }
+
+    60% {
+        transform: translateX(-4px);
+    }
+
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+/* Navigation buttons row below the stepper (Back / Next / Submit):
+   spaced apart with flex and top padding. */
+.stepper-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+}
+
+/* Minimum width for stepper navigation buttons so they
+   stay consistently sized. */
+.stepper-nav .btn {
+    min-width: 110px;
+}
+
+/* Adjustments when the stepper is placed inside a modal:
+   tighter padding, negative margin to align with modal edges,
+   and a bottom border separator. */
+.modal .stepper {
+    padding: 0.25rem 0.5rem 1rem;
+    margin: 0 -0.5rem;
+    border-bottom: 1px solid #eef2f1;
+    margin-bottom: 1.25rem;
+}
+
+/* Mobile stepper adjustments (≤575.98px): smaller circles,
+   labels, and connector lines to fit narrow screens. */
+@media (max-width: 575.98px) {
+
+    /* Tighter horizontal padding on the stepper. */
+    .stepper {
+        padding: 0.25rem 0.25rem 1rem;
+    }
+
+    /* Smaller step circles on mobile. */
+    .stepper-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+
+    /* Smaller step labels on mobile. */
+    .stepper-label {
+        font-size: 0.62rem;
+        letter-spacing: 0.2px;
+    }
+
+    /* Adjusted connector line position and width for smaller circles. */
+    .stepper-step:not(:last-child)::after {
+        top: 15px;
+        left: calc(50% + 16px);
+        width: calc(100% - 32px);
+    }
+}
+
+/* ---- Animations ---- */
+/* Keyframe: element fades in while sliding upward. */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Applies the fadeInUp animation (0.4s) to an element. */
+.animate-fade-in {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Animation delay utility: 0.1 second delay (used for staggered entrances). */
+.animate-delay-1 {
+    animation-delay: 0.1s;
+}
+
+/* Animation delay utility: 0.2 second delay. */
+.animate-delay-2 {
+    animation-delay: 0.2s;
+}
+
+/* Animation delay utility: 0.3 second delay. */
+.animate-delay-3 {
+    animation-delay: 0.3s;
+}
+
+/* Animation delay utility: 0.4 second delay. */
+.animate-delay-4 {
+    animation-delay: 0.4s;
+}
+
+/* ---- Print Styles ---- */
+/* When printing: hides the navbar, sidebar, overlay, and any
+   elements marked with .no-print; resets layout for paper output. */
+@media print {
+
+    /* Hide navigation and non-printable elements. */
+    .cc-navbar,
+    .cc-sidebar,
+    .sidebar-overlay,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Remove sidebar offset and padding for full-width print. */
+    .cc-main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Remove navbar offset on the body. */
+    body {
+        padding-top: 0 !important;
+    }
+}
+
+/* ---- Student Autocomplete ---- */
+/* Outer wrapper for the student autocomplete widget;
+   positioned relatively to anchor the dropdown. */
+.student-autocomplete {
+    position: relative;
+}
+
+/* Inner wrapper around the autocomplete input field,
+   positioned relatively to anchor the icon and clear button. */
+.student-ac-input-wrap {
+    position: relative;
+}
+
+/* Search icon inside the autocomplete input: positioned on the
+   left side, vertically centered, non-interactive. */
+.student-ac-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.9rem;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Autocomplete text input: extra left/right padding to make
+   room for the search icon and the clear button. */
+.student-ac-input {
+    padding-left: 38px !important;
+    padding-right: 38px !important;
+}
+
+/* Clear ("×") button inside the autocomplete input: positioned
+   on the right side, styled as a minimal icon button. */
+.student-ac-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    transition: var(--cc-transition);
+}
+
+/* Clear button hover: gains a light background and darker icon. */
+.student-ac-clear:hover {
+    background: #f0f4f3;
+    color: #2c3e50;
+}
+
+/* Dropdown list that appears below the autocomplete input
+   showing matching student results; hidden by default. */
+.student-ac-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    background: #fff;
+    border: 1.5px solid #d5dcd9;
+    border-top: none;
+    border-radius: 0 0 var(--cc-radius-sm) var(--cc-radius-sm);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+/* Makes the autocomplete dropdown visible when it has the .show class. */
+.student-ac-dropdown.show {
+    display: block;
+}
+
+/* Slim scrollbar for the autocomplete dropdown (WebKit). */
+.student-ac-dropdown::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Light scrollbar thumb for the autocomplete dropdown. */
+.student-ac-dropdown::-webkit-scrollbar-thumb {
+    background: #d5dcd9;
+    border-radius: 3px;
+}
+
+/* Individual student item row in the autocomplete dropdown:
+   flex layout with a gap, pointer cursor, and a bottom border. */
+.student-ac-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+/* Removes the border from the last item in the dropdown. */
+.student-ac-item:last-child {
+    border-bottom: none;
+}
+
+/* Hover and keyboard-active state for a student item:
+   highlighted with the primary background tint. */
+.student-ac-item:hover,
+.student-ac-item.active {
+    background: var(--cc-primary-bg);
+}
+
+/* Student ID badge inside each autocomplete item: small, bold,
+   primary-colored text on a tinted background pill. */
+.student-ac-item-id {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cc-primary);
+    background: var(--cc-primary-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+/* Deepens the ID badge background when the item is
+   hovered or keyboard-active. */
+.student-ac-item.active .student-ac-item-id,
+.student-ac-item:hover .student-ac-item-id {
+    background: rgba(13, 110, 63, 0.12);
+}
+
+/* Student name text inside each autocomplete item. */
+.student-ac-item-name {
+    font-size: 0.875rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Message shown in the dropdown when no students match the query. */
+.student-ac-empty {
+    padding: 1rem 0.85rem;
+    font-size: 0.85rem;
+    color: #6b7c93;
+    text-align: center;
+}
+
+/* Invalid state for the autocomplete input: red border to indicate
+   that a valid student has not been selected. */
+.student-ac-input.is-invalid {
+    border-color: var(--cc-danger);
+}
+
+/* ---- PHI Access Gate Modal ---- */
+/* Circular icon container centered at the top of the gate modal. */
+.access-control-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cc-primary-dark), var(--cc-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+/* Shield-lock icon inside the gate icon circle. */
+.access-control-icon i {
+    font-size: 28px;
+    color: #fff;
+}
+
+/* Rounded chip showing the student's name/ID being accessed. */
+.access-control-student {
+    display: inline-block;
+    padding: 0.5rem 0.85rem;
+    background: var(--cc-primary-bg);
+    border-radius: var(--cc-radius-sm);
+    border: 1px solid #b8d4f0;
+}
+
+/* Student name inside the chip: green and bold. */
+.access-control-student-name {
+    color: var(--cc-primary-dark);
+}
+
+/* Compact alert for showing gate errors (wrong password). */
+.access-control-alert {
+    font-size: 0.85rem;
+    border-radius: var(--cc-radius-sm);
+}
+
+/* Password input inside the gate: left icon padding. */
+.access-control-input {
+    padding-left: 38px;
+    padding-right: 45px;
+}
+
+/* Positioned icon/button inside the gate password field. */
+.access-control-field-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Password toggle button inside the gate password field. */
+.access-control-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-decoration: none;
+}
+
+/* Small hint text at the bottom of the gate modal. */
+.access-control-hint {
+    font-size: 0.75rem;
+}
+
+/* ---- Dashboard Charts & Widgets ---- */
+/* Container for Chart.js canvas elements with a fixed aspect ratio. */
+.chart-container {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
+.chart-container-sm {
+    position: relative;
+    height: 220px;
+    width: 100%;
+}
+
+/* Comparison indicator (↑/↓ arrows with percentage) on stat cards. */
+.stat-comparison {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.stat-comparison.up {
+    color: var(--cc-success);
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.stat-comparison.down {
+    color: var(--cc-danger);
+    background: rgba(192, 57, 43, 0.1);
+}
+
+.stat-comparison.neutral {
+    color: #6b7c93;
+    background: rgba(107, 124, 147, 0.1);
+}
+
+.stat-comparison i {
+    font-size: 0.65rem;
+    margin-right: 3px;
+}
+
+/* Activity feed items in the dashboard. */
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.activity-icon.login {
+    background: rgba(39, 174, 96, 0.12);
+    color: var(--cc-success);
+}
+
+.activity-icon.action {
+    background: rgba(0, 90, 156, 0.12);
+    color: var(--cc-primary);
+}
+
+.activity-icon.warning {
+    background: rgba(243, 156, 18, 0.12);
+    color: var(--cc-warning);
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-content .activity-text {
+    font-size: 0.8rem;
+    color: #3d4f5f;
+    line-height: 1.3;
+}
+
+.activity-content .activity-time {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+
+
+/* Profile completeness progress bar. */
+.completeness-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.completeness-bar .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+/* Request status mini card. */
+.request-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f4f3;
+}
+
+.request-status-item:last-child {
+    border-bottom: none;
+<<<<<<< HEAD
+}
+
+/* ---- Export Modal Checkbox Items ---- */
+/* Styled checkbox rows in the Generate Report modal with
+   a card-like appearance, hover effects, and checked state indicator. */
+.export-check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    overflow: hidden;
+}
+
+.export-check-item .form-check-input {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.export-check-item .form-check-label {
+    display: block;
+    width: 100%;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: var(--cc-radius-sm);
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.export-check-item .form-check-label:hover {
+    background: var(--cc-primary-bg);
+    border-color: var(--cc-primary-light);
+}
+
+.export-check-item .form-check-input:checked ~ .form-check-label {
+    color: var(--cc-primary);
+    border-color: var(--cc-primary-light);
+    background: var(--cc-primary-bg);
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+}

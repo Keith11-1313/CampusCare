@@ -1,0 +1,10 @@
+{
+    "require": {
+<<<<<<< HEAD
+        "dompdf/dompdf": "^3.1",
+        "phpmailer/phpmailer": "^7.0"
+=======
+        "dompdf/dompdf": "^3.1"
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+    }
+}

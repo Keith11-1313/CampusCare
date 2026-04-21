@@ -1,0 +1,11 @@
+student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address
+2024-002021-N,Beatriz,Tan,Santiago,Female,2005-01-09,O+,09371234567,beatriz.santiago@email.com,332 Timog Ave Quezon City
+2024-002022-N,Diego,Rivera,Manalo,Male,2004-06-21,B+,09381234567,diego.manalo@email.com,445 Visayas Ave Quezon City
+2024-002023-N,Katrina,Sy,Aguilar,Female,2006-08-14,A+,09391234567,katrina.aguilar@email.com,558 Congressional Ave Quezon City
+2024-002024-N,Lorenzo,Chua,Pascual,Male,2003-03-30,AB-,09401234567,lorenzo.pascual@email.com,671 Sgt. Rivera St Mandaluyong City
+2024-002025-N,Daniela,Go,Mercado,Female,2005-10-05,O-,09411234567,daniela.mercado@email.com,784 Pioneer St Mandaluyong City
+2024-002026-N,Antonio,Uy,Evangelista,Male,2004-01-17,A-,09421234567,antonio.evangelista@email.com,897 Boni Ave Mandaluyong City
+2024-002027-N,Francesca,Ong,Salazar,Female,2006-04-23,B-,09431234567,francesca.salazar@email.com,110 Meralco Ave Pasig City
+2024-002028-N,Enrique,Co,Reyes,Male,2003-09-11,O+,09441234567,enrique.reyes@email.com,223 Julia Vargas Ave Pasig City
+2024-002029-N,Valeria,Yap,De Leon,Female,2005-06-06,AB+,09451234567,valeria.deleon@email.com,336 Ortigas Center Pasig City
+2024-002030-N,Sebastian,Lim,Fernandez,Male,2004-12-25,A+,09461234567,sebastian.fernandez@email.com,449 Meralco Ave Ortigas Pasig City

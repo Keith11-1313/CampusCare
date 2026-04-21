@@ -1,0 +1,11 @@
+student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address
+2024-002001-N,Maria,Dela Cruz,Santos,Female,2005-04-12,O+,09171234567,maria.santos@email.com,123 Rizal St Manila
+2024-002002-N,Juan,Garcia,Reyes,Male,2004-08-25,A+,09181234567,juan.reyes@email.com,456 Bonifacio St Quezon City
+2024-002003-N,Ana,Bautista,Mendoza,Female,2006-01-10,B+,09191234567,ana.mendoza@email.com,789 Mabini St Makati City
+2024-002004-N,Pedro,Perez,Gonzales,Male,2003-11-20,AB-,09201234567,pedro.gonzales@email.com,321 Taft Ave Pasay City
+2024-002005-N,Luz,Torres,Aquino,Female,2005-06-30,O-,09211234567,luz.aquino@email.com,654 EDSA Mandaluyong City
+2024-002006-N,Ramon,Cruz,Lopez,Male,2004-02-14,A-,09221234567,ramon.lopez@email.com,987 Roxas Blvd Manila
+2024-002007-N,Rosa,Velasquez,Gomez,Female,2006-09-05,B-,09231234567,rosa.gomez@email.com,147 Shaw Blvd Pasig City
+2024-002008-N,Jose,Delos Santos,Ramos,Male,2003-05-18,AB+,09241234567,jose.ramos@email.com,258 Ortigas Ave Quezon City
+2024-002009-N,Carmen,Navarro,Flores,Female,2005-12-01,O+,09251234567,carmen.flores@email.com,369 Aurora Blvd San Juan
+2024-002010-N,Miguel,Castillo,Villanueva,Male,2004-07-07,A+,09261234567,miguel.villanueva@email.com,741 Commonwealth Ave Quezon City

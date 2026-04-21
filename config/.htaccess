@@ -1,0 +1,8 @@
+# Block all direct browser access to config files
+<<<<<<< HEAD
+Order deny,allow
+Deny from all
+=======
+    Order deny,allow
+    Deny from all
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
