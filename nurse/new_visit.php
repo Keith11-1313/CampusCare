@@ -14,6 +14,7 @@ if ($preSelectId) {
 // Handle student search AJAX
 if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $raw = trim($_GET['search_student']);
     // Validate: only letters, numbers, spaces, dots, hyphens, and commas allowed
     if (!preg_match('/^[a-zA-Z0-9\s.\-,]+$/', $raw)) {
@@ -21,6 +22,10 @@ if (isset($_GET['search_student']) && !empty($_GET['search_student'])) {
     }
     $q = '%' . $raw . '%';
     $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE ? OR CONCAT(first_name, ' ', LEFT(middle_name, 1), '. ', last_name) LIKE ?) LIMIT 10", [$q, $q, $q, $q, $q, $q]);
+=======
+    $q = '%' . trim($_GET['search_student']) . '%';
+    $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ?) LIMIT 10", [$q, $q, $q]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $q = '%' . trim($_GET['search_student']) . '%';
     $results = $db->fetchAll("SELECT id, student_id, first_name, last_name FROM students WHERE status='active' AND (student_id LIKE ? OR first_name LIKE ? OR last_name LIKE ?) LIMIT 10", [$q, $q, $q]);
@@ -40,10 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $complaintDesc = trim($_POST['complaint_description'] ?? '');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     $assessmentVal = trim($_POST['assessment'] ?? '');
 
     if (!$sid || empty($complaintCategory) || empty($assessmentVal)) {
         setFlashMessage('error', 'Student, complaint, and assessment are required.');
+=======
+    if (!$sid || empty($complaintCategory)) {
+        setFlashMessage('error', 'Student and complaint are required.');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     if (!$sid || empty($complaintCategory)) {
         setFlashMessage('error', 'Student and complaint are required.');
@@ -64,7 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $complaintCategory,
         $complaintDesc ?: null,
 <<<<<<< HEAD
+<<<<<<< HEAD
         $assessmentVal,
+=======
+        trim($_POST['assessment'] ?? '') ?: null,
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         trim($_POST['assessment'] ?? '') ?: null,
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -112,7 +126,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <form method="POST" class="needs-validation" data-custom-validation novalidate>
+=======
+<form method="POST" class="needs-validation" novalidate>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 <form method="POST" class="needs-validation" novalidate>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -230,12 +248,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <textarea class="form-control" name="complaint_description" rows="3" placeholder="Provide additional details about the complaint..."></textarea>
     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div class="mb-3"><label class="form-label">Assessment <span class="required-asterisk">*</span></label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..." required></textarea><div class="invalid-feedback">Please provide an assessment.</div></div>
     <div class="mb-3">
         <label class="form-label">Treatment Provided</label>
         <div id="treatmentSuggestions" class="treatment-suggestions" style="display:none;"></div>
         <textarea class="form-control" name="treatment" id="treatmentTextarea" rows="3" placeholder="Treatment given or recommended..."></textarea>
     </div>
+=======
+    <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
+    <div class="mb-3"><label class="form-label">Treatment Provided</label><textarea class="form-control" name="treatment" rows="3" placeholder="Treatment given or recommended..."></textarea></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <div class="mb-3"><label class="form-label">Assessment</label><textarea class="form-control" name="assessment" rows="3" placeholder="Clinical assessment and findings..."></textarea></div>
     <div class="mb-3"><label class="form-label">Treatment Provided</label><textarea class="form-control" name="treatment" rows="3" placeholder="Treatment given or recommended..."></textarea></div>
@@ -272,6 +295,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <style>
 .treatment-suggestions {
@@ -324,6 +348,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <script>
 let currentVisitStep = 1;
 const totalVisitSteps = 4;
@@ -369,9 +395,13 @@ function visitStepNav(dir) {
                     const searchInput = document.getElementById('studentSearchInput');
                     searchInput.classList.add('is-invalid');
 <<<<<<< HEAD
+<<<<<<< HEAD
                     const fb = document.getElementById('studentInvalidFeedback');
                     fb.textContent = 'Please select a student from the dropdown.';
                     fb.style.display = 'block';
+=======
+                    document.getElementById('studentInvalidFeedback').style.display = 'block';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     document.getElementById('studentInvalidFeedback').style.display = 'block';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -417,6 +447,7 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
     let activeIdx  = -1;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Only allow letters, numbers, spaces, dots, hyphens, commas
     const validPattern = /^[a-zA-Z0-9\s.\-,]*$/;
 
@@ -426,10 +457,15 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
     input.addEventListener('input', function() {
         const q = this.value.trim();
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+    input.addEventListener('input', function() {
+        const q = this.value.trim();
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         hidden.value = '';
         feedback.style.display = 'none';
         input.classList.remove('is-invalid');
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         // Silently strip invalid characters
         if (!validPattern.test(raw)) {
@@ -439,12 +475,15 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
         const q = this.value.trim();
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         clearTimeout(debounce);
         if (q.length < 1) { closeDropdown(); return; }
 
         debounce = setTimeout(() => {
             fetch('new_visit.php?search_student=' + encodeURIComponent(q))
                 .then(r => r.json())
+<<<<<<< HEAD
 <<<<<<< HEAD
                 .then(data => {
                     if (data.error) {
@@ -454,6 +493,9 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
                     }
                     renderDropdown(data.results || []);
                 })
+=======
+                .then(data => renderDropdown(data.results || []))
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 .then(data => renderDropdown(data.results || []))
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -545,7 +587,10 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
             e.stopPropagation();
             input.classList.add('is-invalid');
 <<<<<<< HEAD
+<<<<<<< HEAD
             feedback.textContent = 'Please select a student from the dropdown.';
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             feedback.style.display = 'block';
@@ -553,6 +598,7 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
             input.focus();
         }
     });
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     // ── Suggested Treatments Logic ──
@@ -616,6 +662,8 @@ document.querySelectorAll('form.needs-validation .step-section input[required], 
         
         treatmentTextarea.focus();
     };
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 })();

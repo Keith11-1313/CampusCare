@@ -11,10 +11,13 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_samesite', 'Lax');
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Auto-detect HTTPS for secure cookies
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     ini_set('session.cookie_secure', 1);
 }
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
@@ -37,7 +40,10 @@ if (isset($_SESSION['user_id'])) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 /**

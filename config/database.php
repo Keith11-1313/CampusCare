@@ -19,8 +19,12 @@ class Database
         }
         catch (PDOException $e) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             error_log("CampusCare DB connection failed: " . $e->getMessage());
             die("Database connection failed. Please check your configuration.");
+=======
+            die("Database connection failed: " . $e->getMessage());
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             die("Database connection failed: " . $e->getMessage());
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

@@ -31,12 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($firstName))
             $errors[] = 'First name is required.';
 <<<<<<< HEAD
+<<<<<<< HEAD
         elseif (!preg_match("/^[a-zA-Z\s'\-\.\x{00f1}\x{00d1}]+$/u", $firstName))
             $errors[] = 'First name should only contain letters, spaces, hyphens, periods, or apostrophes.';
         if (empty($lastName))
             $errors[] = 'Last name is required.';
         elseif (!preg_match("/^[a-zA-Z\s'\-\.\x{00f1}\x{00d1}]+$/u", $lastName))
             $errors[] = 'Last name should only contain letters, spaces, hyphens, periods, or apostrophes.';
+=======
+        if (empty($lastName))
+            $errors[] = 'Last name is required.';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         if (empty($lastName))
             $errors[] = 'Last name is required.';
@@ -56,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         if ($action === 'create') {
             $password = $_POST['password'] ?? '';
             $confirmPassword = $_POST['confirm_password'] ?? '';
@@ -66,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if ($password !== $confirmPassword) {
                 jsonResponse(['success' => false, 'message' => 'Passwords do not match.']);
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         // Security question fields
         $securityQuestion = trim($_POST['security_question'] ?? '');
         $securityAnswer = trim($_POST['security_answer'] ?? '');
@@ -75,15 +83,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $password = $_POST['password'] ?? '';
             if (empty($password) || strlen($password) < 6) {
                 jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             }
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             $db->query(
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null]
+=======
+                "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question, security_answer) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [$username, $hashedPassword, $firstName, $lastName, $email ?: null, $role, $assignedProgramId, $assignedYearLevelId, $assignedSection ?: null, $securityQuestion ?: null, $hashedSecurityAnswer]
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 "INSERT INTO users (username, password, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question, security_answer) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -102,7 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                      JOIN students s ON rr.nominee_student_id = s.id
                      WHERE rr.id = ? AND rr.status = 'pending'",
 <<<<<<< HEAD
+<<<<<<< HEAD
                     [$prefillRequest]
+=======
+                [$prefillRequest]
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 [$prefillRequest]
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -112,7 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $db->query(
                         "UPDATE users SET status = 'inactive', deactivation_reason = ? WHERE id = ?",
 <<<<<<< HEAD
+<<<<<<< HEAD
                         ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
+=======
+                    ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     ['Stepped down; replaced by ' . $repRequest['nominee_fname'] . ' ' . $repRequest['nominee_lname'], $repRequest['rep_user_id']]
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -125,7 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             jsonResponse(['success' => true, 'message' => 'User created successfully.']);
 <<<<<<< HEAD
+<<<<<<< HEAD
         } else {
+=======
+        }
+        else {
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         }
         else {
@@ -135,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update password if provided
             if (!empty($_POST['password'])) {
+<<<<<<< HEAD
 <<<<<<< HEAD
                 $pwdErrors = validatePasswordStrength($_POST['password']);
                 if (!empty($pwdErrors)) {
@@ -147,13 +178,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 if (strlen($_POST['password']) < 6) {
                     jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+                if (strlen($_POST['password']) < 6) {
+                    jsonResponse(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 }
                 $updateFields = "password = ?, " . $updateFields;
                 array_unshift($params, password_hash($_POST['password'], PASSWORD_DEFAULT));
             }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             // Update security question/answer if provided
             if (!empty($securityQuestion)) {
                 $updateFields .= ", security_question = ?";
@@ -164,6 +202,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             $params[] = $id;
             $db->query("UPDATE users SET $updateFields WHERE id = ?", $params);
@@ -191,7 +232,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
             $db->query("UPDATE users SET status = ?, deactivation_reason = ? WHERE id = ?", [$newStatus, $reason, $id]);
 <<<<<<< HEAD
+<<<<<<< HEAD
         } else {
+=======
+        }
+        else {
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         }
         else {
@@ -211,7 +257,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'get') {
         $id = intval($_POST['id'] ?? 0);
 <<<<<<< HEAD
+<<<<<<< HEAD
         $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section FROM users WHERE id = ?", [$id]);
+=======
+        $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question FROM users WHERE id = ?", [$id]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         $userData = $db->fetch("SELECT id, username, first_name, last_name, email, role, assigned_program_id, assigned_year_level_id, assigned_section, security_question FROM users WHERE id = ?", [$id]);
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -222,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Fetch data for listing
 $search = trim($_GET['search'] ?? '');
 $roleFilter = $_GET['role'] ?? '';
+<<<<<<< HEAD
 <<<<<<< HEAD
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
@@ -238,6 +289,8 @@ if (!empty($search)) {
     $searchParam = "%$search%";
     $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 $statusFilter = $_GET['status'] ?? '';
 $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 15;
@@ -253,6 +306,9 @@ if (!empty($search)) {
     $where .= " AND (username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR role LIKE ?)";
     $searchParam = "%$search%";
     $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 }
 if (!empty($roleFilter)) {
@@ -260,11 +316,14 @@ if (!empty($roleFilter)) {
     $params[] = $roleFilter;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 $orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
 $totalUsers = $db->fetchColumn("SELECT COUNT(*) FROM users $where", $params);
 $totalPages = ceil($totalUsers / $perPage);
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 if (!empty($statusFilter)) {
     $where .= " AND status = ?";
     $params[] = $statusFilter;
@@ -273,6 +332,9 @@ if (!empty($statusFilter)) {
 $totalUsers = $db->fetchColumn("SELECT COUNT(*) FROM users $where", $params);
 $totalPages = ceil($totalUsers / $perPage);
 $orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 $users = $db->fetchAll("SELECT * FROM users $where ORDER BY $orderSql LIMIT $perPage OFFSET $offset", $params);
 $programs = $db->fetchAll("SELECT * FROM programs WHERE status = 'active' ORDER BY name");
@@ -286,10 +348,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <h1><i class="bi bi-people me-2"></i>User Management</h1>
         <nav aria-label="breadcrumb">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/dashboard.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Users</li>
             </ol>
+=======
+            <ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Users</li></ol>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             <ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Users</li></ol>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -303,6 +369,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <?php if (isset($_GET['prefill_request'])): ?>
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" id="prefillAlert" style="display:none;">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <i
             class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new class representative account setup. The old class representative will be deactivated once saved.'); ?>
         <button type="button" class="btn btn-sm btn-outline-success"
@@ -311,10 +378,15 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
     <?php
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <i class="bi bi-check-circle-fill me-2"></i><?php echo e($_GET['msg'] ?? 'Please complete the new class representative account setup. The old class representative will be deactivated once saved.'); ?>
         <button type="button" class="btn btn-sm btn-outline-success" style="position:absolute;top:50%;right:1rem;transform:translateY(-50%);" onclick="openPrefillModal()">Continue</button>
     </div>
 <?php
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 endif; ?>
 <?php if (isset($_GET['msg']) && !isset($_GET['prefill_request'])): ?>
@@ -323,7 +395,11 @@ endif; ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <?php
+=======
+<?php
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 <?php
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -333,16 +409,22 @@ endif; ?>
 <div class="filter-bar">
     <form method="GET" class="row g-2 align-items-end">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="col-md-9">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" class="form-control" name="search" placeholder="Search users..."
                     value="<?php echo e($search); ?>">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <div class="col-md-7">
             <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" class="form-control" name="search" placeholder="Search users..." value="<?php echo e($search); ?>">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             </div>
         </div>
@@ -355,6 +437,7 @@ endif; ?>
             </select>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="col-md-1 mt-1">
             <?php if ($search || $roleFilter): ?>
                 <a href="users.php" class="btn btn-outline-secondary w-100">Clear</a>
@@ -364,6 +447,8 @@ endif; ?>
                 <?php
             endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <div class="col-md-2">
             <select class="form-select" name="status">
                 <option value="">All Status</option>
@@ -379,6 +464,9 @@ else: ?>
                 <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
             <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         </div>
     </form>
@@ -397,6 +485,10 @@ endif; ?>
                         <th>Assignment</th>
                         <?php echo sortableHeader('Last Login', 'last_login', $sort, $order); ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                        <?php echo sortableHeader('Status', 'status', $sort, $order); ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                         <?php echo sortableHeader('Status', 'status', $sort, $order); ?>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -405,6 +497,7 @@ endif; ?>
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
                         <tr>
                             <td colspan="6" class="text-center text-muted py-4">No users found.</td>
@@ -459,6 +552,8 @@ endif; ?>
                         <?php
                     endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
                     <?php
 else: ?>
@@ -512,6 +607,9 @@ else: ?>
     endforeach; ?>
                     <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 </tbody>
             </table>
@@ -519,17 +617,23 @@ endif; ?>
     </div>
     <?php if ($totalPages > 1): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="card-footer bg-white">
             <?php echo generatePagination($page, $totalPages, 'users.php?search=' . urlencode($search) . '&role=' . urlencode($roleFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?>
         </div>
         <?php
     endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     <div class="card-footer bg-white">
         <?php echo generatePagination($page, $totalPages, 'users.php?search=' . urlencode($search) . '&role=' . urlencode($roleFilter) . '&status=' . urlencode($statusFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?>
     </div>
     <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </div>
 
@@ -570,6 +674,7 @@ endif; ?>
                             <div class="col-md-6">
                                 <label class="form-label">First Name <span class="required-asterisk">*</span></label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <input type="text" class="form-control" name="first_name" id="firstName" required
                                     pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+"
                                     title="Letters, spaces, hyphens, periods, and apostrophes only"
@@ -584,11 +689,16 @@ endif; ?>
                                     oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                                 <div class="invalid-feedback">Please enter a valid last name (letters only).</div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                 <input type="text" class="form-control" name="first_name" id="firstName" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Last Name <span class="required-asterisk">*</span></label>
                                 <input type="text" class="form-control" name="last_name" id="lastName" required>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             </div>
                             <div class="col-12">
@@ -606,6 +716,7 @@ endif; ?>
                                 <input type="text" class="form-control" name="username" id="username" required>
                             </div>
                             <div class="col-12">
+<<<<<<< HEAD
 <<<<<<< HEAD
                                 <label class="form-label">Password <span class="required-asterisk"
                                         id="pwdRequired">*</span></label>
@@ -647,6 +758,8 @@ endif; ?>
                                     <div class="invalid-feedback" id="confirmPwdFeedback">Passwords do not match.</div>
                                 </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                 <label class="form-label">Password <span class="required-asterisk" id="pwdRequired">*</span></label>
                                 <div class="position-relative">
                                     <input type="password" class="form-control" name="password" id="password" minlength="6" style="padding-right: 45px;">
@@ -655,6 +768,9 @@ endif; ?>
                                     </button>
                                 </div>
                                 <div class="form-text" id="pwdHint">Minimum 6 characters.</div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             </div>
                             <div class="col-12">
@@ -667,7 +783,10 @@ endif; ?>
                                 </select>
                             </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <div class="col-12">
                                 <label class="form-label">Security Question</label>
                                 <select class="form-select" name="security_question" id="securityQuestion">
@@ -684,6 +803,9 @@ endif; ?>
                                 <label class="form-label">Security Answer <span class="required-asterisk">*</span></label>
                                 <input type="text" class="form-control" name="security_answer" id="securityAnswerInput" placeholder="Enter the answer to the security question">
                             </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         </div>
                     </div>
@@ -698,11 +820,17 @@ endif; ?>
                                         <option value="">Select Program</option>
                                         <?php foreach ($programs as $p): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             <option value="<?php echo $p['id']; ?>">
                                                 <?php echo e($p['code'] . ' - ' . $p['name']); ?>
                                             </option>
                                             <?php
                                         endforeach; ?>
+=======
+                                        <option value="<?php echo $p['id']; ?>"><?php echo e($p['code'] . ' - ' . $p['name']); ?></option>
+                                        <?php
+endforeach; ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                         <option value="<?php echo $p['id']; ?>"><?php echo e($p['code'] . ' - ' . $p['name']); ?></option>
                                         <?php
@@ -716,9 +844,15 @@ endforeach; ?>
                                         <option value="">Select</option>
                                         <?php foreach ($yearLevels as $yl): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             <option value="<?php echo $yl['id']; ?>"><?php echo e($yl['name']); ?></option>
                                             <?php
                                         endforeach; ?>
+=======
+                                        <option value="<?php echo $yl['id']; ?>"><?php echo e($yl['name']); ?></option>
+                                        <?php
+endforeach; ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                         <option value="<?php echo $yl['id']; ?>"><?php echo e($yl['name']); ?></option>
                                         <?php
@@ -740,8 +874,12 @@ endforeach; ?>
                         <div id="noRepMessage" class="text-center text-muted py-4" style="display:none;">
                             <i class="bi bi-info-circle fs-4 d-block mb-2 opacity-50"></i>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <p class="mb-0 fs-sm">Assignment is only applicable for<br><strong>Class
                                     Representative</strong> role.</p>
+=======
+                            <p class="mb-0 fs-sm">Assignment is only applicable for<br><strong>Class Representative</strong> role.</p>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <p class="mb-0 fs-sm">Assignment is only applicable for<br><strong>Class Representative</strong> role.</p>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -750,8 +888,12 @@ endforeach; ?>
                 </div>
                 <div class="modal-footer">
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <button type="button" class="btn btn-outline-secondary" id="userStepBack" style="display:none;"
                         onclick="userStepNav(-1)">
+=======
+                    <button type="button" class="btn btn-outline-secondary" id="userStepBack" style="display:none;" onclick="userStepNav(-1)">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <button type="button" class="btn btn-outline-secondary" id="userStepBack" style="display:none;" onclick="userStepNav(-1)">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -778,17 +920,23 @@ endforeach; ?>
         <div class="modal-content">
             <div class="modal-header">
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <h5 class="modal-title"><i class="bi bi-archive me-2"></i>Deactivate and Archive User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-3">You are about to deactivate and archive <strong id="deactivateUsername"></strong>.</p>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <h5 class="modal-title"></i>Deactivate User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-3">You are about to deactivate <strong id="deactivateUsername"></strong>.</p>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <div class="mb-3">
                     <label class="form-label">Reason for Deactivation <span class="required-asterisk">*</span></label>
@@ -806,8 +954,12 @@ endforeach; ?>
                 <div class="mb-0" id="otherReasonGroup" style="display:none;">
                     <label class="form-label">Please specify <span class="required-asterisk">*</span></label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <textarea class="form-control" id="otherReasonText" rows="3"
                         placeholder="Enter reason for deactivation..."></textarea>
+=======
+                    <textarea class="form-control" id="otherReasonText" rows="3" placeholder="Enter reason for deactivation..."></textarea>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <textarea class="form-control" id="otherReasonText" rows="3" placeholder="Enter reason for deactivation..."></textarea>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -817,8 +969,13 @@ endforeach; ?>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <button type="button" class="btn btn-danger" id="confirmDeactivateBtn">
                     <i class="bi bi-archive me-1"></i>Deactivate and Archive
+=======
+                <button type="button" class="btn btn-warning" id="confirmDeactivateBtn">
+                    <i class="bi bi-person-slash me-1"></i>Deactivate
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 <button type="button" class="btn btn-warning" id="confirmDeactivateBtn">
                     <i class="bi bi-person-slash me-1"></i>Deactivate
@@ -832,6 +989,7 @@ endforeach; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     const userModal = new bootstrap.Modal(document.getElementById('userModal'));
     let currentUserStep = 1;
@@ -1095,6 +1253,8 @@ endforeach; ?>
         deactivateUserId = id;
         document.getElementById('deactivateUsername').textContent = name + ' (' + username + ')';
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 const userModal = new bootstrap.Modal(document.getElementById('userModal'));
 let currentUserStep = 1;
 const totalUserSteps = 3;
@@ -1253,6 +1413,9 @@ function toggleUserStatus(id, currentStatus, username) {
         // Deactivating — show Bootstrap modal with reason dropdown
         deactivateUserId = id;
         document.getElementById('deactivateUsername').textContent = username;
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         document.getElementById('deactivationReason').value = '';
         document.getElementById('deactivationReason').classList.remove('is-invalid');
@@ -1260,6 +1423,7 @@ function toggleUserStatus(id, currentStatus, username) {
         document.getElementById('otherReasonText').value = '';
         document.getElementById('otherReasonText').classList.remove('is-invalid');
         deactivateModal.show();
+<<<<<<< HEAD
 <<<<<<< HEAD
     }
 
@@ -1405,6 +1569,8 @@ function toggleUserStatus(id, currentStatus, username) {
     });
 </script>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     } else {
         // Activating — simple confirm
         showConfirm('Activate User?', `Are you sure you want to activate "${username}"?`, 'Yes, activate').then(result => {
@@ -1532,4 +1698,7 @@ document.getElementById('userModal').addEventListener('hidden.bs.modal', functio
     }
 });
 </script>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

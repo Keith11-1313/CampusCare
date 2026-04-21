@@ -5,6 +5,7 @@ requireRole('admin');
 $db = Database::getInstance();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Determine active tab
 $activeTab = $_GET['tab'] ?? 'students';
 if (!in_array($activeTab, ['students', 'users', 'programs']))
@@ -13,13 +14,18 @@ if (!in_array($activeTab, ['students', 'users', 'programs']))
 // Handle POST actions
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!validateCSRFToken($_POST['csrf_token'] ?? ''))
         jsonResponse(['success' => false, 'message' => 'Invalid token.'], 403);
     $id = intval($_POST['id'] ?? 0);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     // Student actions
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     if ($_POST['action'] === 'archive') {
@@ -32,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         logAccess($_SESSION['user_id'], 'restore_student', "Restored student ID $id");
         jsonResponse(['success' => true, 'message' => 'Student restored.']);
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     // User actions
@@ -71,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+}
+
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 $search = trim($_GET['search'] ?? '');
 $programFilter = $_GET['program'] ?? '';
 $yearLevelFilter = $_GET['year_level'] ?? '';
@@ -86,9 +97,15 @@ $where = "WHERE s.status='archived'";
 $params = [];
 if (!empty($search)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR CONCAT(s.first_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', s.middle_name, ' ', s.last_name) LIKE ? OR CONCAT(s.first_name, ' ', LEFT(s.middle_name, 1), '. ', s.last_name) LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
     $sk = "%$search%";
     $params = [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk];
+=======
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
+    $sk = "%$search%";
+    $params = [$sk, $sk, $sk, $sk, $sk, $sk];
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR p.code LIKE ? OR yl.name LIKE ? OR s.section LIKE ?)";
     $sk = "%$search%";
@@ -111,6 +128,7 @@ if (!empty($genderFilter)) {
     $where .= " AND s.gender = ?";
     $params[] = $genderFilter;
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 $totalStudents = $db->fetchColumn("SELECT COUNT(*) FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $where", $params);
 $totalStudentPages = ceil($totalStudents / $perPage);
@@ -153,6 +171,8 @@ $inactivePrograms = $db->fetchAll("SELECT p.*, (SELECT COUNT(*) FROM students s 
 
 
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 $total = $db->fetchColumn("SELECT COUNT(*) FROM students s LEFT JOIN programs p ON s.program_id=p.id LEFT JOIN year_levels yl ON s.year_level_id=yl.id $where", $params);
 $totalPages = ceil($total / $perPage);
 $orderSql = $sortColumns[$sort] . ' ' . ($order === 'asc' ? 'ASC' : 'DESC');
@@ -161,6 +181,9 @@ $programs = $db->fetchAll("SELECT * FROM programs WHERE status='active' ORDER BY
 $yearLevels = $db->fetchAll("SELECT * FROM year_levels WHERE status='active' ORDER BY order_num");
 $sections = $db->fetchAll("SELECT DISTINCT section FROM students WHERE status='archived' AND section IS NOT NULL AND section != '' ORDER BY section");
 
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -168,6 +191,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <div class="page-header">
     <div>
         <h1><i class="bi bi-archive me-2"></i>Archived Records</h1>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -450,6 +474,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 <?php endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Archived Records</li></ol></nav>
     </div>
 </div>
@@ -525,11 +551,15 @@ endif; ?>
 <?php if ($totalPages > 1): ?><div class="card-footer bg-white"><?php echo generatePagination($page, $totalPages, 'archive.php?search=' . urlencode($search) . '&program=' . urlencode($programFilter) . '&year_level=' . urlencode($yearLevelFilter) . '&section=' . urlencode($sectionFilter) . '&gender=' . urlencode($genderFilter) . '&sort=' . urlencode($sort) . '&order=' . urlencode($order)); ?></div><?php
 endif; ?>
 </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
@@ -669,6 +699,8 @@ endif; ?>
     }
 </script>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 const CSRF_TOKEN = '<?php echo getCSRFToken(); ?>';
 
 function restoreStudent(id, sid, name) {
@@ -706,4 +738,7 @@ function archiveStudent(id, sid) {
     });
 }
 </script>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

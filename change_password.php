@@ -1,5 +1,6 @@
 <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
 require_once __DIR__ . '/includes/auth.php';
 requireLogin();
 
@@ -37,6 +38,11 @@ $pageTitle = 'Change Password';
 require_once __DIR__ . '/includes/header.php';
 requireLogin();
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+$pageTitle = 'Change Password';
+require_once __DIR__ . '/includes/header.php';
+requireLogin();
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
 $db = Database::getInstance();
 $user = getCurrentUser();
@@ -44,8 +50,12 @@ $errors = [];
 $success = false;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // ── Handle form submission (update password) ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_submit'])) {
+=======
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -63,10 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($newPassword))
             $errors[] = 'New password is required.';
 <<<<<<< HEAD
+<<<<<<< HEAD
         else {
             $pwdErrors = validatePasswordStrength($newPassword);
             $errors = array_merge($errors, $pwdErrors);
         }
+=======
+        if (strlen($newPassword) < 6)
+            $errors[] = 'New password must be at least 6 characters.';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         if (strlen($newPassword) < 6)
             $errors[] = 'New password must be at least 6 characters.';
@@ -82,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             else {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 // Ensure new password is not the same as old password
                 if (password_verify($newPassword, $userData['password'])) {
                     $errors[] = 'New password must be different from your current password.';
@@ -96,6 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 // Update password
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 $db->query("UPDATE users SET password = ? WHERE id = ?", [$hashedPassword, $user['id']]);
@@ -104,6 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setFlashMessage('success', 'Password changed successfully!');
                 header('Location: ' . $_SERVER['PHP_SELF']);
                 exit;
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             }
         }
@@ -127,6 +148,7 @@ require_once __DIR__ . '/includes/sidebar.php';
     <div class="col-md-6 col-lg-5">
         <div class="card">
             <div class="card-body p-4">
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <?php foreach ($errors as $err): ?>
                 <div class="alert alert-danger d-flex align-items-center" style="font-size: 0.85rem; border-radius: 8px;">
@@ -216,6 +238,8 @@ require_once __DIR__ . '/includes/sidebar.php';
                         </button>
                     </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <?php if (!empty($errors)): ?>
                 <div class="alert alert-danger" style="font-size: 0.85rem; border-radius: 8px;">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -254,6 +278,9 @@ endif; ?>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-check-lg me-2"></i>Update Password
                     </button>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 </form>
             </div>
@@ -261,6 +288,7 @@ endif; ?>
     </div>
 </div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <script>
 // Toggle password visibility
@@ -385,6 +413,8 @@ function checkPwdRequirements() {
 document.getElementById('new_password').addEventListener('input', checkPwdRequirements);
 </script>
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

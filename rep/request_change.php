@@ -13,7 +13,10 @@ $section = $user['assigned_section'] ?? null;
 $message = '';
 $error = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
 $activeTab = $_GET['tab'] ?? 'replacement';
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
@@ -51,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_request'])) {
             $error = 'Error submitting request: ' . $e->getMessage();
         }
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
     $activeTab = 'replacement';
 }
@@ -99,6 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_deletion'])) {
 
 
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+}
+
+
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
 // Check if there's already a pending or approved replacement request
 $existingRequest = $db->fetch(
@@ -123,6 +132,7 @@ if ($programId && $yearLevelId && $section) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Fetch all requests by this rep (My Requests)
 $myRequests = $db->fetchAll(
     "SELECT cr.*, 
@@ -134,6 +144,8 @@ $myRequests = $db->fetchAll(
     [$user['id']]
 );
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -160,6 +172,7 @@ endif; ?>
 <?php
 endif; ?>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <!-- Tab Navigation -->
 <ul class="nav nav-tabs mb-4" id="requestTabs" role="tablist">
@@ -384,6 +397,8 @@ else: ?>
     </div>
 
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <div class="row g-4">
     <!-- Replacement Request Card -->
     <div class="col-lg-8 mx-auto">
@@ -458,6 +473,9 @@ endif; ?>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </div>
 

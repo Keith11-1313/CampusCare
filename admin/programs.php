@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Validate program code: letters and hyphens only, must start with a letter
         if (!preg_match('/^[A-Z][A-Z\-]{1,19}$/', $code)) {
             jsonResponse(['success' => false, 'message' => 'Program code must start with a letter and contain only letters and hyphens (2-20 characters).']);
@@ -33,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Program name must start with a letter and contain only letters, spaces, periods, and hyphens (3-100 characters).']);
         }
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         // Check uniqueness for code
@@ -51,7 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $db->query("UPDATE programs SET code = ?, name = ? WHERE id = ?", [$code, $name, $id]);
             logAccess($_SESSION['user_id'], 'update_program', "Updated program: $code");
 <<<<<<< HEAD
+<<<<<<< HEAD
         } else {
+=======
+        }
+        else {
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         }
         else {
@@ -63,12 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     if ($action === 'archive') {
         $id = intval($_POST['id'] ?? 0);
         $db->query("UPDATE programs SET status = 'inactive' WHERE id = ?", [$id]);
         logAccess($_SESSION['user_id'], 'archive_program', "Archived program ID $id");
         jsonResponse(['success' => true, 'message' => 'Program archived successfully.']);
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     if ($action === 'toggle_status') {
         $id = intval($_POST['id'] ?? 0);
         $currentStatus = $db->fetchColumn("SELECT status FROM programs WHERE id = ?", [$id]);
@@ -76,6 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $db->query("UPDATE programs SET status = ? WHERE id = ?", [$newStatus, $id]);
         logAccess($_SESSION['user_id'], 'toggle_program', "Program ID $id status changed to $newStatus");
         jsonResponse(['success' => true, 'message' => 'Status updated.']);
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     }
 
@@ -87,7 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 $programs = $db->fetchAll("SELECT p.*, (SELECT COUNT(*) FROM students s WHERE s.program_id = p.id AND s.status = 'active') as student_count FROM programs p WHERE p.status = 'active' ORDER BY p.code");
+=======
+$programs = $db->fetchAll("SELECT p.*, (SELECT COUNT(*) FROM students s WHERE s.program_id = p.id AND s.status = 'active') as student_count FROM programs p ORDER BY p.code");
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $programs = $db->fetchAll("SELECT p.*, (SELECT COUNT(*) FROM students s WHERE s.program_id = p.id AND s.status = 'active') as student_count FROM programs p ORDER BY p.code");
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -100,10 +118,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <h1><i class="bi bi-mortarboard me-2"></i>Programs</h1>
         <nav aria-label="breadcrumb">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Programs</li>
             </ol>
+=======
+            <ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Programs</li></ol>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             <ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Programs</li></ol>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -116,6 +138,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <thead>
                     <tr>
@@ -156,6 +179,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <?php
                     endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <thead><tr><th class="sortable-th" data-col="0"><a href="#">Code <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="1"><a href="#">Program Name <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="2"><a href="#">Students <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="sortable-th" data-col="3"><a href="#">Status <i class="bi bi-chevron-expand sort-icon-idle"></i></a></th><th class="text-center">Actions</th></tr></thead>
                 <tbody>
                     <?php if (empty($programs)): ?>
@@ -180,6 +205,9 @@ else: ?>
     endforeach; ?>
                     <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 </tbody>
             </table>
@@ -192,10 +220,14 @@ endif; ?>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div class="modal-header">
                 <h5 class="modal-title" id="programModalTitle">Add Program</h5><button type="button" class="btn-close"
                     data-bs-dismiss="modal"></button>
             </div>
+=======
+            <div class="modal-header"><h5 class="modal-title" id="programModalTitle">Add Program</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             <div class="modal-header"><h5 class="modal-title" id="programModalTitle">Add Program</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -206,6 +238,7 @@ endif; ?>
                     <input type="hidden" name="id" id="programId" value="0">
                     <div class="mb-3">
                         <label class="form-label">Program Code <span class="required-asterisk">*</span></label>
+<<<<<<< HEAD
 <<<<<<< HEAD
                         <input type="text" class="form-control" name="code" id="programCode" required
                             placeholder="e.g. BSIT" style="text-transform:uppercase;"
@@ -225,11 +258,16 @@ endif; ?>
                             oninput="this.value=this.value.replace(/[^a-zA-Z\s\.\-]/g,'')">
                         <div class="invalid-feedback">Letters, spaces, periods, and hyphens only (must start with a letter).</div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         <input type="text" class="form-control" name="code" id="programCode" required placeholder="e.g. BSIT" style="text-transform:uppercase;">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Program Name <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="name" id="programName" required placeholder="e.g. Bachelor of Science in Information Technology">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     </div>
                 </div>
@@ -245,6 +283,7 @@ endif; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     const programModal = new bootstrap.Modal(document.getElementById('programModal'));
 
@@ -364,6 +403,8 @@ endif; ?>
     })();
 </script>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 const programModal = new bootstrap.Modal(document.getElementById('programModal'));
 
 function openProgramModal() {
@@ -448,4 +489,7 @@ document.getElementById('programForm').addEventListener('submit', function(e) {
     });
 })();
 </script>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

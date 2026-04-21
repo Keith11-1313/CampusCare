@@ -58,9 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Format all date inputs to display mm/dd/yyyy
     initDateFormatOverride();
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     // Auto-dismiss alerts after page load
@@ -158,9 +161,12 @@ function initFormValidation() {
     const forms = document.querySelectorAll('.needs-validation');
     forms.forEach(function (form) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Skip forms with custom validation (e.g. stepper forms)
         if (form.hasAttribute('data-custom-validation')) return;
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         form.addEventListener('submit', function (event) {
@@ -181,6 +187,7 @@ function initFormValidation() {
 }
 
 // ============================================================
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Date Input Format Override (mm/dd/yyyy)
 // ============================================================
@@ -228,6 +235,8 @@ function initDateFormatOverride() {
 }
 
 // ============================================================
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Dynamic Search (Debounced)

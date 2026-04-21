@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             jsonResponse(['success' => false, 'message' => 'Student ID, name, gender, and DOB are required.']);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Validate Student ID format - must end with -N and contain no other letters
         if (!preg_match('/^[0-9-]+-N$/', $studentIdNum))
             jsonResponse(['success' => false, 'message' => 'Student ID must end with -N and contain no other letters (e.g. 2024-001-N).']);
@@ -54,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 jsonResponse(['success' => false, 'message' => 'Contact number must start with 09.']);
         }
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         // Uniqueness check
@@ -141,6 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             // Validate Student ID format
             if (!preg_match('/^[0-9-]+-N$/', $sid)) {
                 $errors[] = "Row $rowNum: Student ID must end with -N and contain no other letters";
@@ -166,6 +170,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             // Skip if student_id already exists
@@ -215,6 +221,7 @@ if ($section) {
 }
 if (!empty($search)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Check if search term is a month name (e.g. "jan", "january", "feb", "february")
     $months = [
         'jan' => '01', 'january' => '01', 'feb' => '02', 'february' => '02',
@@ -249,6 +256,11 @@ if (!empty($search)) {
             $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk, $sk]);
         }
     }
+=======
+    $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
+    $sk = "%$search%";
+    $params = array_merge($params, [$sk, $sk, $sk, $sk, $sk, $sk, $sk]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $where .= " AND (s.student_id LIKE ? OR s.first_name LIKE ? OR s.last_name LIKE ? OR s.gender LIKE ? OR s.date_of_birth LIKE ? OR s.blood_type LIKE ? OR s.contact_number LIKE ?)";
     $sk = "%$search%";
@@ -327,6 +339,7 @@ endif; ?>
 <input type="hidden" name="id" id="studentDbId" value="0">
 <div class="row g-3">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class="col-md-4"><label class="form-label">Student ID <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="student_id_num" id="studentIdNum" required pattern="[0-9\-]+-N" title="Format: XXXXXX-N (Numbers, hyphens, and ends with -N)" oninput="this.value = this.value.toUpperCase().replace(/[^0-9\-N]/g, '')"><div class="invalid-feedback">Must end with -N and contain no other letters.</div></div>
 <div class="col-md-4"><label class="form-label">First Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="first_name" id="sFirstName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"><div class="invalid-feedback">Please enter a valid first name (letters only).</div></div>
 <div class="col-md-4"><label class="form-label">Last Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="last_name" id="sLastName" required pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"><div class="invalid-feedback">Please enter a valid last name (letters only).</div></div>
@@ -336,6 +349,8 @@ endif; ?>
 <div class="col-md-3"><label class="form-label">Blood Type</label><select class="form-select" name="blood_type" id="sBloodType"><option value="">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
 <div class="col-md-4"><label class="form-label">Contact Number</label><input type="tel" class="form-control" name="contact_number" id="sContact" placeholder="09XXXXXXXXX" maxlength="11" pattern="09[0-9]{9}" title="Must be 11 digits starting with 09 (e.g. 09171234567)" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <div class="col-md-4"><label class="form-label">Student ID <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="student_id_num" id="studentIdNum" required></div>
 <div class="col-md-4"><label class="form-label">First Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="first_name" id="sFirstName" required></div>
 <div class="col-md-4"><label class="form-label">Last Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="last_name" id="sLastName" required></div>
@@ -344,6 +359,9 @@ endif; ?>
 <div class="col-md-4"><label class="form-label">Date of Birth <span class="required-asterisk">*</span></label><input type="date" class="form-control" name="date_of_birth" id="sDob" required></div>
 <div class="col-md-3"><label class="form-label">Blood Type</label><select class="form-select" name="blood_type" id="sBloodType"><option value="">Unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
 <div class="col-md-4"><label class="form-label">Contact Number</label><input type="text" class="form-control" name="contact_number" id="sContact"></div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <div class="col-md-5"><label class="form-label">Email</label><input type="email" class="form-control" name="email" id="sEmail"></div>
 <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" id="sAddress" rows="2"></textarea></div>
@@ -430,6 +448,7 @@ document.getElementById('importForm').addEventListener('submit', function(e){
         if(d.success){
             importModal.hide();
 <<<<<<< HEAD
+<<<<<<< HEAD
             let alertType = 'success', alertTitle = 'Import Complete';
             if(d.imported === 0 && d.skipped > 0){
                 alertType = 'error';
@@ -439,6 +458,9 @@ document.getElementById('importForm').addEventListener('submit', function(e){
                 alertTitle = 'Partially Imported';
             }
             showAlert(alertType, alertTitle, d.message).then(()=>location.reload());
+=======
+            showAlert('success', 'Import Complete', d.message).then(()=>location.reload());
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             showAlert('success', 'Import Complete', d.message).then(()=>location.reload());
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -455,7 +477,11 @@ document.getElementById('importForm').addEventListener('submit', function(e){
 function downloadTemplate(){
     const headers = 'student_id,first_name,middle_name,last_name,gender,date_of_birth,blood_type,contact_number,email,address';
 <<<<<<< HEAD
+<<<<<<< HEAD
     const sample = '2024-0001-N,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
+=======
+    const sample = '2024-0001,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     const sample = '2024-0001,Juan,Santos,Dela Cruz,Male,2005-03-15,O+,09171234567,juan@email.com,123 Main St';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

@@ -94,12 +94,16 @@ require_once __DIR__ . '/includes/sidebar.php';
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Current Password <span class="required-asterisk">*</span></label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <div class="position-relative">
                             <input type="password" class="form-control login-input-pwd" id="current_password" name="current_password" required>
                             <button class="btn btn-link position-absolute text-muted p-0 login-pwd-toggle" type="button" data-target="current_password" tabindex="-1" title="Toggle visibility">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
+=======
+                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                         <input type="password" class="form-control" id="current_password" name="current_password" required>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -138,6 +142,7 @@ require_once __DIR__ . '/includes/sidebar.php';
 </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <script>
 document.querySelectorAll('.login-pwd-toggle').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -154,6 +159,8 @@ document.querySelectorAll('.login-pwd-toggle').forEach(function(btn) {
 });
 </script>
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

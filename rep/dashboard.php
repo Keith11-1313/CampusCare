@@ -74,6 +74,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <!-- Stat Cards -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 <style>
 .stat-card-link { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
 .stat-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12) !important; }
@@ -82,6 +83,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="col-sm-12 col-xl-12">
         <a href="<?php echo BASE_URL; ?>/rep/students.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
+=======
+<div class="row g-3 mb-4">
+    <div class="col-sm-12 col-xl-12">
+        <div class="stat-card stat-card-primary animate-fade-in">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 <div class="row g-3 mb-4">
     <div class="col-sm-12 col-xl-12">
@@ -96,7 +102,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         </a>
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
@@ -140,6 +149,7 @@ endif; ?>
     </div>
     <div class="col-lg-4">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <!-- Quick Actions -->
         <div class="card">
             <div class="card-header"><i class="bi bi-lightning-fill me-2"></i>Quick Actions</div>
@@ -151,6 +161,8 @@ endif; ?>
                 <a href="requests.php" class="btn btn-outline-primary btn-sm w-100 text-start">
                     <i class="bi bi-inbox me-2"></i>Requests</a>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <!-- Gender Distribution Doughnut -->
         <div class="card">
             <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Gender Distribution</div>
@@ -162,6 +174,9 @@ else: ?>
                 <div class="chart-container-sm"><canvas id="genderChart"></canvas></div>
                 <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             </div>
         </div>
@@ -185,6 +200,7 @@ endif; ?>
     <!-- Right Column -->
     <div class="col-lg-4">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <!-- Gender Distribution -->
         <div class="card">
             <div class="card-header"><i class="bi bi-pie-chart-fill me-2"></i>Gender Distribution</div>
@@ -202,11 +218,16 @@ endif; ?>
                 <span><i class="bi bi-inbox me-2"></i>My Requests</span>
                 <a href="requests.php?tab=my_requests" class="btn btn-sm btn-outline-secondary">View All</a>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <!-- My Requests -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-inbox me-2"></i>My Requests</span>
                 <a href="request_change.php" class="btn btn-sm btn-outline-secondary">View All</a>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             </div>
             <div class="card-body">
@@ -217,7 +238,11 @@ else: ?>
                 <?php foreach ($myRequests as $r):
         $badgeClass = $r['status'] === 'pending' ? 'bg-warning text-dark' : ($r['status'] === 'approved' ? 'bg-success' : 'bg-danger');
 <<<<<<< HEAD
+<<<<<<< HEAD
         $typeLabel = $r['request_type'] === 'student_deletion' ? 'Student Deletion' : 'Replacement';
+=======
+        $typeLabel = $r['request_type'] === 'password_reset' ? 'Password Reset' : 'Replacement';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         $typeLabel = $r['request_type'] === 'password_reset' ? 'Password Reset' : 'Replacement';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -236,7 +261,10 @@ endif; ?>
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
         <!-- Quick Actions -->
         <div class="card mt-3">
@@ -250,6 +278,9 @@ endif; ?>
                     <i class="bi bi-inbox me-2"></i>Requests</a>
             </div>
         </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
 </div>
@@ -268,7 +299,11 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: genderData.map(d => d.count),
                 backgroundColor: genderData.map(d => genderColors[d.gender] || '#6b7c93'),
 <<<<<<< HEAD
+<<<<<<< HEAD
                 borderWidth: 2, borderColor: '#fff', borderRadius: 4
+=======
+                borderWidth: 2, borderColor: '#fff'
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 borderWidth: 2, borderColor: '#fff'
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -277,7 +312,11 @@ document.addEventListener('DOMContentLoaded', function(){
         options: {
             responsive: true, maintainAspectRatio: false,
 <<<<<<< HEAD
+<<<<<<< HEAD
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
+=======
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

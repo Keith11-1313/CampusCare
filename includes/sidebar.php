@@ -15,8 +15,12 @@ $userRole = $_SESSION['user_role'] ?? '';
     <div class="sidebar-header">
         <div class="d-flex align-items-center px-3 py-3">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>"
                 style="width:28px;height:28px;object-fit:contain;" class="me-2">
+=======
+            <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             <img src="<?php echo BASE_URL; ?>/assets/logo-main-w.png" alt="<?php echo APP_NAME; ?>" style="width:28px;height:28px;object-fit:contain;" class="me-2">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -29,6 +33,7 @@ $userRole = $_SESSION['user_role'] ?? '';
 
     <nav class="sidebar-nav">
         <?php if ($userRole === 'admin'): ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
             <!-- Admin Navigation -->
             <div class="sidebar-section-title">Main</div>
@@ -126,6 +131,8 @@ $userRole = $_SESSION['user_role'] ?? '';
             <?php
         endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <!-- Admin Navigation -->
         <div class="sidebar-section-title">Main</div>
         <a href="<?php echo BASE_URL; ?>/admin/dashboard.php" class="sidebar-link <?php echo isActivePage('dashboard.php'); ?>">
@@ -205,13 +212,20 @@ elseif ($userRole === 'rep'): ?>
         </a>
         <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </nav>
 </aside>
 
 <!-- Main Content Wrapper -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 <main class="cc-main-content">
+=======
+<main class="cc-main-content">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 <main class="cc-main-content">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

@@ -154,6 +154,10 @@ function statusBadge($status)
         'Severe' => '<span class="badge bg-danger">Severe</span>',
         'Active' => '<span class="badge bg-danger">Active</span>',
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        'Managed' => '<span class="badge bg-info">Managed</span>',
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         'Managed' => '<span class="badge bg-info">Managed</span>',
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -222,6 +226,7 @@ function jsonResponse($data, $statusCode = 200)
     exit;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 /**
  * Validate password strength.
@@ -244,5 +249,7 @@ function validatePasswordStrength($password)
         $errors[] = 'Password must contain at least one special character.';
     return $errors;
 }
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

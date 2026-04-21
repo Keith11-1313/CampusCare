@@ -17,9 +17,15 @@ $where = "WHERE 1=1";
 $params = [];
 if (!empty($search)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ? OR al.description LIKE ?)";
     $s = "%$search%";
     $params = array_merge($params, [$s, $s, $s, $s, $s]);
+=======
+    $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR al.description LIKE ?)";
+    $s = "%$search%";
+    $params = array_merge($params, [$s, $s, $s, $s]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $where .= " AND (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR al.description LIKE ?)";
     $s = "%$search%";

@@ -198,6 +198,7 @@ $emergencyContacts = $db->fetchAll("SELECT * FROM emergency_contacts WHERE stude
 $visits = $db->fetchAll("SELECT v.*, CONCAT(u.first_name,' ',u.last_name) as nurse_name FROM visits v LEFT JOIN users u ON v.attended_by=u.id WHERE v.student_id=? ORDER BY v.visit_date DESC LIMIT 20", [$studentId]);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Predefined common options grouped by category + any existing DB values
 $categorizedAllergens = [
     'Drug Allergies' => ['Amoxicillin', 'Aspirin', 'Codeine', 'Ibuprofen', 'Penicillin', 'Sulfa Drugs', 'Sulfites'],
@@ -252,6 +253,8 @@ if (!empty($extraVaccines)) {
     sort($categorizedVaccines['Travel & Other']);
 }
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Predefined common options + any existing DB values
 $presetAllergens = ['Amoxicillin', 'Aspirin', 'Bee Stings', 'Cats', 'Cockroach', 'Codeine', 'Dairy / Lactose', 'Dogs', 'Dust Mites', 'Eggs', 'Fish', 'Gluten / Wheat', 'Grass Pollen', 'Ibuprofen', 'Insect Bites', 'Latex', 'Mold', 'Peanuts', 'Penicillin', 'Pollen', 'Sesame', 'Shellfish', 'Soy', 'Sulfa Drugs', 'Sulfites', 'Tree Nuts'];
 $dbAllergens = array_column($db->fetchAll("SELECT DISTINCT allergen FROM allergies WHERE allergen IS NOT NULL AND allergen != '' ORDER BY allergen ASC"), 'allergen');
@@ -267,6 +270,9 @@ $presetVaccines = ['BCG (Bacillus Calmette-Guérin)', 'Chickenpox (Varicella)', 
 $dbVaccines = array_column($db->fetchAll("SELECT DISTINCT vaccine_name FROM immunizations WHERE vaccine_name IS NOT NULL AND vaccine_name != '' ORDER BY vaccine_name ASC"), 'vaccine_name');
 $allVaccines = array_unique(array_merge($presetVaccines, $dbVaccines));
 sort($allVaccines);
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -512,7 +518,11 @@ else:
                                 <td><?php echo e($im['dose_number'] ?? '—'); ?></td>
                                 <td><small><?php echo e($im['administered_by'] ?? '—'); ?></small></td>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <td><button class="btn btn-sm btn-outline-primary btn-icon" onclick="editImmunization(this)" data-id="<?php echo $im['id']; ?>" data-vaccine="<?php echo e($im['vaccine_name']); ?>" data-date="<?php echo e($im['date_administered'] ?? ''); ?>" data-dose="<?php echo e($im['dose_number'] ?? ''); ?>" data-administered="<?php echo e($im['administered_by'] ?? ''); ?>"><i class="bi bi-pencil"></i></button></td>
+=======
+                                <td><button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteRecord('immunizations',<?php echo $im['id']; ?>)"><i class="bi bi-trash"></i></button></td>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                 <td><button class="btn btn-sm btn-outline-danger btn-icon" onclick="deleteRecord('immunizations',<?php echo $im['id']; ?>)"><i class="bi bi-trash"></i></button></td>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -637,6 +647,7 @@ endif; ?>
                         <select class="form-select" name="data[allergen]" id="allergenSelect" required>
                             <option value="" disabled selected>Select an allergen</option>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <?php foreach ($categorizedAllergens as $group => $items): ?>
                             <optgroup label="<?php echo e($group); ?>">
                                 <?php foreach ($items as $a): ?>
@@ -645,10 +656,15 @@ endif; ?>
                             </optgroup>
                             <?php endforeach; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <?php foreach ($allAllergens as $a): ?>
                             <option value="<?php echo e($a); ?>"><?php echo e($a); ?></option>
                             <?php
 endforeach; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         </select>
                     </div>
@@ -696,6 +712,7 @@ endforeach; ?>
                         <select class="form-select" name="data[condition_name]" id="conditionSelect" required>
                             <option value="" disabled selected>Select a condition</option>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <?php foreach ($categorizedConditions as $group => $items): ?>
                             <optgroup label="<?php echo e($group); ?>">
                                 <?php foreach ($items as $c): ?>
@@ -704,10 +721,15 @@ endforeach; ?>
                             </optgroup>
                             <?php endforeach; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <?php foreach ($allConditions as $c): ?>
                             <option value="<?php echo e($c); ?>"><?php echo e($c); ?></option>
                             <?php
 endforeach; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         </select>
                     </div>
@@ -720,6 +742,10 @@ endforeach; ?>
                         <select class="form-select" name="data[status]">
                             <option value="Active">Active</option>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                            <option value="Managed">Managed</option>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <option value="Managed">Managed</option>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -760,6 +786,7 @@ endforeach; ?>
                     <div class="mb-3">
                         <label class="form-label">Dosage</label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <input type="hidden" name="data[dosage]" id="medDosageHidden">
                         <div class="input-group">
                             <input type="number" class="form-control" id="medDosageAmount" placeholder="e.g. 200" min="0" step="any">
@@ -799,6 +826,8 @@ endforeach; ?>
                         <label class="form-label">Prescribing Doctor</label>
                         <input type="text" class="form-control" name="data[prescribing_doctor]" placeholder="Doctor name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         <input type="text" class="form-control" name="data[dosage]" placeholder="e.g. 200mg">
                     </div>
                     <div class="mb-3">
@@ -808,6 +837,9 @@ endforeach; ?>
                     <div class="mb-3">
                         <label class="form-label">Prescribing Doctor</label>
                         <input type="text" class="form-control" name="data[prescribing_doctor]" placeholder="Doctor name">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     </div>
                 </div>
@@ -826,7 +858,11 @@ endforeach; ?>
         <div class="modal-content">
             <div class="modal-header">
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <h5 class="modal-title" id="immunizationModalTitle">Add Immunization</h5>
+=======
+                <h5 class="modal-title">Add Immunization</h5>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 <h5 class="modal-title">Add Immunization</h5>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -835,9 +871,14 @@ endforeach; ?>
             <form id="immunizationForm">
                 <div class="modal-body">
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <input type="hidden" name="action" id="immunizationAction" value="add">
                     <input type="hidden" name="table" value="immunizations">
                     <input type="hidden" name="record_id" id="immunizationRecordId" value="">
+=======
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="table" value="immunizations">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="table" value="immunizations">
@@ -848,6 +889,7 @@ endforeach; ?>
                         <select class="form-select" name="data[vaccine_name]" id="vaccineSelect" required>
                             <option value="" disabled selected>Select a vaccine</option>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <?php foreach ($categorizedVaccines as $group => $items): ?>
                             <optgroup label="<?php echo e($group); ?>">
                                 <?php foreach ($items as $v): ?>
@@ -856,10 +898,15 @@ endforeach; ?>
                             </optgroup>
                             <?php endforeach; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <?php foreach ($allVaccines as $v): ?>
                             <option value="<?php echo e($v); ?>"><?php echo e($v); ?></option>
                             <?php
 endforeach; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         </select>
                     </div>
@@ -870,7 +917,11 @@ endforeach; ?>
                     <div class="mb-3">
                         <label class="form-label">Dose Number</label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <input type="number" class="form-control" name="data[dose_number]" placeholder="e.g. 1" min="1" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+=======
+                        <input type="text" class="form-control" name="data[dose_number]" placeholder="e.g. 1st dose">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                         <input type="text" class="form-control" name="data[dose_number]" placeholder="e.g. 1st dose">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -906,6 +957,7 @@ endforeach; ?>
                     <div class="mb-3">
                         <label class="form-label">Contact Name <span class="required-asterisk">*</span></label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <input type="text" class="form-control" id="emContactName" name="data[contact_name]" required placeholder="Full name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')">
                     </div>
                     <div class="mb-3">
@@ -928,6 +980,8 @@ endforeach; ?>
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
                         <input type="tel" class="form-control" id="emContactPhone" name="data[phone_number]" required placeholder="09XXXXXXXXX" maxlength="11" pattern="09[0-9]{9}" title="Must be 11 digits starting with 09 (e.g. 09171234567)" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                         <input type="text" class="form-control" id="emContactName" name="data[contact_name]" required placeholder="Full name">
                     </div>
                     <div class="mb-3">
@@ -940,6 +994,9 @@ endforeach; ?>
                             <span class="input-group-text">+63</span>
                             <input type="text" class="form-control" id="emContactPhone" name="data[phone_number]" required placeholder="9xxxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     </div>
                 </div>
@@ -993,6 +1050,7 @@ function showAddForm(table) {
     if (formId) {
         document.getElementById(formId).reset();
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (table === 'immunizations') {
             document.getElementById('immunizationAction').value = 'add';
             document.getElementById('immunizationRecordId').value = '';
@@ -1000,10 +1058,13 @@ function showAddForm(table) {
         }
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         if (table === 'emergency_contacts') {
             document.getElementById('emContactAction').value = 'add';
             document.getElementById('emContactRecordId').value = '';
             document.getElementById('emContactModalTitle').textContent = 'Add Emergency Contact';
+<<<<<<< HEAD
 <<<<<<< HEAD
             document.getElementById('emContactRelationshipOther').style.display = 'none';
             document.getElementById('emContactRelationshipOther').required = false;
@@ -1013,11 +1074,14 @@ function showAddForm(table) {
             if (hidden) hidden.remove();
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         }
         modals[table].show();
     }
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 function toggleOtherRelationship(select) {
     const otherInput = document.getElementById('emContactRelationshipOther');
@@ -1059,11 +1123,14 @@ function editImmunization(btn) {
 
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 function editContact(btn) {
     document.getElementById('emContactForm').reset();
     document.getElementById('emContactAction').value = 'update';
     document.getElementById('emContactRecordId').value = btn.dataset.id;
     document.getElementById('emContactName').value = btn.dataset.name;
+<<<<<<< HEAD
 <<<<<<< HEAD
     document.getElementById('emContactPhone').value = btn.dataset.phone;
     document.getElementById('emContactModalTitle').textContent = 'Edit Emergency Contact';
@@ -1157,12 +1224,17 @@ document.getElementById('medicationForm').addEventListener('submit', function(e)
 }, true);
 
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     document.getElementById('emContactRelationship').value = btn.dataset.relationship;
     document.getElementById('emContactPhone').value = btn.dataset.phone;
     document.getElementById('emContactModalTitle').textContent = 'Edit Emergency Contact';
     modals.emergency_contacts.show();
 }
 
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Attach submit handlers to all modal forms
 Object.entries(formIds).forEach(([table, formId]) => {

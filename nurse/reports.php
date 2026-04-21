@@ -89,6 +89,7 @@ $visitStatuses = $db->fetchAll(
 );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Students by year level
 $studentsByYearLevel = $db->fetchAll(
     "SELECT yl.name, COUNT(s.id) as student_count 
@@ -99,6 +100,8 @@ $studentsByYearLevel = $db->fetchAll(
      ORDER BY yl.order_num"
 );
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Top 5 allergens across all students
@@ -116,8 +119,13 @@ $topVaccines = $db->fetchAll(
 // Top chronic conditions
 $topConditions = $db->fetchAll(
 <<<<<<< HEAD
+<<<<<<< HEAD
     "SELECT condition_name, COUNT(*) as count FROM chronic_conditions
      GROUP BY condition_name ORDER BY count DESC LIMIT 8"
+=======
+    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
      GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
@@ -126,6 +134,7 @@ $topConditions = $db->fetchAll(
 
 // Summary stats
 $totalVisits = $db->fetchColumn(
+<<<<<<< HEAD
 <<<<<<< HEAD
     "SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where",
     $params
@@ -138,6 +147,8 @@ $avgVisitsPerDay = $db->fetchColumn(
     "SELECT ROUND((COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1)) * 100, 1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where",
     $params
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     "SELECT COUNT(*) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
 );
 $totalStudentsWithVisits = $db->fetchColumn(
@@ -145,6 +156,9 @@ $totalStudentsWithVisits = $db->fetchColumn(
 );
 $avgVisitsPerDay = $db->fetchColumn(
     "SELECT ROUND(COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1),1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 );
 
@@ -152,6 +166,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <div class="page-header d-flex justify-content-between align-items-start flex-wrap">
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div>
         <h1><i class="bi bi-graph-up me-2"></i>Reports & Analytics</h1>
@@ -166,11 +181,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal">
             <i class="bi bi-filetype-pdf me-1"></i>Generate Report
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     <div><h1><i class="bi bi-graph-up me-2"></i>Reports & Analytics</h1>
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Reports</li></ol></nav></div>
     <div>
         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal">
             <i class="bi bi-filetype-pdf me-1"></i>Export PDF
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         </button>
     </div>
@@ -183,6 +203,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <div class="col-md-2">
                 <label class="form-label small mb-1">Start Date</label>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <input type="date" class="form-control form-control-sm" name="start_date"
                     value="<?php echo e($filterStartDate); ?>" max="<?php echo date('Y-m-d'); ?>">
             </div>
@@ -191,11 +212,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <input type="date" class="form-control form-control-sm" name="end_date"
                     value="<?php echo e($filterEndDate); ?>" max="<?php echo date('Y-m-d'); ?>">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <input type="date" class="form-control form-control-sm" name="start_date" value="<?php echo e($filterStartDate); ?>" max="<?php echo date('Y-m-d'); ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label small mb-1">End Date</label>
                 <input type="date" class="form-control form-control-sm" name="end_date" value="<?php echo e($filterEndDate); ?>" max="<?php echo date('Y-m-d'); ?>">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             </div>
             <div class="col-md-2">
@@ -204,11 +230,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <option value="">All Programs</option>
                     <?php foreach ($programs as $p): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <option value="<?php echo $p['id']; ?>" <?php echo $filterProgramId == $p['id'] ? 'selected' : ''; ?>>
                             <?php echo e($p['code']); ?>
                         </option>
                         <?php
                     endforeach; ?>
+=======
+                    <option value="<?php echo $p['id']; ?>" <?php echo $filterProgramId == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option>
+                    <?php
+endforeach; ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <option value="<?php echo $p['id']; ?>" <?php echo $filterProgramId == $p['id'] ? 'selected' : ''; ?>><?php echo e($p['code']); ?></option>
                     <?php
@@ -222,9 +254,15 @@ endforeach; ?>
                     <option value="">All Year Levels</option>
                     <?php foreach ($yearLevels as $yl): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <option value="<?php echo $yl['id']; ?>" <?php echo $filterYearLevelId == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option>
                         <?php
                     endforeach; ?>
+=======
+                    <option value="<?php echo $yl['id']; ?>" <?php echo $filterYearLevelId == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option>
+                    <?php
+endforeach; ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <option value="<?php echo $yl['id']; ?>" <?php echo $filterYearLevelId == $yl['id'] ? 'selected' : ''; ?>><?php echo e($yl['name']); ?></option>
                     <?php
@@ -238,6 +276,7 @@ endforeach; ?>
                     <option value="">All Sections</option>
                     <?php foreach ($sections as $sec): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <option value="<?php echo e($sec['section']); ?>" <?php echo $filterSection == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option>
                         <?php
                     endforeach; ?>
@@ -249,6 +288,8 @@ endforeach; ?>
                 <a href="reports.php" class="btn btn-outline-secondary btn-sm"><i
                         class="bi bi-arrow-counterclockwise"></i></a>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     <option value="<?php echo e($sec['section']); ?>" <?php echo $filterSection == $sec['section'] ? 'selected' : ''; ?>><?php echo e($sec['section']); ?></option>
                     <?php
 endforeach; ?>
@@ -257,6 +298,9 @@ endforeach; ?>
             <div class="col-md-2 d-flex gap-1">
                 <button type="submit" class="btn btn-primary btn-sm flex-fill"><i class="bi bi-funnel me-1"></i>Filter</button>
                 <a href="reports.php" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></a>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             </div>
         </form>
@@ -265,6 +309,7 @@ endforeach; ?>
 
 <!-- Export Modal -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -465,6 +510,8 @@ endforeach; ?>
                     <button type="submit" class="btn btn-primary"><i class="bi bi-filetype-pdf me-1"></i>Generate
                         Report</button>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -561,6 +608,9 @@ endif; ?>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>Generate</button>
                     </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 </div>
             </form>
@@ -568,6 +618,7 @@ endif; ?>
     </div>
 </div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <script>
     // Toggle sort section visibility based on table toggle
@@ -612,17 +663,23 @@ endif; ?>
         </div>
     </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <!-- Summary -->
 <div class="row g-3 mb-4">
     <div class="col-md-4"><div class="stat-card stat-card-primary"><div class="d-flex justify-content-between"><div><div class="stat-label">Total Visits</div><div class="stat-value"><?php echo number_format($totalVisits); ?></div></div><div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div></div></div></div>
     <div class="col-md-4"><div class="stat-card stat-card-secondary"><div class="d-flex justify-content-between"><div><div class="stat-label">Unique Patients</div><div class="stat-value"><?php echo number_format($totalStudentsWithVisits); ?></div></div><div class="stat-icon"><i class="bi bi-people-fill"></i></div></div></div></div>
     <div class="col-md-4"><div class="stat-card stat-card-accent"><div class="d-flex justify-content-between"><div><div class="stat-label">Avg Visits/Day</div><div class="stat-value"><?php echo $avgVisitsPerDay; ?></div></div><div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div></div></div></div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </div>
 
 <div class="row g-4">
     <!-- Monthly Visits Chart -->
     <div class="col-lg-8">
+<<<<<<< HEAD
 <<<<<<< HEAD
         <div class="card">
             <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits by Month</div>
@@ -649,6 +706,8 @@ endif; ?>
             </div>
         </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <div class="card"><div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits by Month</div>
         <div class="card-body"><div class="chart-container"><canvas id="monthlyChart"></canvas></div></div></div>
     </div>
@@ -661,6 +720,9 @@ endif; ?>
     <div class="col-12">
         <div class="card"><div class="card-header"><i class="bi bi-list-ol me-2"></i>Top Health Complaints</div>
         <div class="card-body"><div class="chart-container" style="height:400px;"><canvas id="complaintsChart"></canvas></div></div></div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
 </div>
@@ -673,6 +735,7 @@ endif; ?>
             <div class="card-header"><i class="bi bi-diagram-3-fill me-2"></i>Visit Status Distribution</div>
             <div class="card-body">
                 <?php if (empty($visitStatuses)): ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
                         <p class="small">No data.</p>
@@ -699,6 +762,11 @@ endif; ?>
                 <?php else: ?>
                 <div class="chart-container"><canvas id="statusChart"></canvas></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+                <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="statusChart"></canvas></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <?php endif; ?>
             </div>
         </div>
@@ -710,11 +778,17 @@ endif; ?>
             <div class="card-body">
                 <?php if (empty($topAllergens)): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
                         <p class="small">No allergy data.</p>
                     </div>
                 <?php else: ?>
                     <div class="chart-container"><canvas id="allergensChart"></canvas></div>
+=======
+                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No allergy data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="allergensChart"></canvas></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No allergy data.</p></div>
                 <?php else: ?>
@@ -726,7 +800,11 @@ endif; ?>
     </div>
     <!-- Top Vaccines -->
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div class="col-lg-6">
+=======
+    <div class="col-lg-4">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <div class="col-lg-4">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -734,6 +812,7 @@ endif; ?>
             <div class="card-header"><i class="bi bi-shield-plus me-2"></i>Top Vaccines</div>
             <div class="card-body">
                 <?php if (empty($topVaccines)): ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <div class="empty-state py-3"><i class="bi bi-bar-chart"></i>
                         <p class="small">No immunization data.</p>
@@ -745,13 +824,22 @@ endif; ?>
                 <?php else: ?>
                 <div class="chart-container"><canvas id="vaccinesChart"></canvas></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+                <div class="empty-state py-3"><i class="bi bi-bar-chart"></i><p class="small">No immunization data.</p></div>
+                <?php else: ?>
+                <div class="chart-container"><canvas id="vaccinesChart"></canvas></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <?php endif; ?>
             </div>
         </div>
     </div>
     <!-- Top Conditions -->
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div class="col-6">
+=======
+    <div class="col-12">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <div class="col-12">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -759,6 +847,7 @@ endif; ?>
             <div class="card-header"><i class="bi bi-heart-pulse me-2"></i>Top Chronic Conditions</div>
             <div class="card-body">
                 <?php if (empty($topConditions)): ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <div class="empty-state py-3"><i class="bi bi-diagram-3"></i>
                         <p class="small">No condition data.</p>
@@ -774,6 +863,8 @@ endif; ?>
                         <?php endforeach; ?>
                     </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <div class="empty-state py-3"><i class="bi bi-diagram-3"></i><p class="small">No condition data.</p></div>
                 <?php else: ?>
                 <div class="list-group list-group-flush">
@@ -794,6 +885,9 @@ endif; ?>
                     </div>
                     <?php endforeach; ?>
                 </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 <?php endif; ?>
             </div>
@@ -802,6 +896,7 @@ endif; ?>
 </div>
 
 <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     document.addEventListener('DOMContentLoaded', function () {
         // Monthly visits
@@ -1013,6 +1108,8 @@ endif; ?>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 document.addEventListener('DOMContentLoaded', function(){
     // Monthly visits
     const monthData = <?php echo json_encode($visitsByMonth); ?>;
@@ -1184,4 +1281,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

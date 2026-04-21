@@ -437,6 +437,7 @@ a:hover {
     transition: var(--cc-transition);
     border: none;
 <<<<<<< HEAD
+<<<<<<< HEAD
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -448,6 +449,10 @@ a:hover {
 }
 
 
+=======
+}
+
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 }
 
@@ -552,6 +557,7 @@ a:hover {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* ---- Stat Card Extra Info Line ---- */
 /* Small line below the stat value for supplementary context
    (e.g., "6 vs yesterday", "5 overdue", "This month", "Review now").
@@ -592,6 +598,8 @@ a:hover {
 }
 
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 /* ---- Tables ---- */
@@ -707,6 +715,7 @@ a:hover {
 
 /* Invalid input state: red border to indicate validation error. */
 <<<<<<< HEAD
+<<<<<<< HEAD
 .form-control.is-invalid,
 .form-select.is-invalid {
     border-color: var(--cc-danger) !important;
@@ -726,6 +735,10 @@ a:hover {
 
 .form-control.is-invalid::placeholder {
     color: rgba(192, 57, 43, 0.6);
+=======
+.form-control.is-invalid {
+    border-color: var(--cc-danger);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 .form-control.is-invalid {
     border-color: var(--cc-danger);
@@ -752,6 +765,7 @@ a:hover {
     font-size: 0.78rem;
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 /* ---- Date Input Format Override (mm/dd/yyyy) ---- */
 /* Forces all date inputs to display in mm/dd/yyyy format regardless
@@ -780,6 +794,8 @@ input[type="date"].date-formatted[data-display=""]::before {
     color: #9aadbd;
 }
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 /* Red asterisk appended to required field labels. */
@@ -1470,7 +1486,11 @@ input[type="date"].date-formatted[data-display=""]::before {
 .login-pwd-toggle {
     right: 12px;
 <<<<<<< HEAD
+<<<<<<< HEAD
     top: 20px;
+=======
+    top: 50%;
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     top: 50%;
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -3043,6 +3063,7 @@ input[type="date"].date-formatted[data-display=""]::before {
 .request-status-item:last-child {
     border-bottom: none;
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 
 /* ---- Export Modal Checkbox Items ---- */
@@ -3085,6 +3106,8 @@ input[type="date"].date-formatted[data-display=""]::before {
     color: var(--cc-primary);
     border-color: var(--cc-primary-light);
     background: var(--cc-primary-bg);
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 }

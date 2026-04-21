@@ -24,7 +24,11 @@ $db = Database::getInstance();
 $guide = $db->fetch(
     "SELECT * FROM first_aid_guidelines WHERE id = ? AND status = 'active'",
 <<<<<<< HEAD
+<<<<<<< HEAD
 [$id]
+=======
+    [$id]
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     [$id]
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -36,7 +40,11 @@ if (!$guide) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 $title = htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8');
+=======
+$title   = htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $title   = htmlspecialchars($guide['title'], ENT_QUOTES, 'UTF-8');
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -48,9 +56,15 @@ $iconPath = __DIR__ . '/assets/first-aid-icons/' . $iconFile;
 $iconHtml = '';
 if (file_exists($iconPath)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $iconData = file_get_contents($iconPath);
     $iconDataUri = 'data:image/png;base64,' . base64_encode($iconData);
     $iconHtml = '<img class="icon-img" src="' . $iconDataUri . '" alt="">';
+=======
+    $iconData    = file_get_contents($iconPath);
+    $iconDataUri = 'data:image/png;base64,' . base64_encode($iconData);
+    $iconHtml    = '<img class="icon-img" src="' . $iconDataUri . '" alt="">';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $iconData    = file_get_contents($iconPath);
     $iconDataUri = 'data:image/png;base64,' . base64_encode($iconData);
@@ -63,9 +77,15 @@ $logoPath = __DIR__ . '/assets/logo-main-b.png';
 $logoHtml = '';
 if (file_exists($logoPath)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     $logoData = file_get_contents($logoPath);
     $logoDataUri = 'data:image/png;base64,' . base64_encode($logoData);
     $logoHtml = '<img src="' . $logoDataUri . '" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;">';
+=======
+    $logoData    = file_get_contents($logoPath);
+    $logoDataUri = 'data:image/png;base64,' . base64_encode($logoData);
+    $logoHtml    = '<img src="' . $logoDataUri . '" style="width:22px;height:22px;vertical-align:middle;margin-right:6px;">';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     $logoData    = file_get_contents($logoPath);
     $logoDataUri = 'data:image/png;base64,' . base64_encode($logoData);
@@ -187,7 +207,11 @@ $filename = 'FirstAid_' . $filename . '.pdf';
 
 // Stream the PDF (attachment = force download)
 <<<<<<< HEAD
+<<<<<<< HEAD
 $dompdf->stream($filename, ['Attachment' => true]);
+=======
+$dompdf->stream($filename, ['Attachment' => true]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $dompdf->stream($filename, ['Attachment' => true]);
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

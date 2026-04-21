@@ -8,8 +8,13 @@ $db = Database::getInstance();
 // Fetch public data
 $announcements = $db->fetchAll("SELECT * FROM announcements WHERE status = 'published' ORDER BY created_at DESC LIMIT 6");
 <<<<<<< HEAD
+<<<<<<< HEAD
 $faqs = $db->fetchAll("SELECT * FROM faqs WHERE status = 'active' ORDER BY id ASC");
 $firstAidGuidelines = $db->fetchAll("SELECT * FROM first_aid_guidelines WHERE status = 'active' ORDER BY id ASC");
+=======
+$faqs = $db->fetchAll("SELECT * FROM faqs WHERE status = 'active' ORDER BY sort_order ASC");
+$firstAidGuidelines = $db->fetchAll("SELECT * FROM first_aid_guidelines WHERE status = 'active' ORDER BY sort_order ASC");
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $faqs = $db->fetchAll("SELECT * FROM faqs WHERE status = 'active' ORDER BY sort_order ASC");
 $firstAidGuidelines = $db->fetchAll("SELECT * FROM first_aid_guidelines WHERE status = 'active' ORDER BY sort_order ASC");
@@ -26,8 +31,13 @@ $clinicHours = $db->fetchAll("SELECT * FROM clinic_hours ORDER BY FIELD(day_of_w
     <title><?php echo APP_NAME; ?> - <?php echo APP_TAGLINE; ?></title>
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+=======
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
@@ -364,7 +374,11 @@ endif; ?>
     </footer>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+=======
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

@@ -32,7 +32,11 @@ $recentVisits = $db->fetchAll(
     "SELECT v.*, s.student_id as sid, s.first_name, s.last_name 
      FROM visits v JOIN students s ON v.student_id=s.id 
 <<<<<<< HEAD
+<<<<<<< HEAD
      WHERE DATE(v.visit_date)=CURDATE() ORDER BY v.visit_date DESC LIMIT 2"
+=======
+     WHERE DATE(v.visit_date)=CURDATE() ORDER BY v.visit_date DESC LIMIT 10"
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
      WHERE DATE(v.visit_date)=CURDATE() ORDER BY v.visit_date DESC LIMIT 10"
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -85,8 +89,13 @@ $topAllergens = $db->fetchAll(
 // Top chronic conditions across all students
 $topConditions = $db->fetchAll(
 <<<<<<< HEAD
+<<<<<<< HEAD
     "SELECT condition_name, COUNT(*) as count FROM chronic_conditions
      GROUP BY condition_name ORDER BY count DESC LIMIT 5"
+=======
+    "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
+     GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     "SELECT condition_name, status, COUNT(*) as count FROM chronic_conditions
      GROUP BY condition_name, status ORDER BY count DESC LIMIT 4"
@@ -109,6 +118,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 
 <!-- Stat Cards -->
+<<<<<<< HEAD
 <<<<<<< HEAD
 <style>
     .stat-card-link {
@@ -188,6 +198,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </a>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card stat-card-primary animate-fade-in">
@@ -240,14 +252,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-exclamation-circle-fill"></i></div>
             </div>
         </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
 </div>
 
 <!-- Charts Row -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class="row g-3 mb-3">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card">
@@ -346,14 +364,21 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <div class="row g-4 mb-4">
     <!-- Today's Visits Table -->
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-clock-history me-2"></i>Today's Visits</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php" class="btn btn-sm btn-primary"><i
                         class="bi bi-plus-lg me-1"></i>New Visit</a>
+=======
+                <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Visit</a>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 <a href="<?php echo BASE_URL; ?>/nurse/new_visit.php" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>New Visit</a>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -372,9 +397,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <tbody>
                             <?php if (empty($recentVisits)): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-4">No visits today yet.</td>
                                 </tr>
+=======
+                                <tr><td colspan="4" class="text-center text-muted py-4">No visits today yet.</td></tr>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                 <tr><td colspan="4" class="text-center text-muted py-4">No visits today yet.</td></tr>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -383,8 +412,12 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     <tr>
                                         <td>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             <div class="fw-semibold"><?php echo e($v['first_name'] . ' ' . $v['last_name']); ?>
                                             </div>
+=======
+                                            <div class="fw-semibold"><?php echo e($v['first_name'] . ' ' . $v['last_name']); ?></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                             <div class="fw-semibold"><?php echo e($v['first_name'] . ' ' . $v['last_name']); ?></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -402,6 +435,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div class="col-lg-4">
         <!-- Quick Actions -->
@@ -538,6 +572,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     foreach ($upcomingFollowUps as $f): ?>
                         <div class="d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
     <!-- Right Column -->
     <div class="col-lg-4">
@@ -550,14 +586,21 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <?php else:
                     foreach ($upcomingFollowUps as $f): ?>
                         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <div>
                                 <div class="fw-semibold small"><?php echo e($f['first_name'] . ' ' . $f['last_name']); ?></div>
                                 <small class="text-muted"><?php echo truncate($f['complaint'], 25); ?></small>
                             </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <span
                                 class="badge bg-warning text-dark"><?php echo formatDate($f['follow_up_date'], 'M d'); ?></span>
+=======
+                            <span class="badge bg-warning text-dark"><?php echo formatDate($f['follow_up_date'], 'M d'); ?></span>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <span class="badge bg-warning text-dark"><?php echo formatDate($f['follow_up_date'], 'M d'); ?></span>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -566,6 +609,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 endif; ?>
             </div>
         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     </div>
 </div>
@@ -725,6 +769,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <?php endif; ?>
     });
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
         <!-- Frequent Visitors -->
         <?php if (!empty($frequentVisitors)): ?>
@@ -892,6 +938,9 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     <?php endif; ?>
 });
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </script>
 

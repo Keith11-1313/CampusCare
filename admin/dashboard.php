@@ -53,6 +53,7 @@ $visitStatuses = $db->fetchAll(
 );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Students by year level (for bar chart)
 $studentsByYearLevel = $db->fetchAll(
     "SELECT yl.name, COUNT(s.id) as student_count 
@@ -63,6 +64,8 @@ $studentsByYearLevel = $db->fetchAll(
      ORDER BY yl.order_num"
 );
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Recent activity feed (last 5 access logs)
@@ -86,6 +89,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <!-- Statistics Cards -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 <style>
 .stat-card-link { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
 .stat-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12) !important; }
@@ -94,6 +98,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/admin/students.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-primary animate-fade-in stat-card-link">
+=======
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-card-primary animate-fade-in">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
@@ -108,11 +117,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/admin/users.php?role=nurse" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1 stat-card-link">
+=======
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-card-secondary animate-fade-in animate-delay-1">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     </div>
     <div class="col-sm-6 col-xl-3">
@@ -127,11 +142,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/admin/reports.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-accent animate-fade-in animate-delay-2 stat-card-link">
+=======
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-card-accent animate-fade-in animate-delay-2">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     </div>
     <div class="col-sm-6 col-xl-3">
@@ -143,7 +164,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="stat-value"><?php echo number_format($totalVisitsMonth); ?></div>
                     <?php if ($lastMonthVisits > 0): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div class="stat-extra <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
+=======
+                    <div class="stat-comparison <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <div class="stat-comparison <?php echo $momChange > 0 ? 'up' : ($momChange < 0 ? 'down' : 'neutral'); ?>">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -156,18 +181,24 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
         <a href="<?php echo BASE_URL; ?>/admin/current_requests.php" class="text-decoration-none h-100 d-flex flex-column">
         <div class="stat-card stat-card-danger animate-fade-in animate-delay-3 stat-card-link">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
     <div class="col-sm-6 col-xl-3">
         <?php if ($pendingRequests > 0): ?>
         <a href="<?php echo BASE_URL; ?>/admin/current_requests.php" class="text-decoration-none">
         <?php endif; ?>
         <div class="stat-card stat-card-danger animate-fade-in animate-delay-3">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -175,7 +206,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <div class="stat-value"><?php echo number_format($pendingRequests); ?></div>
                     <?php if ($pendingRequests > 0): ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div class="stat-extra danger"><i class="bi bi-arrow-right-circle"></i>Review now</div>
+=======
+                    <div class="small mt-1 opacity-75"><i class="bi bi-arrow-right-circle me-1"></i>Review now</div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <div class="small mt-1 opacity-75"><i class="bi bi-arrow-right-circle me-1"></i>Review now</div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -184,6 +219,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="stat-icon"><i class="bi bi-inbox-fill"></i></div>
             </div>
         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
         </a>
     </div>
@@ -195,6 +231,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="col-lg-8 d-flex">
         <div class="card flex-fill">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         <?php if ($pendingRequests > 0): ?>
         </a>
         <?php endif; ?>
@@ -206,6 +244,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <!-- Visits Per Day (Last 7 Days) -->
     <div class="col-lg-8">
         <div class="card">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Visits — Last 7 Days</div>
             <div class="card-body">
@@ -213,6 +254,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div class="col-lg-4 d-flex">
         <!-- Quick Actions -->
@@ -254,6 +296,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="col-lg-4 d-flex">
         <!-- Top Complaints This Month -->
         <div class="card flex-fill">
+=======
+    <!-- Complaint Categories Doughnut -->
+    <div class="col-lg-4">
+        <div class="card">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <!-- Complaint Categories Doughnut -->
     <div class="col-lg-4">
@@ -363,7 +410,10 @@ endif; ?>
             </div>
         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
         <!-- Quick Links -->
         <div class="card mt-3">
@@ -383,6 +433,9 @@ endif; ?>
                 </a>
             </div>
         </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </div>
 </div>
@@ -436,7 +489,11 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: compData.map(d => d.count),
                 backgroundColor: chartColors.slice(0, compData.length),
 <<<<<<< HEAD
+<<<<<<< HEAD
                 borderWidth: 2, borderColor: '#fff', borderRadius: 4
+=======
+                borderWidth: 2, borderColor: '#fff'
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 borderWidth: 2, borderColor: '#fff'
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -445,7 +502,11 @@ document.addEventListener('DOMContentLoaded', function(){
         options: {
             responsive: true, maintainAspectRatio: false,
 <<<<<<< HEAD
+<<<<<<< HEAD
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
+=======
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -466,7 +527,11 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: statusData.map(d => d.count),
                 backgroundColor: statusData.map(d => statusColors[d.status] || '#6b7c93'),
 <<<<<<< HEAD
+<<<<<<< HEAD
                 borderWidth: 2, borderColor: '#fff', borderRadius: 4
+=======
+                borderWidth: 2, borderColor: '#fff'
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 borderWidth: 2, borderColor: '#fff'
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -475,7 +540,11 @@ document.addEventListener('DOMContentLoaded', function(){
         options: {
             responsive: true, maintainAspectRatio: false,
 <<<<<<< HEAD
+<<<<<<< HEAD
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'rectRounded' } } },
+=======
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -483,6 +552,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
     <?php endif; ?>
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     // --- Students by Year Level Bar Chart ---
@@ -513,6 +583,8 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
     <?php endif; ?>
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 });

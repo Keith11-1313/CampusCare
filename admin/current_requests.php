@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     redirect(BASE_URL . "/admin/users.php?$params&msg=Please+complete+the+new+class+representative+account+setup.+The+old+class+representative+will+be+deactivated+once+saved.");
                 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                 elseif ($request['request_type'] === 'student_deletion') {
                     // Student deletion — archive the student
@@ -56,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     } else {
                         $error = 'Student not found for this deletion request.';
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                 elseif ($request['request_type'] === 'password_reset') {
                     // Password reset — generate new password and update
                     $newPassword = trim($_POST['new_password'] ?? '');
@@ -68,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         $db->query("UPDATE current_requests SET status = 'approved', admin_notes = 'Password has been reset.' WHERE id = ?", [$requestId]);
                         logAccess($_SESSION['user_id'], 'approve_password_reset', "Approved password reset request ID $requestId for user: " . $request['old_rep_username'] . " (" . $request['user_fname'] . " " . $request['user_lname'] . ")");
                         $message = 'Password has been reset successfully for ' . $request['user_fname'] . ' ' . $request['user_lname'] . '.';
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     }
                 }
@@ -88,8 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             [$notes, $requestId]
             );
 <<<<<<< HEAD
+<<<<<<< HEAD
             $rt = $reqInfo['request_type'] ?? 'replacement';
             $typeLabel = $rt === 'student_deletion' ? 'student deletion' : 'replacement';
+=======
+            $typeLabel = ($reqInfo['request_type'] ?? 'replacement') === 'password_reset' ? 'password reset' : 'replacement';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             $typeLabel = ($reqInfo['request_type'] ?? 'replacement') === 'password_reset' ? 'password reset' : 'replacement';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -167,8 +177,13 @@ else: ?>
                                 <td class="align-middle small"><?php echo formatDateTime($r['created_at']); ?></td>
                                 <td class="align-middle">
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     <?php if ($r['request_type'] === 'student_deletion'): ?>
                                         <span class="badge bg-danger"><i class="bi bi-person-dash me-1"></i>Student Deletion</span>
+=======
+                                    <?php if ($r['request_type'] === 'password_reset'): ?>
+                                        <span class="badge bg-info text-dark"><i class="bi bi-key me-1"></i>Password Reset</span>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                     <?php if ($r['request_type'] === 'password_reset'): ?>
                                         <span class="badge bg-info text-dark"><i class="bi bi-key me-1"></i>Password Reset</span>
@@ -218,6 +233,7 @@ else: ?>
                                     <?php if ($r['status'] === 'pending'): ?>
                                         <div class="d-flex justify-content-center gap-2">
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             <?php if ($r['request_type'] === 'student_deletion'): ?>
                                                 <form method="POST" id="approveForm<?php echo $r['id']; ?>">
                                                     <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
@@ -228,10 +244,15 @@ else: ?>
                                                     </button>
                                                 </form>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                             <?php if ($r['request_type'] === 'password_reset'): ?>
                                                 <button type="button" class="btn btn-sm btn-success" onclick="openPasswordResetModal(<?php echo $r['id']; ?>, '<?php echo e($r['user_fname'] . ' ' . $r['user_lname']); ?>')">
                                                     <i class="bi bi-check-lg me-1"></i>Reset
                                                 </button>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                             <?php else: ?>
                                                 <form method="POST" id="approveForm<?php echo $r['id']; ?>">
@@ -292,8 +313,11 @@ endif; ?>
 </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 <!-- Password Reset Modal -->
 <div class="modal fade" id="passwordResetModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -328,6 +352,9 @@ endif; ?>
         </div>
     </div>
 </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
 <script>
@@ -345,6 +372,7 @@ function confirmApprove(id) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 function confirmStudentDeletion(id, studentName) {
     showConfirm(
         'Archive this student?',
@@ -360,14 +388,19 @@ function confirmStudentDeletion(id, studentName) {
 
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 function openRejectModal(id) {
     document.getElementById('rejectRequestId').value = id;
     new bootstrap.Modal(document.getElementById('rejectModal')).show();
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 function openPasswordResetModal(id, userName) {
     document.getElementById('resetRequestId').value = id;
     document.getElementById('resetUserName').textContent = userName;
@@ -387,6 +420,9 @@ document.getElementById('toggleNewPassword').addEventListener('click', function(
         icon.className = 'bi bi-eye';
     }
 });
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </script>
 

@@ -70,9 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 jsonResponse(['success' => false, 'message' => 'Title and content required.']);
             if ($id > 0)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=? WHERE id=?", [$title, $icon, $content, $id]);
             else
                 $db->query("INSERT INTO first_aid_guidelines (title,icon,content) VALUES (?,?,?)", [$title, $icon, $content]);
+=======
+                $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=?, sort_order=? WHERE id=?", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0), $id]);
+            else
+                $db->query("INSERT INTO first_aid_guidelines (title,icon,content,sort_order) VALUES (?,?,?,?)", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0)]);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 $db->query("UPDATE first_aid_guidelines SET title=?, icon=?, content=?, sort_order=? WHERE id=?", [$title, $icon, $content, intval($_POST['sort_order'] ?? 0), $id]);
             else
@@ -94,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($action === 'save') {
             $name = trim($_POST['name'] ?? '');
 <<<<<<< HEAD
+<<<<<<< HEAD
             $role = trim($_POST['role'] ?? '');
             $phone = trim($_POST['phone_number'] ?? '');
             if (empty($name) || empty($phone))
@@ -108,6 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             else
                 $db->query("INSERT INTO clinic_emergency_contacts (name,role,phone_number,sort_order) VALUES (?,?,?,?)", [$name, $role, $phone, intval($_POST['sort_order'] ?? 0)]);
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             $phone = trim($_POST['phone_number'] ?? '');
             if (empty($name) || empty($phone))
                 jsonResponse(['success' => false, 'message' => 'Name and phone required.']);
@@ -115,6 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $db->query("UPDATE clinic_emergency_contacts SET name=?, role=?, phone_number=?, sort_order=? WHERE id=?", [$name, trim($_POST['role'] ?? ''), $phone, intval($_POST['sort_order'] ?? 0), $id]);
             else
                 $db->query("INSERT INTO clinic_emergency_contacts (name,role,phone_number,sort_order) VALUES (?,?,?,?)", [$name, trim($_POST['role'] ?? ''), $phone, intval($_POST['sort_order'] ?? 0)]);
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             jsonResponse(['success' => true, 'message' => 'Contact saved.']);
         }
@@ -132,6 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($action === 'save_all') {
             $hours = $_POST['hours'] ?? [];
 <<<<<<< HEAD
+<<<<<<< HEAD
             // Validate each day's hours before saving
             foreach ($hours as $h) {
                 $isClosed = isset($h['is_closed']) ? 1 : 0;
@@ -146,6 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             foreach ($hours as $h) {
                 $db->query("UPDATE clinic_hours SET opening_time=?, closing_time=?, is_closed=?, notes=? WHERE id=?",
                 [$h['opening_time'] ?: null, $h['closing_time'] ?: null, isset($h['is_closed']) ? 1 : 0, $h['notes'] ?? '', $h['id']]);
@@ -158,8 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Fetch data
 $announcements = $db->fetchAll("SELECT a.*, u.first_name, u.last_name FROM announcements a LEFT JOIN users u ON a.posted_by=u.id ORDER BY a.created_at DESC");
 <<<<<<< HEAD
+<<<<<<< HEAD
 $faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY id ASC");
 $firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY id ASC");
+=======
+$faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY sort_order");
+$firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY sort_order");
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $faqs = $db->fetchAll("SELECT * FROM faqs ORDER BY sort_order");
 $firstAid = $db->fetchAll("SELECT * FROM first_aid_guidelines ORDER BY sort_order");
@@ -217,6 +237,10 @@ endforeach; ?>
                     <thead>
                         <tr>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                            <th>Order</th>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <th>Order</th>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -230,6 +254,10 @@ endforeach; ?>
                         <?php foreach ($firstAid as $f): ?>
                         <tr>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                            <td><?php echo $f['sort_order']; ?></td>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <td><?php echo $f['sort_order']; ?></td>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -260,6 +288,10 @@ endforeach; ?>
                     <thead>
                         <tr>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                            <th>Order</th>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <th>Order</th>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -272,6 +304,10 @@ endforeach; ?>
                         <?php foreach ($faqs as $f): ?>
                         <tr>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                            <td><?php echo $f['sort_order']; ?></td>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                             <td><?php echo $f['sort_order']; ?></td>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -340,8 +376,13 @@ endforeach; ?>
                             <tr>
                                 <th>Day</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <th>Opening</th>
                                 <th>Closing</th>
+=======
+                                <th>Opens</th>
+                                <th>Closes</th>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                 <th>Opens</th>
                                 <th>Closes</th>
@@ -356,9 +397,15 @@ endforeach; ?>
                                 <td class="fw-semibold"><?php echo e($h['day_of_week']); ?></td>
                                 <input type="hidden" name="hours[<?php echo $i; ?>][id]" value="<?php echo $h['id']; ?>">
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <td><input type="time" class="form-control form-control-sm hours-time" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>" <?php echo $h['is_closed'] ? 'disabled' : ''; ?>></td>
                                 <td><input type="time" class="form-control form-control-sm hours-time" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>" <?php echo $h['is_closed'] ? 'disabled' : ''; ?>></td>
                                 <td><input type="checkbox" class="form-check-input hours-closed-cb" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
+=======
+                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>"></td>
+                                <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>"></td>
+                                <td><input type="checkbox" class="form-check-input" name="hours[<?php echo $i; ?>][is_closed]" <?php echo $h['is_closed'] ? 'checked' : ''; ?>></td>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                 <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][opening_time]" value="<?php echo e($h['opening_time'] ?? ''); ?>"></td>
                                 <td><input type="time" class="form-control form-control-sm" name="hours[<?php echo $i; ?>][closing_time]" value="<?php echo e($h['closing_time'] ?? ''); ?>"></td>
@@ -418,6 +465,10 @@ endforeach; ?>
                     <div class="mb-3"><label class="form-label">Question <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="question" id="faqQuestion" required placeholder="Enter question"></div>
                     <div class="mb-3"><label class="form-label">Answer <span class="required-asterisk">*</span></label><textarea class="form-control" name="answer" id="faqAnswer" rows="4" required placeholder="Enter answer"></textarea></div>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faqSortOrder" value="0"></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -485,7 +536,11 @@ endforeach; ?>
                         <div id="faContentEditor" style="height:200px;background:#fff;border-radius:0 0 6px 6px;"></div>
                     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+                    <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control" name="sort_order" id="faSortOrder" value="0"></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -511,12 +566,15 @@ endforeach; ?>
                     <input type="hidden" name="section" value="emergency">
                     <input type="hidden" name="id" id="emId" value="0">
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"></div>
                     <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role" pattern="[a-zA-Z\s\-\.\u00f1\u00d1']+" title="Letters, spaces, hyphens, periods, and apostrophes only" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.'\u00f1\u00d1]/g,'')"></div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number <span class="required-asterisk">*</span></label>
                         <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="e.g. 911, (02) 8888-8888, 09xxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9\s\-()#+]/g, '');">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     <div class="mb-3"><label class="form-label">Name <span class="required-asterisk">*</span></label><input type="text" class="form-control" name="name" id="emName" required placeholder="Enter name"></div>
                     <div class="mb-3"><label class="form-label">Role</label><input type="text" class="form-control" name="role" id="emRole" placeholder="Enter role"></div>
                     <div class="mb-3">
@@ -525,6 +583,9 @@ endforeach; ?>
                             <span class="input-group-text">+63</span>
                             <input type="text" class="form-control" name="phone_number" id="emPhone" required placeholder="09xxxxxxxxx" minlength="11" maxlength="11" pattern="[0-9]{11}" title="Phone number must be exactly 11 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         </div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     </div>
                 </div>
@@ -612,6 +673,10 @@ function showFaqForm(item){
     document.getElementById('faqQuestion').value = item ? (item.question||'') : '';
     document.getElementById('faqAnswer').value = item ? (item.answer||'') : '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    document.getElementById('faqSortOrder').value = item ? (item.sort_order||'0') : '0';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     document.getElementById('faqSortOrder').value = item ? (item.sort_order||'0') : '0';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -624,7 +689,11 @@ function showFirstAidForm(item){
     document.getElementById('faId').value = item ? item.id : 0;
     document.getElementById('faTitle').value = item ? (item.title||'') : '';
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+    document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     document.getElementById('faSortOrder').value = item ? (item.sort_order||'0') : '0';
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -728,6 +797,7 @@ window.quillEditor = new Quill('#faContentEditor', {
 document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     e.preventDefault();
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Client-side validation: opening time must be before closing time
     const rows = this.querySelectorAll('tbody tr');
     let valid = true;
@@ -758,11 +828,14 @@ document.getElementById('hoursForm')?.addEventListener('submit', function(e){
     if (!valid) return;
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     postAction(new FormData(this)).then(d=>{
         if(d.success){ scheduleToast('success', d.message); }
         else showAlert('error','Error',d.message);
     });
 });
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 // Toggle time inputs when Closed? checkbox changes
@@ -781,6 +854,8 @@ document.querySelectorAll('.hours-closed-cb').forEach(cb => {
         });
     });
 });
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 </script>

@@ -135,7 +135,11 @@ $totalStudentsWithVisits = $db->fetchColumn(
 );
 $avgVisitsPerDay = $db->fetchColumn(
 <<<<<<< HEAD
+<<<<<<< HEAD
     "SELECT ROUND((COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1)) * 100, 1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
+=======
+    "SELECT ROUND(COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1),1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     "SELECT ROUND(COUNT(*)/GREATEST(DATEDIFF(MAX(v.visit_date),MIN(v.visit_date)),1),1) FROM visits v JOIN students s ON v.student_id=s.id WHERE $where", $params
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -159,7 +163,11 @@ $useLandscape = isset($_GET['landscape']) && $_GET['landscape'] == '1';
     <meta charset="UTF-8">
     <title>CampusCare - Visits Report</title>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+=======
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js"></script>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js"></script>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -284,7 +292,11 @@ $hasPreviousSection = false;
         <div class="stat-box"><div class="value"><?php echo number_format($totalVisits); ?></div><div class="label">Total Visits</div></div>
         <div class="stat-box"><div class="value"><?php echo number_format($totalStudentsWithVisits); ?></div><div class="label">Unique Patients</div></div>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?>%</div><div class="label">Avg Visits/Day</div></div>
+=======
+        <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?></div><div class="label">Avg Visits/Day</div></div>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         <div class="stat-box"><div class="value"><?php echo $avgVisitsPerDay; ?></div><div class="label">Avg Visits/Day</div></div>
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -292,6 +304,7 @@ $hasPreviousSection = false;
     <?php $hasPreviousSection = true;
 endif; ?>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     <!-- Visits by Month Row: Chart + Table side by side -->
     <?php if (in_array('visits_month', $sections)): ?>
@@ -326,6 +339,8 @@ endif; ?>
     <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
         <div class="chart-box half">
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     <!-- Charts Row -->
     <?php if (in_array('visits_month', $sections) || in_array('visits_program', $sections)): ?>
     <div class="charts-row <?php echo($hasPreviousSection) ? 'page-break' : ''; ?>">
@@ -340,11 +355,15 @@ endif; ?>
         
         <?php if (in_array('visits_program', $sections)): ?>
         <div class="chart-box <?php echo in_array('visits_month', $sections) ? 'narrow' : 'full'; ?>">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             <h3>Visits by Program</h3>
             <canvas id="programChart"></canvas>
             <img class="chart-img" id="programChartImg" alt="Program visits chart">
         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <div class="chart-box narrow">
             <h3>Program Summary</h3>
@@ -360,6 +379,10 @@ endif; ?>
                 </tbody>
             </table>
         </div>
+=======
+        <?php
+    endif; ?>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         <?php
     endif; ?>
@@ -549,18 +572,24 @@ endif; ?>
     new Chart(document.getElementById('monthlyChart'), {
         type:'bar', data:{
 <<<<<<< HEAD
+<<<<<<< HEAD
             labels: monthData.map(d=>{ const [y,m]=d.month.split('-'); return new Date(y,m-1).toLocaleString('en-US',{month:'long',year:'numeric'}); }),
             datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.08)'}}}}
     });
     <?php endif; ?>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             labels: monthData.map(d=>d.month),
             datasets:[{label:'Visits',data:monthData.map(d=>d.count),backgroundColor:'rgba(0, 90, 156, 0.7)',borderColor:'#005a9c',borderWidth:1,borderRadius:6}]
         }, options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
     <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
     // Program visits doughnut chart
@@ -570,7 +599,11 @@ endif; ?>
     new Chart(document.getElementById('programChart'), {
         type:'doughnut', data:{
 <<<<<<< HEAD
+<<<<<<< HEAD
             labels: progData.map(d=>(d.code||'Unknown')+' ('+d.count+')'),
+=======
+            labels: progData.map(d=>d.code||'Unknown'),
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             labels: progData.map(d=>d.code||'Unknown'),
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -637,7 +670,11 @@ endif; ?>
             },
             scales: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0, 0, 0, 0.08)' } },
+=======
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { display: false } },
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                 y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { display: false } },
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -655,7 +692,11 @@ endif; ?>
     new Chart(document.getElementById('statusChart'), {
         type:'doughnut', data:{
 <<<<<<< HEAD
+<<<<<<< HEAD
             labels: statusData.map(d=>d.status+' ('+d.count+')'),
+=======
+            labels: statusData.map(d=>d.status),
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             labels: statusData.map(d=>d.status),
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af

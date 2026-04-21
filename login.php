@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
 <<<<<<< HEAD
+<<<<<<< HEAD
 require_once __DIR__ . '/includes/mailer.php';
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
@@ -13,6 +16,11 @@ if (isLoggedIn()) {
 
 $error = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+$forgotSuccess = '';
+$forgotError = '';
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 $forgotSuccess = '';
 $forgotError = '';
@@ -50,7 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
         }
         if (empty($user['security_question'])) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             echo json_encode(['success' => false, 'message' => 'No security question has been set for this account. Please use the Email Verification option instead.']);
+=======
+            echo json_encode(['success' => false, 'message' => 'No security question has been set for this account. Please use the "Contact Admin" option instead.']);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             echo json_encode(['success' => false, 'message' => 'No security question has been set for this account. Please use the "Contact Admin" option instead.']);
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -102,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
             exit;
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (empty($newPassword)) {
             echo json_encode(['success' => false, 'message' => 'Password is required.']);
             exit;
@@ -109,6 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
         $pwdErrors = validatePasswordStrength($newPassword);
         if (!empty($pwdErrors)) {
             echo json_encode(['success' => false, 'message' => implode(' ', $pwdErrors)]);
+=======
+        if (empty($newPassword) || strlen($newPassword) < 6) {
+            echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters.']);
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         if (empty($newPassword) || strlen($newPassword) < 6) {
             echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters.']);
@@ -122,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 
         $userId = $_SESSION['pw_reset_user_id'];
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         // Ensure new password is not the same as old password
         $oldData = $db->fetch("SELECT password FROM users WHERE id = ?", [$userId]);
@@ -132,13 +150,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $db->query("UPDATE users SET password = ? WHERE id = ?", [$hashedPassword, $userId]);
 
         // Log the action
         $user = $db->fetch("SELECT first_name, last_name FROM users WHERE id = ?", [$userId]);
 <<<<<<< HEAD
+<<<<<<< HEAD
         logAccess($userId, 'password_reset_self_service', ($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '') . ' reset password via self-service');
+=======
+        logAccess($userId, 'password_reset_security', ($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '') . ' reset password via security question');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
         logAccess($userId, 'password_reset_security', ($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '') . ' reset password via security question');
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -150,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
         exit;
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     // Step OTP-1: Send OTP code to user's registered email
@@ -275,6 +300,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     echo json_encode(['success' => false, 'message' => 'Invalid action.']);
     exit;
 }
@@ -319,7 +346,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
         else {
             $error = 'Invalid username or password.';
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             // Log failed attempt
@@ -332,7 +362,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 // Handle forgot password (Contact Admin) form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
     $forgotUsername = trim($_POST['forgot_username'] ?? '');
@@ -377,6 +410,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
         }
     }
 }
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 ?>
 <!DOCTYPE html>
@@ -387,8 +423,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
     <title>Login | <?php echo APP_NAME; ?></title>
     <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/logo-main-w.png">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+=======
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
@@ -481,6 +522,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                         <p class="text-muted mb-3 forgot-description-lg">How would you like to recover your password?</p>
                         <div class="d-flex flex-column gap-3">
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <button type="button" class="forgot-method-card" onclick="showForgotMethod('otp')">
                                 <div class="forgot-method-icon admin-icon">
                                     <i class="bi bi-envelope-fill"></i>
@@ -489,6 +531,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                     <div class="fw-bold forgot-method-title">Email Verification</div>
                                     <div class="forgot-method-desc">Receive a one-time code to your registered email</div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <button type="button" class="forgot-method-card" onclick="showForgotMethod('admin')">
                                 <div class="forgot-method-icon admin-icon">
                                     <i class="bi bi-person-badge"></i>
@@ -496,6 +540,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 <div>
                                     <div class="fw-bold forgot-method-title">Contact Admin</div>
                                     <div class="forgot-method-desc">Submit a request to the administrator to reset your password</div>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                 </div>
                                 <i class="bi bi-chevron-right forgot-method-chevron"></i>
@@ -513,6 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                         </div>
                     </div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <!-- Option A: Email OTP -->
                     <div id="forgotOtpSection" class="d-none">
@@ -547,6 +595,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 <span></span>
                             </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     <!-- Option A: Contact Admin -->
                     <div id="forgotAdminSection" class="d-none">
                         <form method="POST" action="" id="forgotAdminForm">
@@ -582,11 +632,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 After submitting, please contact the administrator to receive your new password.
                             </div>
 
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn btn-outline-secondary forgot-rounded-btn" onclick="backToMethodChoice()">
                                     <i class="bi bi-arrow-left me-1"></i>Back
                                 </button>
+<<<<<<< HEAD
 <<<<<<< HEAD
                                 <button type="button" class="btn btn-primary fw-semibold flex-fill forgot-rounded-btn" id="btnSendOtp" onclick="sendOtpCode()">
                                     <span class="spinner-border spinner-border-sm me-1 d-none" id="otpSendSpinner"></span>
@@ -670,11 +724,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                             </button>
                         </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                 <button type="submit" class="btn btn-primary fw-semibold flex-fill forgot-rounded-btn">
                                     <i class="bi bi-send-fill me-1"></i>Submit Request
                                 </button>
                             </div>
                         </form>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                     </div>
 
@@ -760,7 +819,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                 <div class="position-relative">
                                     <input type="password" class="form-control login-input-pwd" id="new_password" 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                            placeholder="Min 8 chars, uppercase, number, special" minlength="8">
+=======
+                                           placeholder="Minimum 6 characters" minlength="6">
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
                                            placeholder="Minimum 6 characters" minlength="6">
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -768,6 +831,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
                                 <ul class="pwd-requirements list-unstyled mt-1 mb-0" id="pwdRequirements" style="font-size:0.78rem;">
                                     <li id="req-length"><i class="bi bi-x-circle text-muted me-1"></i>At least 8 characters</li>
@@ -788,12 +852,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
                                     </button>
                                 </div>
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                                 <div class="form-text forgot-form-hint">Minimum 6 characters.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label fw-semibold forgot-form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="confirm_password" 
                                        placeholder="Re-enter your new password">
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
                             </div>
                             <div id="securityResetError" class="alert alert-danger py-2 px-3 mb-3 forgot-error-alert">
@@ -812,8 +881,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
     </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+=======
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.23/dist/sweetalert2.all.min.js"></script>
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.23/dist/sweetalert2.all.min.js"></script>
@@ -845,7 +919,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_submit'])) {
         })();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         // Show forgot password result messages
         <?php if ($forgotSuccess): ?>
         Swal.fire({
@@ -864,6 +941,9 @@ elseif ($forgotError): ?>
         });
         <?php
 endif; ?>
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 
         // ─── Forgot Password Modal Logic ───
@@ -873,8 +953,13 @@ endif; ?>
         function showForgotMethod(method) {
             document.getElementById('forgotStep1').classList.add('d-none');
 <<<<<<< HEAD
+<<<<<<< HEAD
             if (method === 'otp') {
                 document.getElementById('forgotOtpSection').classList.remove('d-none');
+=======
+            if (method === 'admin') {
+                document.getElementById('forgotAdminSection').classList.remove('d-none');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             if (method === 'admin') {
                 document.getElementById('forgotAdminSection').classList.remove('d-none');
@@ -896,7 +981,11 @@ endif; ?>
         function backToMethodChoice() {
             document.getElementById('forgotStep1').classList.remove('d-none');
 <<<<<<< HEAD
+<<<<<<< HEAD
             document.getElementById('forgotOtpSection').classList.add('d-none');
+=======
+            document.getElementById('forgotAdminSection').classList.add('d-none');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             document.getElementById('forgotAdminSection').classList.add('d-none');
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -907,6 +996,7 @@ endif; ?>
             document.getElementById('securityStep3').classList.add('d-none');
             updateSecurityDots(1);
 <<<<<<< HEAD
+<<<<<<< HEAD
             // Reset OTP steps
             document.getElementById('otpStep1').classList.remove('d-none');
             document.getElementById('otpStep2').classList.add('d-none');
@@ -915,11 +1005,14 @@ endif; ?>
             stopOtpCountdown();
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
             // Clear fields
             document.getElementById('security_username').value = '';
             document.getElementById('security_answer').value = '';
             document.getElementById('new_password').value = '';
             document.getElementById('confirm_password').value = '';
+<<<<<<< HEAD
 <<<<<<< HEAD
             document.getElementById('otp_username').value = '';
             document.getElementById('otp_code').value = '';
@@ -927,6 +1020,9 @@ endif; ?>
             document.getElementById('otp_confirm_password').value = '';
             hideAllSecurityErrors();
             hideAllOtpErrors();
+=======
+            hideAllSecurityErrors();
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             hideAllSecurityErrors();
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
@@ -1041,6 +1137,7 @@ endif; ?>
             const newPwd = document.getElementById('new_password').value;
             const confirmPwd = document.getElementById('confirm_password').value;
 <<<<<<< HEAD
+<<<<<<< HEAD
             const loginPwd = document.getElementById('password').value;
             
             const hasLength = newPwd.length >= 8;
@@ -1053,6 +1150,11 @@ endif; ?>
             if (!newPwd || !hasLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial || (loginPwd.length > 0 && !notSameAsOld)) {
                 updateResetPwdRequirements(newPwd);
                 showSecurityError('securityResetError', 'Password does not meet all requirements.');
+=======
+            
+            if (!newPwd || newPwd.length < 6) {
+                showSecurityError('securityResetError', 'Password must be at least 6 characters.');
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
             
             if (!newPwd || newPwd.length < 6) {
@@ -1118,6 +1220,7 @@ endif; ?>
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Toggle confirm password visibility
         function toggleConfirmPwd(btn) {
             const pwd = document.getElementById('confirm_password');
@@ -1135,11 +1238,16 @@ endif; ?>
         document.getElementById('forgotPasswordModal').addEventListener('hidden.bs.modal', function() {
             backToMethodChoice();
 =======
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         // Reset modal state when closed
         document.getElementById('forgotPasswordModal').addEventListener('hidden.bs.modal', function() {
             backToMethodChoice();
             document.getElementById('forgot_username').value = '';
             document.getElementById('forgot_reason').value = '';
+<<<<<<< HEAD
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
+=======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
         });
 
@@ -1150,6 +1258,7 @@ endif; ?>
         document.getElementById('security_answer').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') { e.preventDefault(); verifySecurityAnswer(); }
         });
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         // Live password requirements check for reset form
@@ -1495,6 +1604,8 @@ endif; ?>
         document.getElementById('otp_code').addEventListener('input', function() {
             this.value = this.value.replace(/\D/g, '').slice(0, 6);
         });
+=======
+>>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
 =======
 >>>>>>> 624513a96c1a8a7d40912a2b3205458cbff711af
     </script>
